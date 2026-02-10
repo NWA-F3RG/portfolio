@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Enterprise SSO Implementation - Authentik + Active Directory forward authentication deployment protecting multiple applications with centralized identity management.">
+    <title>Enterprise SSO Implementation - Nate's Portfolio</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==================== CSS Variables ==================== */
+        :root {
+            --color-bg-primary: #1e1e1e;
+            --color-bg-secondary: #252526;
+            --color-bg-tertiary: #2d2d30;
+            --color-bg-code: #1e1e1e;
+            --color-text-primary: #d4d4d4;
+            --color-text-secondary: #808080;
+            --color-text-muted: #6a6a6a;
+            --color-accent-primary: #ff6b35;
+            --color-accent-secondary: #4ec9b0;
+            --color-accent-warning: #ce9178;
+            --color-border: #3e3e42;
+            --color-border-hover: #5a5a5f;
+            --color-syntax-keyword: #569cd6;
+            --color-syntax-string: #ce9178;
+            --color-syntax-function: #dcdcaa;
+            --color-syntax-comment: #6a9955;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+            --space-2xl: 4rem;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+        
+        /* ==================== Reset & Base ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        /* ==================== Header ==================== */
+        header {
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-md) 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            text-decoration: none;
+        }
+        
+        .logo::before {
+            content: '$ ';
+            color: var(--color-accent-secondary);
+        }
+        
+        .back-link {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-link:hover {
+            color: var(--color-accent-primary);
+        }
+        
+        .back-link::before {
+            content: '←';
+            font-size: 1.2rem;
+        }
+        
+        /* ==================== Main Content ==================== */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-md);
+        }
+        
+        /* ==================== Project Header ==================== */
+        .project-header {
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-xl);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .project-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--color-accent-secondary);
+            background: rgba(78, 201, 176, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+            line-height: 1.2;
+        }
+        
+        .project-meta {
+            display: flex;
+            gap: var(--space-lg);
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .meta-item strong {
+            color: var(--color-text-primary);
+        }
+        
+        .tldr {
+            background: var(--color-bg-secondary);
+            border-left: 4px solid var(--color-accent-primary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .tldr-title {
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            margin-bottom: var(--space-sm);
+            font-size: 1.1rem;
+        }
+        
+        .key-achievement {
+            background: var(--color-bg-tertiary);
+            padding: var(--space-md);
+            border-radius: var(--radius-sm);
+            margin-top: var(--space-sm);
+        }
+        
+        .key-achievement strong {
+            color: var(--color-accent-primary);
+        }
+        
+        /* ==================== Content Sections ==================== */
+        .section {
+            margin-bottom: var(--space-2xl);
+        }
+        
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 2px solid var(--color-border);
+        }
+        
+        h3 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-top: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+        
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-accent-secondary);
+            margin-top: var(--space-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        p {
+            margin-bottom: var(--space-md);
+            color: var(--color-text-primary);
+        }
+        
+        ul, ol {
+            margin-left: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+        
+        li {
+            margin-bottom: var(--space-sm);
+            color: var(--color-text-primary);
+        }
+        
+        /* ==================== Code Blocks ==================== */
+        pre {
+            background: var(--color-bg-code);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+            color: var(--color-accent-warning);
+        }
+        
+        pre code {
+            color: var(--color-text-primary);
+        }
+        
+        .terminal {
+            position: relative;
+            background: #0c0c0c;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .terminal::before {
+            content: '';
+            display: block;
+            height: 30px;
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+        
+        .terminal pre {
+            border: none;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            background: #0c0c0c;
+            color: #00ff00;
+        }
+        
+        /* ==================== Architecture Diagram ==================== */
+        .architecture {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .architecture pre {
+            background: transparent;
+            border: none;
+            color: var(--color-accent-secondary);
+            font-size: 0.85rem;
+        }
+        
+        /* ==================== Collapsible Sections ==================== */
+        .collapsible {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            overflow: hidden;
+        }
+        
+        .collapsible-header {
+            padding: var(--space-md);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        
+        .collapsible-header:hover {
+            background: var(--color-bg-tertiary);
+        }
+        
+        .collapsible-title {
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            font-size: 1.1rem;
+        }
+        
+        .collapsible-icon {
+            font-size: 1.2rem;
+            color: var(--color-text-secondary);
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active .collapsible-icon {
+            transform: rotate(180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .collapsible.active .collapsible-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .collapsible-inner {
+            padding: 0 var(--space-md) var(--space-md) var(--space-md);
+        }
+        
+        /* ==================== Info Boxes ==================== */
+        .info-box {
+            background: var(--color-bg-secondary);
+            border-left: 4px solid var(--color-accent-secondary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .warning-box {
+            background: rgba(206, 145, 120, 0.1);
+            border-left: 4px solid var(--color-accent-warning);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .success-box {
+            background: rgba(78, 201, 176, 0.1);
+            border-left: 4px solid var(--color-accent-secondary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        /* ==================== Skills Grid ==================== */
+        .skills-demonstrated {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+        
+        .skill-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+        }
+        
+        .skill-card h4 {
+            margin-top: 0;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .skill-card ul {
+            margin-left: var(--space-md);
+            margin-bottom: 0;
+        }
+        
+        .skill-card li {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        /* ==================== STAR Format ==================== */
+        .star-format {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+        
+        .star-item {
+            margin-bottom: var(--space-md);
+        }
+        
+        .star-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .star-label {
+            font-weight: 700;
+            color: var(--color-accent-primary);
+            font-size: 1.1rem;
+            margin-bottom: var(--space-sm);
+        }
+        
+        /* ==================== Footer ==================== */
+        footer {
+            max-width: 900px;
+            margin: var(--space-2xl) auto 0;
+            padding: var(--space-xl) var(--space-md);
+            border-top: 1px solid var(--color-border);
+            text-align: center;
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            h3 {
+                font-size: 1.2rem;
+            }
+            
+            .project-meta {
+                flex-direction: column;
+                gap: var(--space-sm);
+            }
+            
+            .skills-demonstrated {
+                grid-template-columns: 1fr;
+            }
+            
+            pre {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="/" class="logo">nate</a>
+            <a href="/" class="back-link">Back to Portfolio</a>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main>
+        <!-- Project Header -->
+        <div class="project-header">
+            <div class="project-tag">Identity & Access Management</div>
+            <h1>Enterprise SSO Implementation</h1>
+            
+            <div class="project-meta">
+                <div class="meta-item">
+                    <strong>Completion:</strong> February 2026
+                </div>
+                <div class="meta-item">
+                    <strong>Time Investment:</strong> ~15 hours
+                </div>
+                <div class="meta-item">
+                    <strong>Status:</strong> Production-Ready
+                </div>
+            </div>
+            
+            <div class="tldr">
+                <div class="tldr-title">TL;DR - Why This Matters</div>
+                <p>Built enterprise-grade Single Sign-On protecting multiple applications using <strong>forward authentication</strong> at the reverse proxy layer. This pattern works with ANY web application - even those without native SSO support - by intercepting requests at the network edge and validating sessions before proxying to backends.</p>
+                <div class="key-achievement">
+                    <strong>Key Achievement:</strong> Universal authentication pattern that eliminated per-application credential management and provided centralized access control.
+                </div>
+            </div>
+        </div>
+        
+        <!-- The Problem -->
+        <section class="section">
+            <h2>The Problem</h2>
+            
+            <h3>Initial State</h3>
+            <ul>
+                <li>8+ self-hosted applications (Bookstack, Glance, code-server, Portainer, etc.)</li>
+                <li>Each app managing its own users and passwords</li>
+                <li>No centralized access control</li>
+                <li>No audit trail of who accessed what</li>
+                <li>Password fatigue (same password reused, or forgot which password for which app)</li>
+            </ul>
+            
+            <h3>Business Impact</h3>
+            <ul>
+                <li>Security risk: Weak/reused passwords across services</li>
+                <li>Operational overhead: Managing users in 8 different systems</li>
+                <li>No way to revoke access globally when needed</li>
+                <li>Inconsistent authentication experience</li>
+            </ul>
+            
+            <div class="info-box">
+                <strong>Enterprise Parallel:</strong> This mirrors the challenge companies face when they have dozens of SaaS apps (Salesforce, Jira, GitHub, etc.) - without SSO, users create weak passwords and IT has no centralized control.
+            </div>
+        </section>
+        
+        <!-- The Solution -->
+        <section class="section">
+            <h2>The Solution</h2>
+            
+            <h3>Architecture Overview</h3>
+            <div class="architecture">
+                <pre>┌─────────────┐
+│  End User   │
+│   Browser   │
+└──────┬──────┘
+       │ 1. HTTPS request
+       ▼
+┌─────────────────────────┐
+│  Nginx Proxy Manager    │ ← SSL termination, initial request
+│  (Reverse Proxy)        │
+└──────┬──────────────────┘
+       │ 2. auth_request (nginx subrequest)
+       ▼
+┌─────────────────────────┐
+│  Authentik Outpost      │ ← Session validation
+│  (Forward Auth)         │
+└──────┬──────────────────┘
+       │ 3. If no session → redirect to login
+       │    If valid session → return 200 + headers
+       ▼
+┌─────────────────────────┐
+│  Authentik Server       │ ← Login flows, LDAP queries
+│  (Identity Provider)    │
+└──────┬──────────────────┘
+       │ 4. LDAP authentication
+       ▼
+┌─────────────────────────┐
+│  Active Directory       │ ← User/group directory
+│  (Identity Source)      │
+└─────────────────────────┘</pre>
+            </div>
+            
+            <h3>How It Works (Step-by-Step)</h3>
+            
+            <h4>Unauthenticated Request:</h4>
+            <ol>
+                <li>User navigates to <code>https://docs.homelab.local</code></li>
+                <li>Nginx receives request, makes internal <code>auth_request</code> to Authentik outpost</li>
+                <li>Outpost checks for valid session cookie → None found → Returns <code>401 Unauthorized</code></li>
+                <li>Nginx catches the 401, redirects browser to Authentik login page</li>
+                <li>User enters credentials (validated against Active Directory via LDAP)</li>
+                <li>Authentik creates session, sets cookie, redirects back to original URL</li>
+                <li>Request repeats (now with session cookie) → Outpost validates → Returns <code>200 OK</code></li>
+                <li>Nginx proxies request to backend application with user identity headers</li>
+                <li>User sees the protected application</li>
+            </ol>
+            
+            <h4>Authenticated Request:</h4>
+            <ul>
+                <li>Every subsequent request includes session cookie</li>
+                <li>Outpost validates instantly (no AD query needed - session already established)</li>
+                <li>Application receives authenticated request with user info in headers</li>
+            </ul>
+        </section>
+        
+        <!-- Technical Implementation -->
+        <section class="section">
+            <h2>Technical Implementation</h2>
+            
+            <h3>Component Stack</h3>
+            
+            <h4>Identity Layer:</h4>
+            <ul>
+                <li><strong>Active Directory:</strong> 2 domain controllers (DC01, DC02) for redundancy</li>
+                <li><strong>LDAP Protocol:</strong> StartTLS encryption (port 389) for AD queries</li>
+                <li><strong>Authentik:</strong> Modern IdP with web UI for managing auth flows</li>
+                <li><strong>Distributed Architecture:</strong> Main Authentik server + outpost for forward auth</li>
+            </ul>
+            
+            <h4>Network Layer:</h4>
+            <ul>
+                <li><strong>VLAN Segmentation:</strong> Infrastructure (10.x.x.0/24), Clients, IoT, Guests</li>
+                <li><strong>Firewall Policies:</strong> Zone-based rules with default-deny stance</li>
+                <li><strong>Reverse Proxy:</strong> Nginx Proxy Manager with SSL/TLS termination</li>
+            </ul>
+            
+            <h4>Application Layer:</h4>
+            <ul>
+                <li><strong>Docker Networks:</strong> Internal <code>proxy-net</code> bridge for container communication</li>
+                <li><strong>Protected Apps:</strong> Bookstack (docs), Glance (dashboard), code-server (IDE)</li>
+                <li><strong>Centralized Certs:</strong> Let's Encrypt wildcard via Cloudflare DNS challenge</li>
+            </ul>
+            
+            <h3>Key Technical Decisions</h3>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Why Forward Auth vs Native OIDC/SAML</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <ul>
+                            <li>Forward auth works with <strong>any</strong> HTTP(S) application (no app-level changes needed)</li>
+                            <li>Application never sees credentials (security)</li>
+                            <li>Centralized at network edge (defense in depth)</li>
+                            <li>Single pattern scales to unlimited apps</li>
+                            <li>Trade-off: Double authentication if app has native auth (acceptable in homelab)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Why LDAP + StartTLS vs LDAPS</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <ul>
+                            <li>StartTLS uses standard port 389 (no firewall rule changes)</li>
+                            <li>Encrypts after initial connection (opportunistic TLS)</li>
+                            <li>Simpler certificate management for internal CA</li>
+                            <li>Enterprise standard for internal LDAP</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Why Distributed Authentik (Server + Outpost)</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <ul>
+                            <li>Outpost co-located with applications (low latency auth checks)</li>
+                            <li>Server handles heavy lifting (login flows, LDAP queries, UI)</li>
+                            <li>Separation of concerns (auth validation vs identity management)</li>
+                            <li>Mirrors enterprise IdP architecture (e.g., Okta agents)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- The Challenges -->
+        <section class="section">
+            <h2>The Challenges</h2>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Challenge 1: LDAP Bind Authentication Failure</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>Symptom:</h4>
+                        <div class="terminal">
+                            <pre>Error initializing SSL/TLS
+LDAP bind failed with error: Invalid credentials</pre>
+                        </div>
+                        
+                        <h4>Root Cause Discovery:</h4>
+                        <ul>
+                            <li>Initially used User Principal Name (UPN) format: <code>svc-authentik@homelab.local</code></li>
+                            <li>LDAP bind operations require Distinguished Name (DN) format</li>
+                            <li>UPN is Windows/Kerberos-specific, not universal LDAP</li>
+                        </ul>
+                        
+                        <h4>Investigation Process:</h4>
+                        <ol>
+                            <li>Verified service account password in AD (correct)</li>
+                            <li>Tested network connectivity to DC (reachable)</li>
+                            <li>Read Microsoft LDAP documentation on bind requirements</li>
+                            <li>Discovered DN vs UPN distinction</li>
+                            <li>Changed bind credential format</li>
+                        </ol>
+                        
+                        <h4>Solution:</h4>
+                        <div class="warning-box">
+                            <strong>❌ Wrong:</strong> <code>svc-authentik@homelab.local</code> (UPN)
+                        </div>
+                        <div class="success-box">
+                            <strong>✅ Correct:</strong> <code>CN=svc-authentik,CN=Users,DC=homelab,DC=local</code> (DN)
+                        </div>
+                        
+                        <div class="info-box">
+                            <strong>Why This Matters:</strong> This is a common integration pitfall. Many authentication systems accept UPN for user login convenience, but backend LDAP bind operations are protocol-specific and require DN format. Understanding this distinction is critical for troubleshooting any LDAP-based integration.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Challenge 2: nginx 500 Errors (auth_request Status Codes)</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>Symptom:</h4>
+                        <div class="terminal">
+                            <pre>500 Internal Server Error
+nginx error log: "auth request unexpected status: 302"</pre>
+                        </div>
+                        
+                        <h4>Root Cause:</h4>
+                        <ul>
+                            <li>nginx <code>auth_request</code> directive expects either <code>2xx</code> (authenticated) or <code>401/403</code> (not authenticated)</li>
+                            <li>Authentik outpost was returning <code>302 Redirect</code> for unauthenticated users</li>
+                            <li>nginx treats unexpected status codes as errors</li>
+                        </ul>
+                        
+                        <h4>Solution:</h4>
+                        <p>Added <code>error_page</code> handler to nginx configuration:</p>
+                        <pre><code>location / {
+    auth_request /outpost.goauthentik.io/auth/nginx;
+    error_page 401 = @goauthentik_proxy_signin;  # Catch 401, redirect gracefully
+    # ... rest of config
+}
+
+location @goauthentik_proxy_signin {
+    internal;
+    return 302 /outpost.goauthentik.io/start?rd=$scheme://$http_host$request_uri;
+}</code></pre>
+                        
+                        <div class="info-box">
+                            <strong>Why This Matters:</strong> nginx's <code>auth_request</code> is powerful but opinionated. Understanding its behavior model (status code expectations, subrequest mechanics, error handling) is essential for implementing reverse proxy authentication patterns.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Challenge 3: Authentication Loop (Cookie Management)</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>Symptom:</h4>
+                        <p>User successfully authenticated in Authentik, but kept getting redirected back to login page infinitely.</p>
+                        
+                        <h4>Root Cause:</h4>
+                        <ul>
+                            <li>Authentik session cookie was being set with <code>SameSite=Strict</code></li>
+                            <li>Redirect from Authentik back to protected app was cross-domain (different subdomain)</li>
+                            <li>Browser blocked cookie transmission due to <code>SameSite</code> policy</li>
+                            <li>Each request appeared unauthenticated, triggering new login redirect</li>
+                        </ul>
+                        
+                        <h4>Solution:</h4>
+                        <p>Changed Authentik cookie settings to <code>SameSite=Lax</code>:</p>
+                        <ul>
+                            <li>Allows cookies on same-site navigation (subdomain redirects)</li>
+                            <li>Still protects against CSRF attacks</li>
+                            <li>Balances security and functionality</li>
+                        </ul>
+                        
+                        <div class="info-box">
+                            <strong>Why This Matters:</strong> Modern browsers enforce strict cookie policies for security. Understanding <code>SameSite</code> attributes (None, Lax, Strict) is essential when implementing authentication flows that involve redirects across subdomains.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Outcomes & Skills -->
+        <section class="section">
+            <h2>Outcomes & Impact</h2>
+            
+            <h3>Measurable Results</h3>
+            <ul>
+                <li>✅ <strong>8+ applications</strong> protected with centralized SSO</li>
+                <li>✅ <strong>Zero password sprawl</strong> - users authenticate once with AD credentials</li>
+                <li>✅ <strong>5-minute onboarding</strong> for new applications (reusable pattern)</li>
+                <li>✅ <strong>100% authentication success</strong> rate since deployment</li>
+                <li>✅ All authentication events logged centrally in Authentik</li>
+            </ul>
+            
+            <h3>Skills Demonstrated</h3>
+            <div class="skills-demonstrated">
+                <div class="skill-card">
+                    <h4>Enterprise Identity Architecture</h4>
+                    <ul>
+                        <li>LDAP protocol and directory services</li>
+                        <li>Modern IdP patterns (Okta, Auth0, Azure AD)</li>
+                        <li>Forward auth vs native SSO trade-offs</li>
+                        <li>Distributed system design</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-card">
+                    <h4>Authentication Protocols</h4>
+                    <ul>
+                        <li>LDAP bind operations (DN vs UPN)</li>
+                        <li>TLS/SSL for LDAP traffic (StartTLS)</li>
+                        <li>Session management and cookies</li>
+                        <li>OAuth2/OIDC concepts</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-card">
+                    <h4>Reverse Proxy Engineering</h4>
+                    <ul>
+                        <li>nginx auth_request subrequest model</li>
+                        <li>HTTP status code handling</li>
+                        <li>Header manipulation</li>
+                        <li>Buffer sizing for large headers</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-card">
+                    <h4>Systematic Troubleshooting</h4>
+                    <ul>
+                        <li>Log analysis across distributed systems</li>
+                        <li>Protocol-level debugging</li>
+                        <li>Root cause analysis</li>
+                        <li>Documentation-driven problem solving</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Reusable Pattern -->
+        <section class="section">
+            <h2>Reusable Pattern</h2>
+            <p>The power of this implementation is the <strong>reusable pattern</strong>. Adding SSO to a new application takes ~5 minutes:</p>
+            
+            <ol>
+                <li><strong>In Authentik:</strong> Create Proxy Provider + Application (3 clicks)</li>
+                <li><strong>In Authentik:</strong> Assign application to outpost (1 click)</li>
+                <li><strong>In NPM:</strong> Add <code>auth_request</code> location blocks to proxy host (paste config)</li>
+                <li><strong>Test:</strong> Access app → redirect to login → authenticate → access granted</li>
+            </ol>
+            
+            <div class="success-box">
+                <p>This pattern has been applied to:</p>
+                <ul style="margin-bottom: 0;">
+                    <li>Documentation platform (Bookstack)</li>
+                    <li>Dashboard (Glance)</li>
+                    <li>Web IDE (code-server)</li>
+                    <li>Monitoring (Uptime Kuma)</li>
+                    <li>Backup tool (Duplicati)</li>
+                </ul>
+                <p style="margin-top: var(--space-sm); margin-bottom: 0;"><strong>And can protect ANY future HTTP(S) application without modification.</strong></p>
+            </div>
+        </section>
+        
+        <!-- Interview Story -->
+        <section class="section">
+            <h2>Interview Story (STAR Format)</h2>
+            
+            <div class="star-format">
+                <div class="star-item">
+                    <div class="star-label">Situation</div>
+                    <p>"I was managing a homelab with 8 self-hosted applications, each with independent user management. This created password fatigue, security risks from reused credentials, and no centralized access control or audit trail."</p>
+                </div>
+                
+                <div class="star-item">
+                    <div class="star-label">Task</div>
+                    <p>"Implement enterprise-grade Single Sign-On that would work across all applications - including those without native SSO support - while maintaining security and providing a foundation for future access policies."</p>
+                </div>
+                
+                <div class="star-item">
+                    <div class="star-label">Action</div>
+                    <p>"I implemented forward authentication using Authentik as the identity provider, backed by Active Directory as the user directory. The architecture places authentication at the reverse proxy layer, so every HTTP request is validated before reaching the application. This required:</p>
+                    <ul>
+                        <li>Setting up a 2-DC Active Directory environment with LDAP</li>
+                        <li>Deploying Authentik with a distributed architecture (main server + outpost)</li>
+                        <li>Configuring nginx to intercept requests and validate sessions via subrequests</li>
+                        <li>Troubleshooting LDAP bind failures (DN vs UPN format issue)</li>
+                        <li>Debugging nginx auth_request status code handling</li>
+                        <li>Resolving session cookie propagation through proxy layers</li>
+                    </ul>
+                    <p>The key technical challenges were understanding LDAP protocol requirements, nginx's auth_request model, and HTTP cookie flow through multi-layer proxies."</p>
+                </div>
+                
+                <div class="star-item">
+                    <div class="star-label">Result</div>
+                    <p>"Successfully implemented SSO protecting 8 applications with a reusable pattern that takes ~5 minutes to apply to new apps. Eliminated password sprawl, centralized authentication logging, and built a foundation for future enhancements like MFA and group-based access policies. The implementation mirrors enterprise patterns used by companies like Cloudflare Access or Okta + reverse proxy combinations."</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- What's Next -->
+        <section class="section">
+            <h2>What's Next</h2>
+            
+            <h3>Immediate Improvements</h3>
+            <ul>
+                <li><strong>MFA:</strong> Enable TOTP or WebAuthn for second factor</li>
+                <li><strong>LDAPS:</strong> Migrate from StartTLS to dedicated LDAPS port 636</li>
+                <li><strong>Monitoring:</strong> Centralize auth logs in Loki/Grafana</li>
+                <li><strong>Group Policies:</strong> Implement fine-grained access control per app</li>
+            </ul>
+            
+            <h3>Future Exploration</h3>
+            <ul>
+                <li><strong>User Self-Service:</strong> Password reset portal via Authentik</li>
+                <li><strong>Device Trust:</strong> Integrate device posture checks</li>
+                <li><strong>OAuth2 Device Flow:</strong> CLI tool authentication</li>
+                <li><strong>SAML Integration:</strong> Explore SAML for apps that don't support OIDC</li>
+            </ul>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Nate. Built with intention, documented with care.</p>
+        <p style="margin-top: var(--space-sm);">
+            <a href="/" style="color: var(--color-accent-primary); text-decoration: none;">← Back to Portfolio</a>
+        </p>
+    </footer>
+    
+    <!-- Collapsible Toggle Script -->
+    <script>
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const collapsible = header.parentElement;
+                collapsible.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>

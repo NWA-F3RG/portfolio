@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nate's Systems Administration & Infrastructure Portfolio - Enterprise-grade homelab projects demonstrating identity management, backup infrastructure, and reliability engineering.">
+    <meta name="keywords" content="systems administration, infrastructure, devops, proxmox, active directory, authentik, backup, storage, homelab">
+    <meta name="author" content="Nate">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
+    <title>Nate - Systems Administration Portfolio</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==================== CSS Variables ==================== */
+        :root {
+            /* Background Colors */
+            --color-bg-primary: #1e1e1e;
+            --color-bg-secondary: #252526;
+            --color-bg-tertiary: #2d2d30;
+            --color-bg-code: #1e1e1e;
+            
+            /* Text Colors */
+            --color-text-primary: #d4d4d4;
+            --color-text-secondary: #808080;
+            --color-text-muted: #6a6a6a;
+            
+            /* Accent Colors */
+            --color-accent-primary: #ff6b35;
+            --color-accent-secondary: #4ec9b0;
+            --color-accent-warning: #ce9178;
+            
+            /* Border Colors */
+            --color-border: #3e3e42;
+            --color-border-hover: #5a5a5f;
+            
+            /* Typography */
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+            --space-2xl: 4rem;
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+        
+        /* ==================== Reset & Base Styles ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        /* ==================== Skip Link (Accessibility) ==================== */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--color-accent-primary);
+            color: var(--color-bg-primary);
+            padding: var(--space-sm);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            z-index: 100;
+        }
+        
+        .skip-link:focus {
+            top: var(--space-sm);
+            left: var(--space-sm);
+        }
+        
+        /* ==================== Header ==================== */
+        header {
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-md) 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            text-decoration: none;
+        }
+        
+        .logo::before {
+            content: '$ ';
+            color: var(--color-accent-secondary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: var(--space-lg);
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-accent-primary);
+            transition: width 0.2s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--color-text-primary);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* ==================== Hero Section ==================== */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-2xl) var(--space-md);
+            min-height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+        }
+        
+        .hero-label {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--color-accent-secondary);
+            margin-bottom: var(--space-sm);
+            letter-spacing: 0.5px;
+        }
+        
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: var(--space-md);
+        }
+        
+        .highlight {
+            color: var(--color-accent-primary);
+        }
+        
+        .hero-description {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-xl);
+            max-width: 650px;
+        }
+        
+        .hero-stats {
+            display: flex;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat {
+            text-align: left;
+        }
+        
+        .stat-value {
+            font-family: var(--font-mono);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-accent-primary);
+            display: block;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            margin-top: var(--space-xs);
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: var(--space-md);
+            flex-wrap: wrap;
+        }
+        
+        /* ==================== Buttons ==================== */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .btn-primary {
+            background: var(--color-accent-primary);
+            color: var(--color-bg-primary);
+        }
+        
+        .btn-primary:hover {
+            background: transparent;
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border-color: var(--color-border);
+            color: var(--color-text-primary);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--color-accent-secondary);
+            color: var(--color-accent-secondary);
+        }
+        
+        /* ==================== Projects Section ==================== */
+        .projects {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-2xl) var(--space-md);
+        }
+        
+        .section-header {
+            margin-bottom: var(--space-xl);
+        }
+        
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            max-width: 600px;
+        }
+        
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .project-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            text-decoration: none;
+            color: var(--color-text-primary);
+            transition: all 0.2s;
+            display: block;
+        }
+        
+        .project-card:hover {
+            border-color: var(--color-accent-primary);
+            transform: translateY(-4px);
+        }
+        
+        .project-tag {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--color-accent-secondary);
+            margin-bottom: var(--space-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+            color: var(--color-text-primary);
+        }
+        
+        .project-description {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-md);
+        }
+        
+        .project-meta {
+            display: flex;
+            gap: var(--space-md);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-md);
+        }
+        
+        .project-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+        
+        .skill-badge {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            border-radius: var(--radius-sm);
+        }
+        
+        /* ==================== Skills Section ==================== */
+        .skills {
+            background: var(--color-bg-secondary);
+            padding: var(--space-2xl) var(--space-md);
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .skills-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .skills-intro {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-xl);
+            max-width: 700px;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .skill-category {
+            background: var(--color-bg-tertiary);
+            padding: var(--space-md);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--color-accent-primary);
+        }
+        
+        .skill-category h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+            color: var(--color-accent-secondary);
+        }
+        
+        .skill-category ul {
+            list-style: none;
+        }
+        
+        .skill-category li {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            padding: 0.25rem 0;
+        }
+        
+        .skill-category li::before {
+            content: '▸ ';
+            color: var(--color-accent-primary);
+            font-weight: bold;
+        }
+        
+        .resume-cta {
+            background: var(--color-bg-primary);
+            border: 2px solid var(--color-accent-primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            text-align: center;
+        }
+        
+        .resume-cta h3 {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-sm);
+            color: var(--color-text-primary);
+        }
+        
+        .resume-cta p {
+            font-size: 1rem;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-md);
+        }
+        
+        /* ==================== Footer ==================== */
+        footer {
+            background: var(--color-bg-primary);
+            border-top: 1px solid var(--color-border);
+            padding: var(--space-xl) var(--space-md);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+        
+        .footer-text {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: var(--space-lg);
+        }
+        
+        .footer-links a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--color-accent-primary);
+        }
+        
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            .hero-stats {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+            
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+            }
+            
+            .btn {
+                text-align: center;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="/" class="logo">nate</a>
+            
+            <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                ☰
+            </button>
+            
+            <ul class="nav-links">
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="/resume">Resume</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-label">Systems Administration & Infrastructure</div>
+                
+                <h1 class="hero-title">
+                    Building <span class="highlight">enterprise-grade</span> infrastructure, one project at a time.
+                </h1>
+                
+                <p class="hero-description">
+                    Systems Administrator with a passion for learning through hands-on implementation. 
+                    I build production-quality infrastructure in my homelab to develop skills that 
+                    translate directly to enterprise environments.
+                </p>
+                
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-value">2yrs</div>
+                        <div class="stat-label">Professional Experience</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">100%</div>
+                        <div class="stat-label">Backup Success Rate</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">8+</div>
+                        <div class="stat-label">Apps with SSO</div>
+                    </div>
+                </div>
+                
+                <div class="hero-cta">
+                    <a href="#projects" class="btn btn-primary">View Projects</a>
+                    <a href="/resume" class="btn btn-secondary">Full Resume</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Projects Section -->
+        <section id="projects" class="projects">
+            <div class="section-header">
+                <h2 class="section-title">Featured Projects</h2>
+                <p class="section-subtitle">
+                    Production-ready implementations demonstrating enterprise patterns and systematic problem-solving.
+                </p>
+            </div>
+            
+            <div class="project-grid">
+                <!-- Project 1: Authentik SSO -->
+                <a href="/authentik-sso" class="project-card">
+                    <div class="project-tag">Identity & Access Management</div>
+                    
+                    <h3 class="project-title">Enterprise SSO Implementation</h3>
+                    
+                    <p class="project-description">
+                        Deployed forward authentication at the reverse proxy layer using Authentik + Active Directory. 
+                        Built a reusable pattern that protects ANY web application, eliminating per-app credential management.
+                    </p>
+                    
+                    <div class="project-meta">
+                        <span>February 2026</span>
+                        <span>~15 hours</span>
+                        <span>Production</span>
+                    </div>
+                    
+                    <div class="project-skills">
+                        <span class="skill-badge">Active Directory</span>
+                        <span class="skill-badge">LDAP</span>
+                        <span class="skill-badge">Authentik</span>
+                        <span class="skill-badge">nginx</span>
+                        <span class="skill-badge">Docker</span>
+                    </div>
+                </a>
+                
+                <!-- Project 2: PBS Storage -->
+                <a href="/pbs-storage" class="project-card">
+                    <div class="project-tag">Infrastructure & Reliability</div>
+                    
+                    <h3 class="project-title">Backup Infrastructure Migration</h3>
+                    
+                    <p class="project-description">
+                        Migrated from unreliable USB backups to Proxmox Backup Server with chunk-level deduplication. 
+                        Achieved 100% backup success rate and 85% storage reduction through intelligent deduplication.
+                    </p>
+                    
+                    <div class="project-meta">
+                        <span>February 2026</span>
+                        <span>~10 hours</span>
+                        <span>Production</span>
+                    </div>
+                    
+                    <div class="project-skills">
+                        <span class="skill-badge">Proxmox</span>
+                        <span class="skill-badge">PBS</span>
+                        <span class="skill-badge">Storage Engineering</span>
+                        <span class="skill-badge">NFS</span>
+                        <span class="skill-badge">Linux</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Skills Section -->
+        <section id="skills" class="skills">
+            <div class="skills-content">
+                <h2 class="section-title">Technical Skills</h2>
+                <p class="skills-intro">
+                    Core competencies developed through hands-on implementation and systematic troubleshooting 
+                    in both homelab and professional environments.
+                </p>
+                
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h3>Identity & Access</h3>
+                        <ul>
+                            <li>Active Directory</li>
+                            <li>Authentik SSO</li>
+                            <li>LDAP & StartTLS</li>
+                            <li>Certificate Management</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="skill-category">
+                        <h3>Virtualization</h3>
+                        <ul>
+                            <li>Proxmox Clustering</li>
+                            <li>Backup Server (PBS)</li>
+                            <li>VM/CT Lifecycle</li>
+                            <li>Storage (NFS, LVM)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="skill-category">
+                        <h3>Networking</h3>
+                        <ul>
+                            <li>VLAN Segmentation</li>
+                            <li>Firewall Policies</li>
+                            <li>Reverse Proxy (nginx)</li>
+                            <li>DNS Management</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="skill-category">
+                        <h3>Microsoft 365</h3>
+                        <ul>
+                            <li>Entra ID / Azure AD</li>
+                            <li>Exchange Online</li>
+                            <li>PowerShell</li>
+                            <li>Conditional Access</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="skill-category">
+                        <h3>Systems & Tools</h3>
+                        <ul>
+                            <li>Linux Administration</li>
+                            <li>Docker Orchestration</li>
+                            <li>Bash Scripting</li>
+                            <li>Git & Documentation</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="resume-cta">
+                    <h3>Want to see more?</h3>
+                    <p>View my full work experience, certifications, and detailed technical background</p>
+                    <a href="/resume" class="btn btn-primary">View Full Resume →</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-text">
+                © 2026 Nate. Built with intention, documented with care.
+            </div>
+            
+            <div class="footer-links">
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
+                <a href="mailto:nate@email.com" aria-label="Email">Email</a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        
+        menuToggle.addEventListener('click', () => {
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            menuToggle.setAttribute('aria-expanded', !isExpanded);
+            navLinks.classList.toggle('active');
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('nav')) {
+                navLinks.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+        
+        // Close menu when clicking a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+    </script>
+</body>
+</html>

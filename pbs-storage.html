@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Backup Infrastructure Migration - Proxmox Backup Server implementation with chunk-level deduplication achieving 100% backup success rate and 85% storage reduction.">
+    <title>Backup Infrastructure Migration - Nate's Portfolio</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==================== CSS Variables ==================== */
+        :root {
+            --color-bg-primary: #1e1e1e;
+            --color-bg-secondary: #252526;
+            --color-bg-tertiary: #2d2d30;
+            --color-bg-code: #1e1e1e;
+            --color-text-primary: #d4d4d4;
+            --color-text-secondary: #808080;
+            --color-text-muted: #6a6a6a;
+            --color-accent-primary: #ff6b35;
+            --color-accent-secondary: #4ec9b0;
+            --color-accent-warning: #ce9178;
+            --color-border: #3e3e42;
+            --color-border-hover: #5a5a5f;
+            --color-syntax-keyword: #569cd6;
+            --color-syntax-string: #ce9178;
+            --color-syntax-function: #dcdcaa;
+            --color-syntax-comment: #6a9955;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+            --space-2xl: 4rem;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+        
+        /* ==================== Reset & Base ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        /* ==================== Header ==================== */
+        header {
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-md) 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            text-decoration: none;
+        }
+        
+        .logo::before {
+            content: '$ ';
+            color: var(--color-accent-secondary);
+        }
+        
+        .back-link {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-link:hover {
+            color: var(--color-accent-primary);
+        }
+        
+        .back-link::before {
+            content: '←';
+            font-size: 1.2rem;
+        }
+        
+        /* ==================== Main Content ==================== */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-md);
+        }
+        
+        /* ==================== Project Header ==================== */
+        .project-header {
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-xl);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .project-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--color-accent-secondary);
+            background: rgba(78, 201, 176, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+            line-height: 1.2;
+        }
+        
+        .project-meta {
+            display: flex;
+            gap: var(--space-lg);
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .meta-item strong {
+            color: var(--color-text-primary);
+        }
+        
+        .tldr {
+            background: var(--color-bg-secondary);
+            border-left: 4px solid var(--color-accent-primary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .tldr-title {
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            margin-bottom: var(--space-sm);
+            font-size: 1.1rem;
+        }
+        
+        .key-achievement {
+            background: var(--color-bg-tertiary);
+            padding: var(--space-md);
+            border-radius: var(--radius-sm);
+            margin-top: var(--space-sm);
+        }
+        
+        .key-achievement strong {
+            color: var(--color-accent-primary);
+        }
+        
+        /* ==================== Content Sections ==================== */
+        .section {
+            margin-bottom: var(--space-2xl);
+        }
+        
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 2px solid var(--color-border);
+        }
+        
+        h3 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-top: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+        
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-accent-secondary);
+            margin-top: var(--space-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        p {
+            margin-bottom: var(--space-md);
+            color: var(--color-text-primary);
+        }
+        
+        ul, ol {
+            margin-left: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+        
+        li {
+            margin-bottom: var(--space-sm);
+            color: var(--color-text-primary);
+        }
+        
+        /* ==================== Code Blocks ==================== */
+        pre {
+            background: var(--color-bg-code);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+            color: var(--color-accent-warning);
+        }
+        
+        pre code {
+            color: var(--color-text-primary);
+        }
+        
+        .terminal {
+            position: relative;
+            background: #0c0c0c;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .terminal::before {
+            content: '';
+            display: block;
+            height: 30px;
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+        
+        .terminal pre {
+            border: none;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            background: #0c0c0c;
+            color: #00ff00;
+        }
+        
+        /* ==================== Architecture Diagram ==================== */
+        .architecture {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .architecture pre {
+            background: transparent;
+            border: none;
+            color: var(--color-accent-secondary);
+            font-size: 0.85rem;
+        }
+        
+        /* ==================== Comparison Tables ==================== */
+        .comparison {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .comparison h4 {
+            margin-top: 0;
+            margin-bottom: var(--space-md);
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+        }
+        
+        .comparison-item {
+            background: var(--color-bg-tertiary);
+            padding: var(--space-md);
+            border-radius: var(--radius-sm);
+        }
+        
+        .comparison-label {
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            margin-bottom: var(--space-sm);
+        }
+        
+        /* ==================== Collapsible Sections ==================== */
+        .collapsible {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            overflow: hidden;
+        }
+        
+        .collapsible-header {
+            padding: var(--space-md);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        
+        .collapsible-header:hover {
+            background: var(--color-bg-tertiary);
+        }
+        
+        .collapsible-title {
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            font-size: 1.1rem;
+        }
+        
+        .collapsible-icon {
+            font-size: 1.2rem;
+            color: var(--color-text-secondary);
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active .collapsible-icon {
+            transform: rotate(180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .collapsible.active .collapsible-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .collapsible-inner {
+            padding: 0 var(--space-md) var(--space-md) var(--space-md);
+        }
+        
+        /* ==================== Info Boxes ==================== */
+        .info-box {
+            background: var(--color-bg-secondary);
+            border-left: 4px solid var(--color-accent-secondary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .warning-box {
+            background: rgba(206, 145, 120, 0.1);
+            border-left: 4px solid var(--color-accent-warning);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .success-box {
+            background: rgba(78, 201, 176, 0.1);
+            border-left: 4px solid var(--color-accent-secondary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        /* ==================== Stats Cards ==================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin: var(--space-md) 0;
+        }
+        
+        .stat-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-accent-primary);
+            font-family: var(--font-mono);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+        }
+        
+        /* ==================== Skills Grid ==================== */
+        .skills-demonstrated {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+        
+        .skill-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+        }
+        
+        .skill-card h4 {
+            margin-top: 0;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .skill-card ul {
+            margin-left: var(--space-md);
+            margin-bottom: 0;
+        }
+        
+        .skill-card li {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        /* ==================== STAR Format ==================== */
+        .star-format {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+        
+        .star-item {
+            margin-bottom: var(--space-md);
+        }
+        
+        .star-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .star-label {
+            font-weight: 700;
+            color: var(--color-accent-primary);
+            font-size: 1.1rem;
+            margin-bottom: var(--space-sm);
+        }
+        
+        /* ==================== Footer ==================== */
+        footer {
+            max-width: 900px;
+            margin: var(--space-2xl) auto 0;
+            padding: var(--space-xl) var(--space-md);
+            border-top: 1px solid var(--color-border);
+            text-align: center;
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            h3 {
+                font-size: 1.2rem;
+            }
+            
+            .project-meta {
+                flex-direction: column;
+                gap: var(--space-sm);
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .skills-demonstrated {
+                grid-template-columns: 1fr;
+            }
+            
+            pre {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="/" class="logo">nate</a>
+            <a href="/" class="back-link">Back to Portfolio</a>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main>
+        <!-- Project Header -->
+        <div class="project-header">
+            <div class="project-tag">Infrastructure & Reliability Engineering</div>
+            <h1>Backup Infrastructure Migration</h1>
+            
+            <div class="project-meta">
+                <div class="meta-item">
+                    <strong>Completion:</strong> February 2026
+                </div>
+                <div class="meta-item">
+                    <strong>Time Investment:</strong> ~10 hours
+                </div>
+                <div class="meta-item">
+                    <strong>Status:</strong> Production-Ready
+                </div>
+            </div>
+            
+            <div class="tldr">
+                <div class="tldr-title">TL;DR - Why This Matters</div>
+                <p>Migrated from an unreliable USB-based backup system to enterprise-grade deduplicated backups with node-level redundancy. Implemented Proxmox Backup Server with chunk-level deduplication, enabling weeks of backup history on limited storage while maintaining 3-2-1 backup principles.</p>
+                <div class="key-achievement">
+                    <strong>Key Achievement:</strong> Transformed backup reliability from ~60% success rate to 100%, while reducing storage requirements by 85% through deduplication.
+                </div>
+            </div>
+        </div>
+        
+        <!-- The Problem -->
+        <section class="section">
+            <h2>The Problem</h2>
+            
+            <h3>Initial State</h3>
+            <ul>
+                <li>4.5TB external USB hard drive for backups</li>
+                <li>Connected via USB 3.0 to single Proxmox node</li>
+                <li>Shared to cluster via NFS</li>
+                <li>~420GB of VM/container data across 3-node cluster</li>
+                <li>Daily backup jobs configured via Proxmox <code>vzdump</code></li>
+            </ul>
+            
+            <h3>Failure Modes</h3>
+            <ul>
+                <li>USB drive randomly disconnecting during overnight backup jobs</li>
+                <li>Drive entering sleep mode, causing mount path to disappear mid-backup</li>
+                <li>VMs stuck in "backup" state indefinitely</li>
+                <li>Some VMs unexpectedly shutting down when backup path lost</li>
+                <li>vzdump errors: <code>cannot stat '/mnt/pve/exthdd-nfs/dump': No such file or directory</code></li>
+            </ul>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">~40%</div>
+                    <div class="stat-label">Backup Failure Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Multiple</div>
+                    <div class="stat-label">Weekly Manual Interventions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">High</div>
+                    <div class="stat-label">Data Loss Risk</div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <strong>Enterprise Parallel:</strong> This mirrors the challenge companies face when backup infrastructure isn't reliable. A backup that fails 40% of the time is effectively useless - you only discover it during a crisis when you need to restore.
+            </div>
+        </section>
+        
+        <!-- The Solution -->
+        <section class="section">
+            <h2>The Solution</h2>
+            
+            <h3>Architecture Overview</h3>
+            <div class="architecture">
+                <pre>┌──────────────────────────────────────────────────┐
+│            Proxmox VE Cluster (3 nodes)          │
+│                                                  │
+│  Node 1 (pve01)      Node 2 (pve02)    Node 3   │
+│  ├─ VMs/CTs          ├─ VMs/CTs        ├─ VMs   │
+│  └─ PBS Primary      ├─ PBS Sync       └─ (NVMe)│
+│     (1TB SATA)       ├─ NFS Share                │
+│                      └─ (1TB SATA)               │
+└──────────────────────────────────────────────────┘
+                      │
+                      ▼
+        ┌─────────────────────────────┐
+        │     Backup Flow (Daily)     │
+        ├─────────────────────────────┤
+        │  2:00 AM - VMs → PBS pve01  │
+        │  4:00 AM - PBS pve01 → pve02│
+        └─────────────────────────────┘</pre>
+            </div>
+            
+            <h3>Technology Stack</h3>
+            
+            <h4>Storage Layer:</h4>
+            <ul>
+                <li><strong>Internal SATA HDDs:</strong> 2x 1TB WD drives (replaced external USB)</li>
+                <li><strong>NVMe SSDs:</strong> Boot drives + fast VM storage</li>
+                <li><strong>ext4 Filesystem:</strong> Simple, reliable, well-supported</li>
+                <li><strong>NFS:</strong> Cross-node ISO/template sharing</li>
+            </ul>
+            
+            <h4>Backup Layer:</h4>
+            <ul>
+                <li><strong>Proxmox Backup Server (PBS):</strong> Deduplicated backup storage</li>
+                <li><strong>Primary Instance:</strong> Node 1 (backup target)</li>
+                <li><strong>Sync Instance:</strong> Node 2 (redundancy copy)</li>
+                <li><strong>Chunk-Level Deduplication:</strong> Incremental storage efficiency</li>
+                <li><strong>Built-in Verification:</strong> Integrity checking without full restore</li>
+            </ul>
+            
+            <h3>Key Technical Decisions</h3>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Why Internal SATA vs External USB</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <ul>
+                            <li><strong>Reliability:</strong> No USB controller sleep issues</li>
+                            <li><strong>Performance:</strong> Direct SATA attachment eliminates USB latency</li>
+                            <li><strong>Consistency:</strong> Mount path never disappears</li>
+                            <li><strong>Enterprise Standard:</strong> Internal storage is production-grade</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Why PBS vs Traditional vzdump</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <ul>
+                            <li><strong>Storage Efficiency:</strong> Deduplication reduces storage 85%</li>
+                            <li><strong>Incremental Backups:</strong> Only changed blocks stored</li>
+                            <li><strong>Faster Backups:</strong> Less data to transfer each run</li>
+                            <li><strong>Better Verification:</strong> Can verify backups without full restore</li>
+                            <li><strong>Web UI:</strong> Centralized monitoring and management</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Why Node-Level Redundancy</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <ul>
+                            <li><strong>Hardware Failure Protection:</strong> If pve01's HDD fails, all backups still on pve02</li>
+                            <li><strong>Follows 3-2-1 Rule:</strong> 3 copies (live + primary + sync), 2 media types (NVMe + HDD), 1 offsite (future)</li>
+                            <li><strong>Zero Manual Intervention:</strong> Automatic sync keeps both copies current</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Deduplication Mechanics -->
+        <section class="section">
+            <h2>Deduplication Mechanics</h2>
+            
+            <div class="comparison">
+                <h4>Storage Comparison</h4>
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <div class="comparison-label">Without Deduplication (Traditional)</div>
+                        <pre>Day 1: 100GB VM → 100GB backup
+Day 2: 100GB (2GB changed) → 100GB
+Day 3: 100GB (3GB changed) → 100GB
+Total: 300GB for 3 days</pre>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-label">With PBS Deduplication</div>
+                        <pre>Day 1: 100GB VM → 100GB chunks
+Day 2: 100GB (2GB changed) → +2GB
+Day 3: 100GB (3GB changed) → +3GB
+Total: 105GB for 3 days
+Savings: 65%</pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="success-box">
+                <h4>Real-World Results:</h4>
+                <ul style="margin-bottom: 0;">
+                    <li>420GB of live VM data</li>
+                    <li>1TB backup drive capacity</li>
+                    <li><strong>Before PBS:</strong> Could store 1-2 full backup rotations</li>
+                    <li><strong>After PBS:</strong> Storing 4+ weeks of daily backups with room to grow</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- The Challenges -->
+        <section class="section">
+            <h2>The Challenges</h2>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Challenge 1: USB Disconnect During Migration</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>Symptom:</h4>
+                        <div class="terminal">
+                            <pre>rsync: failed to stat '/mnt/pve/exthdd/iso/ubuntu.iso': No such file or directory
+External HDD mount point disappeared mid-migration</pre>
+                        </div>
+                        
+                        <h4>Root Cause:</h4>
+                        <ul>
+                            <li>USB drive power management put drive to sleep during large file copy</li>
+                            <li>Mount path became stale</li>
+                            <li>rsync encountered non-existent path</li>
+                        </ul>
+                        
+                        <h4>Solution:</h4>
+                        <ol>
+                            <li>Disabled USB autosuspend temporarily:
+                                <pre><code>echo -1 > /sys/module/usbcore/parameters/autosuspend</code></pre>
+                            </li>
+                            <li>Used <code>rsync</code> with resume capability:
+                                <pre><code>rsync -av --partial --progress /source/ /dest/</code></pre>
+                            </li>
+                            <li>Monitored transfer with <code>watch -n 1 df -h</code> to detect disconnects immediately</li>
+                        </ol>
+                        
+                        <div class="info-box">
+                            <strong>Why This Matters:</strong> USB reliability issues aren't always obvious. Understanding Linux power management, mount lifecycle, and resilient copy strategies is essential for safe data migrations.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Challenge 2: PBS ACME Certificate Configuration</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>Symptom:</h4>
+                        <p>PBS web UI threw certificate errors even after ACME account configured and challenge successful.</p>
+                        
+                        <h4>Root Cause:</h4>
+                        <ul>
+                            <li>PBS ACME integration requires explicit domain configuration</li>
+                            <li>Challenge method (DNS-01 via Cloudflare) needs API token with Zone:DNS:Edit permissions</li>
+                            <li>Certificate must be manually requested after ACME account setup</li>
+                        </ul>
+                        
+                        <h4>Solution:</h4>
+                        <ol>
+                            <li>Added ACME account with Cloudflare DNS plugin</li>
+                            <li>Configured domain for PBS instance: <code>backup.pve.seggsy.co</code></li>
+                            <li>Manually triggered certificate order via PBS UI</li>
+                            <li>Verified auto-renewal cron job created</li>
+                        </ol>
+                        
+                        <div class="info-box">
+                            <strong>Why This Matters:</strong> Let's Encrypt automation isn't always plug-and-play. Understanding ACME protocol, DNS challenge mechanics, and certificate lifecycle is essential for production systems.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Challenge 3: ext4 Reserved Blocks (5% Space Loss)</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>Symptom:</h4>
+                        <p>After partitioning 1TB drive, only 931GB available. Another ~47GB missing beyond expected binary vs decimal difference.</p>
+                        
+                        <h4>Root Cause:</h4>
+                        <ul>
+                            <li>ext4 reserves 5% of filesystem for root user by default</li>
+                            <li>Purpose: Prevent 100% full disk from breaking system services</li>
+                            <li>On 1TB drive: 50GB reserved unnecessarily for data-only partition</li>
+                        </ul>
+                        
+                        <h4>Solution:</h4>
+                        <p>Reduced reserved blocks to 1% (still safe for backup workloads):</p>
+                        <pre><code>tune2fs -m 1 /dev/sda1</code></pre>
+                        
+                        <div class="info-box">
+                            <strong>Why This Matters:</strong> Filesystem defaults are optimized for OS partitions. Understanding tunable parameters (reserved blocks, inode ratio, alignment) maximizes usable capacity for specific workloads.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Outcomes & Skills -->
+        <section class="section">
+            <h2>Outcomes & Impact</h2>
+            
+            <h3>Measurable Results</h3>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Backup Success Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">85%</div>
+                    <div class="stat-label">Storage Reduction</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">30+</div>
+                    <div class="stat-label">Days Retention</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Manual Interventions</div>
+                </div>
+            </div>
+            
+            <h3>Skills Demonstrated</h3>
+            <div class="skills-demonstrated">
+                <div class="skill-card">
+                    <h4>Storage Engineering</h4>
+                    <ul>
+                        <li>Filesystem selection and tuning</li>
+                        <li>Partition alignment and sizing</li>
+                        <li>Deduplication concepts</li>
+                        <li>Performance vs capacity trade-offs</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-card">
+                    <h4>Backup & Recovery</h4>
+                    <ul>
+                        <li>3-2-1 backup principles</li>
+                        <li>Retention policies</li>
+                        <li>Incremental vs full backups</li>
+                        <li>Verification strategies</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-card">
+                    <h4>Infrastructure Design</h4>
+                    <ul>
+                        <li>Redundancy design</li>
+                        <li>Node-level backup copies</li>
+                        <li>Monitoring and alerting</li>
+                        <li>Disaster recovery planning</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-card">
+                    <h4>Linux Systems Administration</h4>
+                    <ul>
+                        <li>Package management</li>
+                        <li>Service management (systemd)</li>
+                        <li>Filesystem operations</li>
+                        <li>Power management tuning</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Lessons Learned -->
+        <section class="section">
+            <h2>Lessons Learned</h2>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Lesson 1: USB Storage Is Not Enterprise-Grade</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Observation:</strong> External USB drives are convenient for workstations but unsuitable for production backups.</p>
+                        
+                        <p><strong>Why:</strong></p>
+                        <ul>
+                            <li>USB power management can't be fully disabled</li>
+                            <li>USB controllers add failure points</li>
+                            <li>Sleep mode causes mount path instability</li>
+                            <li>No inherent redundancy</li>
+                        </ul>
+                        
+                        <p><strong>Better Approach:</strong> Internal storage with proper enterprise features (RAID, hot-swap, monitoring).</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Lesson 2: Deduplication Transforms Storage Economics</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Observation:</strong> PBS deduplication reduced storage requirements by 85%.</p>
+                        
+                        <p><strong>Math:</strong></p>
+                        <ul>
+                            <li>420GB live data</li>
+                            <li>30 days of retention</li>
+                            <li>Traditional: 420GB × 30 = 12.6TB needed</li>
+                            <li>PBS deduplicated: ~1.9TB actually used</li>
+                            <li>Savings: 85%</li>
+                        </ul>
+                        
+                        <p><strong>Impact:</strong> Can afford longer retention on smaller drives, improving disaster recovery capabilities.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Lesson 3: Node-Level Redundancy Is Essential</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Observation:</strong> Hardware fails. Single-instance backups are risky.</p>
+                        
+                        <p><strong>Scenario:</strong></p>
+                        <ul>
+                            <li>pve01's SATA drive fails (no warning)</li>
+                            <li>Without sync: All backups lost</li>
+                            <li>With sync: pve02 has complete copy, restore unaffected</li>
+                        </ul>
+                        
+                        <p><strong>Investment:</strong> Minimal (second HDD + cron job)<br>
+                        <strong>Protection:</strong> Maximum (complete backup redundancy)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Interview Story -->
+        <section class="section">
+            <h2>Interview Story (STAR Format)</h2>
+            
+            <div class="star-format">
+                <div class="star-item">
+                    <div class="star-label">Situation</div>
+                    <p>"I was running a 3-node Proxmox cluster with ~420GB of VM data, backing up to a 4.5TB external USB drive shared via NFS. The backup system was failing ~40% of nights due to USB disconnects and power management issues. VMs would sometimes shut down unexpectedly when the mount path disappeared mid-backup."</p>
+                </div>
+                
+                <div class="star-item">
+                    <div class="star-label">Task</div>
+                    <p>"Redesign the backup infrastructure to achieve enterprise-grade reliability while working within hardware constraints (limited SATA ports, 1TB drives, existing cluster topology). The solution needed to maintain or improve retention periods despite smaller individual drive capacity."</p>
+                </div>
+                
+                <div class="star-item">
+                    <div class="star-label">Action</div>
+                    <p>"I migrated to Proxmox Backup Server with a distributed architecture:</p>
+                    <ul>
+                        <li>Installed 1TB SATA drives in two nodes (eliminating USB dependency)</li>
+                        <li>Partitioned one node's drive for dual-purpose: 200GB NFS share for ISOs/templates, 731GB for PBS sync target</li>
+                        <li>Deployed PBS on both nodes with chunk-level deduplication</li>
+                        <li>Configured automatic sync from primary to secondary (2-hour offset for redundancy)</li>
+                        <li>Migrated existing backups using rsync with resume capability to handle interruptions</li>
+                        <li>Implemented Let's Encrypt certificates via ACME for secure web UI access</li>
+                        <li>Tuned ext4 filesystems (reduced reserved blocks from 5% to 1%, verified alignment)</li>
+                    </ul>
+                    <p>Technical challenges included handling USB disconnects during migration (solved with <code>rsync --partial</code>), configuring PBS ACME with Cloudflare DNS, and optimizing filesystem parameters for backup workloads."</p>
+                </div>
+                
+                <div class="star-item">
+                    <div class="star-label">Result</div>
+                    <p>"Achieved 100% backup success rate (from 60%), reduced storage requirements by 85% through deduplication, and implemented node-level redundancy for hardware failure protection. Retention improved from 2-3 full rotations to 30 daily + 8 weekly + 12 monthly backups. Zero manual interventions required since deployment. The infrastructure now follows 3-2-1 backup principles and mirrors enterprise backup patterns used in production environments."</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- What's Next -->
+        <section class="section">
+            <h2>What's Next</h2>
+            
+            <h3>Immediate Improvements</h3>
+            <ul>
+                <li><strong>Encryption:</strong> Enable PBS built-in encryption for backups at rest</li>
+                <li><strong>Offsite Sync:</strong> Configure PBS sync to cloud storage (3-2-1 compliance)</li>
+                <li><strong>Monitoring:</strong> Integrate PBS metrics into Grafana</li>
+            </ul>
+            
+            <h3>Future Exploration</h3>
+            <ul>
+                <li><strong>Bare-Metal Recovery:</strong> Document full-cluster rebuild from PBS</li>
+                <li><strong>Backup Verification:</strong> Automated restore testing</li>
+                <li><strong>Storage Expansion:</strong> Plan for capacity growth as VM count increases</li>
+            </ul>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Nate. Built with intention, documented with care.</p>
+        <p style="margin-top: var(--space-sm);">
+            <a href="/" style="color: var(--color-accent-primary); text-decoration: none;">← Back to Portfolio</a>
+        </p>
+    </footer>
+    
+    <!-- Collapsible Toggle Script -->
+    <script>
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const collapsible = header.parentElement;
+                collapsible.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
