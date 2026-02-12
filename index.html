@@ -222,6 +222,15 @@
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0.5rem;
+            /* iOS touch improvements */
+            -webkit-tap-highlight-color: rgba(255, 107, 53, 0.3);
+            touch-action: manipulation;
+            min-width: 44px;
+            min-height: 44px;
+        }
+        
+        .menu-toggle:active {
+            opacity: 0.7;
         }
         
         /* ==================== Hero Section ==================== */
@@ -843,11 +852,18 @@
         const menuToggle = document.querySelector('.menu-toggle');
         const navLinks = document.querySelector('.nav-links');
         
-        menuToggle.addEventListener('click', () => {
+        // Toggle menu function
+        function toggleMenu(e) {
+            e.preventDefault();
+            e.stopPropagation();
             const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
             menuToggle.setAttribute('aria-expanded', !isExpanded);
             navLinks.classList.toggle('active');
-        });
+        }
+        
+        // Add both click and touchstart for iOS compatibility
+        menuToggle.addEventListener('click', toggleMenu);
+        menuToggle.addEventListener('touchstart', toggleMenu, { passive: false });
         
         // Close menu when clicking outside
         document.addEventListener('click', (e) => {
@@ -860,4 +876,7 @@
         // Close menu when clicking a link
         navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
-                navLinks.classLi
+                navLinks.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            });
+        });
