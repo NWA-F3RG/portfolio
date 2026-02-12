@@ -4,7 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Enterprise SSO Implementation - Authentik + Active Directory forward authentication deployment protecting multiple applications with centralized identity management.">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
     <title>Enterprise SSO Implementation - Nate's Portfolio</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://seggsy.co/authentik-sso">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Enterprise SSO Implementation - Nate's Portfolio">
+    <meta property="og:description" content="Forward authentication deployment using Authentik + Active Directory. Protecting 8+ applications with centralized identity management and zero per-app credentials.">
+    <meta property="og:image" content="https://seggsy.co/og-image.png">
+    <meta property="og:url" content="https://seggsy.co/authentik-sso">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Enterprise SSO Implementation - Nate's Portfolio">
+    <meta name="twitter:description" content="Forward authentication deployment using Authentik + Active Directory. Protecting 8+ applications with centralized identity management.">
+    <meta name="twitter:image" content="https://seggsy.co/og-image.png">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,12 +84,46 @@
             scroll-behavior: smooth;
         }
         
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+        
         body {
             font-family: var(--font-sans);
             background: var(--color-bg-primary);
             color: var(--color-text-primary);
             line-height: 1.6;
             font-size: 16px;
+        }
+        
+        /* ==================== Skip Link (Accessibility) ==================== */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--color-accent-primary);
+            color: var(--color-bg-primary);
+            padding: var(--space-sm);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            z-index: 100;
+        }
+        
+        .skip-link:focus {
+            top: var(--space-sm);
+            left: var(--space-sm);
         }
         
         /* ==================== Header ==================== */
@@ -474,16 +538,19 @@
     </style>
 </head>
 <body>
+    <!-- Skip to content link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <!-- Header -->
     <header>
-        <nav>
+        <nav aria-label="Main navigation">
             <a href="/" class="logo">nate</a>
             <a href="/" class="back-link">Back to Portfolio</a>
         </nav>
     </header>
     
     <!-- Main Content -->
-    <main>
+    <main id="main-content" role="main">
         <!-- Project Header -->
         <div class="project-header">
             <div class="project-tag">Identity & Access Management</div>
@@ -698,7 +765,7 @@ LDAP bind failed with error: Invalid credentials</pre>
                         
                         <h4>Root Cause Discovery:</h4>
                         <ul>
-                            <li>Initially used User Principal Name (UPN) format: <code>svc-authentik@homelab.local</code></li>
+                            <li>Initially used User Principal Name (UPN) format: <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3d4e4b5e105c48495558534954567d55525058515c5f1351525e5c51">[email&#160;protected]</a></code></li>
                             <li>LDAP bind operations require Distinguished Name (DN) format</li>
                             <li>UPN is Windows/Kerberos-specific, not universal LDAP</li>
                         </ul>
@@ -714,7 +781,7 @@ LDAP bind failed with error: Invalid credentials</pre>
                         
                         <h4>Solution:</h4>
                         <div class="warning-box">
-                            <strong>❌ Wrong:</strong> <code>svc-authentik@homelab.local</code> (UPN)
+                            <strong>❌ Wrong:</strong> <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="601316034d01151408050e14090b20080f0d050c01024e0c0f03010c">[email&#160;protected]</a></code> (UPN)
                         </div>
                         <div class="success-box">
                             <strong>✅ Correct:</strong> <code>CN=svc-authentik,CN=Users,DC=homelab,DC=local</code> (DN)
@@ -942,7 +1009,7 @@ location @goauthentik_proxy_signin {
     </main>
     
     <!-- Footer -->
-    <footer>
+    <footer role="contentinfo">
         <p>© 2026 Nate. Built with intention, documented with care.</p>
         <p style="margin-top: var(--space-sm);">
             <a href="/" style="color: var(--color-accent-primary); text-decoration: none;">← Back to Portfolio</a>
@@ -950,13 +1017,4 @@ location @goauthentik_proxy_signin {
     </footer>
     
     <!-- Collapsible Toggle Script -->
-    <script>
-        document.querySelectorAll('.collapsible-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const collapsible = header.parentElement;
-                collapsible.classList.toggle('active');
-            });
-        });
-    </script>
-</body>
-</html>
+    <script data-cfasync="false" src="/cdn-cgi/scripts

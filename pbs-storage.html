@@ -4,7 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Backup Infrastructure Migration - Proxmox Backup Server implementation with chunk-level deduplication achieving 100% backup success rate and 85% storage reduction.">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
     <title>Backup Infrastructure Migration - Nate's Portfolio</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://seggsy.co/pbs-storage">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Backup Infrastructure Migration - Nate's Portfolio">
+    <meta property="og:description" content="Proxmox Backup Server implementation with chunk-level deduplication. Achieved 100% backup success rate and 85% storage reduction replacing unreliable USB storage.">
+    <meta property="og:image" content="https://seggsy.co/og-image.png">
+    <meta property="og:url" content="https://seggsy.co/pbs-storage">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Backup Infrastructure Migration - Nate's Portfolio">
+    <meta name="twitter:description" content="Proxmox Backup Server implementation achieving 100% backup success rate and 85% storage reduction.">
+    <meta name="twitter:image" content="https://seggsy.co/og-image.png">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,12 +84,46 @@
             scroll-behavior: smooth;
         }
         
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+        
         body {
             font-family: var(--font-sans);
             background: var(--color-bg-primary);
             color: var(--color-text-primary);
             line-height: 1.6;
             font-size: 16px;
+        }
+        
+        /* ==================== Skip Link (Accessibility) ==================== */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--color-accent-primary);
+            color: var(--color-bg-primary);
+            padding: var(--space-sm);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            z-index: 100;
+        }
+        
+        .skip-link:focus {
+            top: var(--space-sm);
+            left: var(--space-sm);
         }
         
         /* ==================== Header ==================== */
@@ -543,16 +607,19 @@
     </style>
 </head>
 <body>
+    <!-- Skip to content link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <!-- Header -->
     <header>
-        <nav>
+        <nav aria-label="Main navigation">
             <a href="/" class="logo">nate</a>
             <a href="/" class="back-link">Back to Portfolio</a>
         </nav>
     </header>
     
     <!-- Main Content -->
-    <main>
+    <main id="main-content" role="main">
         <!-- Project Header -->
         <div class="project-header">
             <div class="project-tag">Infrastructure & Reliability Engineering</div>
@@ -1057,7 +1124,7 @@ External HDD mount point disappeared mid-migration</pre>
     </main>
     
     <!-- Footer -->
-    <footer>
+    <footer role="contentinfo">
         <p>© 2026 Nate. Built with intention, documented with care.</p>
         <p style="margin-top: var(--space-sm);">
             <a href="/" style="color: var(--color-accent-primary); text-decoration: none;">← Back to Portfolio</a>

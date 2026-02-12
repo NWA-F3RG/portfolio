@@ -15,6 +15,30 @@
     
     <title>Nate - Systems Administration Portfolio</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://seggsy.co">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Nate - Systems Administration Portfolio">
+    <meta property="og:description" content="Enterprise-grade homelab projects demonstrating identity management, backup infrastructure, and reliability engineering. Building production-quality systems to develop real-world skills.">
+    <meta property="og:image" content="https://seggsy.co/og-image.png">
+    <meta property="og:url" content="https://seggsy.co">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Nate - Systems Administration Portfolio">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Nate - Systems Administration Portfolio">
+    <meta name="twitter:description" content="Enterprise-grade homelab projects demonstrating identity management, backup infrastructure, and reliability engineering.">
+    <meta name="twitter:image" content="https://seggsy.co/og-image.png">
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,6 +71,15 @@
             --font-mono: 'JetBrains Mono', monospace;
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             
+            /* Fluid Typography - responsive font sizes */
+            --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+            --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+            --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+            --font-size-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+            --font-size-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+            --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+            --font-size-3xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+            
             /* Spacing */
             --space-xs: 0.5rem;
             --space-sm: 1rem;
@@ -70,6 +103,21 @@
         
         html {
             scroll-behavior: smooth;
+        }
+        
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
         
         body {
@@ -586,7 +634,7 @@
     
     <!-- Header -->
     <header>
-        <nav>
+        <nav aria-label="Main navigation">
             <a href="/" class="logo">nate</a>
             
             <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
@@ -603,7 +651,7 @@
     </header>
     
     <!-- Main Content -->
-    <main id="main-content">
+    <main id="main-content" role="main">
         <!-- Hero Section -->
         <section class="hero">
             <div class="hero-content">
@@ -776,7 +824,7 @@
     </main>
     
     <!-- Footer -->
-    <footer id="contact">
+    <footer id="contact" role="contentinfo">
         <div class="footer-content">
             <div class="footer-text">
                 © 2026 Nate. Built with intention, documented with care.
@@ -785,13 +833,13 @@
             <div class="footer-links">
                 <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
                 <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
-                <a href="mailto:nate@email.com" aria-label="Email">Email</a>
+                <a href="/cdn-cgi/l/email-protection#3f515e4b5a7f5a525e5653115c5052" aria-label="Email">Email</a>
             </div>
         </div>
     </footer>
     
     <!-- Mobile Menu Toggle Script -->
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         const menuToggle = document.querySelector('.menu-toggle');
         const navLinks = document.querySelector('.nav-links');
         
@@ -812,10 +860,4 @@
         // Close menu when clicking a link
         navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                menuToggle.setAttribute('aria-expanded', 'false');
-            });
-        });
-    </script>
-</body>
-</html>
+                navLinks.classLi
