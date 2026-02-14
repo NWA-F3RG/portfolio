@@ -222,7 +222,6 @@
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0.5rem;
-            /* iOS touch improvements */
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
             min-width: 44px;
@@ -261,7 +260,7 @@
         .hero-title {
             font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 700;
-            line-height: 1.1;
+            line-height: 1.2;
             margin-bottom: var(--space-md);
         }
         
@@ -365,7 +364,8 @@
             max-width: 600px;
         }
         
-        .project-grid {
+        /* Unified Project Grid */
+        .unified-project-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: var(--space-lg);
@@ -378,13 +378,64 @@
             padding: var(--space-lg);
             text-decoration: none;
             color: var(--color-text-primary);
-            transition: all 0.2s;
-            display: block;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            position: relative;
         }
         
         .project-card:hover {
             border-color: var(--color-accent-primary);
-            transform: translateY(-4px);
+            transform: translateY(-6px);
+        }
+        
+        /* Status Badges */
+        .project-status-badge {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-sm);
+            z-index: 2;
+        }
+        
+        .status-live {
+            background: rgba(255, 107, 53, 0.15);
+            color: var(--color-accent-primary);
+            border: 1px solid var(--color-accent-primary);
+        }
+        
+        .status-wip {
+            background: rgba(78, 201, 176, 0.15);
+            color: var(--color-accent-secondary);
+            border: 1px solid var(--color-accent-secondary);
+        }
+        
+        /* Live projects get orange left border and glow on hover */
+        .project-card:has(.status-live) {
+            border-left: 3px solid var(--color-accent-primary);
+        }
+        
+        .project-card:has(.status-live):hover {
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.15);
+        }
+        
+        /* WIP cards get green left border and slight dim */
+        .wip-card-style {
+            border-left: 3px solid var(--color-accent-secondary);
+            cursor: default;
+            opacity: 0.9;
+        }
+        
+        .wip-card-style:hover {
+            border-color: var(--color-accent-secondary);
+            opacity: 1;
         }
         
         .project-tag {
@@ -408,6 +459,25 @@
             line-height: 1.6;
             color: var(--color-text-secondary);
             margin-bottom: var(--space-md);
+            flex-grow: 1;
+        }
+        
+        /* "Learn more" link for clickable projects */
+        .project-cta-link {
+            font-size: 0.9rem;
+            color: var(--color-accent-primary);
+            margin-bottom: var(--space-md);
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        
+        .project-card:hover .project-cta-link {
+            color: var(--color-accent-secondary);
+        }
+        
+        /* Hide on WIP cards since they're not clickable */
+        .wip-card-style .project-cta-link {
+            display: none;
         }
         
         .project-meta {
@@ -423,6 +493,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: var(--space-xs);
+            margin-top: auto;
         }
         
         .skill-badge {
@@ -557,12 +628,19 @@
                 gap: var(--space-md);
             }
             
-            .project-grid {
+            .unified-project-grid {
                 grid-template-columns: 1fr;
             }
             
             .skills-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .project-status-badge {
+                top: var(--space-sm);
+                right: var(--space-sm);
+                font-size: 0.7rem;
+                padding: 0.25rem 0.5rem;
             }
             
             .nav-links {
@@ -669,27 +747,31 @@
                 <div class="hero-label">Systems Administration & Infrastructure</div>
                 
                 <h1 class="hero-title">
-                    Building <span class="highlight">enterprise-grade</span> infrastructure, one project at a time.
+                    <span class="highlight">Building</span> infrastructure.<br>
+                    <span class="highlight">Documenting</span> everything.<br>
+                    <span class="highlight">Learning</span> constantly.
                 </h1>
                 
                 <p class="hero-description">
-                    Systems Administrator with a passion for learning through hands-on implementation. 
-                    I build production-quality infrastructure in my homelab to develop skills that 
-                    translate directly to enterprise environments.
+                    I'm obsessed with understanding how things actually work. My homelab isn't 
+                    just a collection of services, it's where I break things, fix them, and 
+                    document every step so I can do it better next time. I build SSO authentication, 
+                    automated backups, and clustering because it's the best way I've found to 
+                    actually understand infrastructure.
                 </p>
                 
                 <div class="hero-stats">
                     <div class="stat">
-                        <div class="stat-value">2yrs</div>
-                        <div class="stat-label">Professional Experience</div>
+                        <div class="stat-value">8 Apps</div>
+                        <div class="stat-label">Protected</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-value">100%</div>
-                        <div class="stat-label">Backup Success Rate</div>
+                        <div class="stat-value">3 Nodes</div>
+                        <div class="stat-label">Clustered</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-value">8+</div>
-                        <div class="stat-label">Apps with SSO</div>
+                        <div class="stat-value">60% → 100%</div>
+                        <div class="stat-label">Backup Success</div>
                     </div>
                 </div>
                 
@@ -703,15 +785,16 @@
         <!-- Projects Section -->
         <section id="projects" class="projects">
             <div class="section-header">
-                <h2 class="section-title">Featured Projects</h2>
+                <h2 class="section-title">What I'm Working On</h2>
                 <p class="section-subtitle">
-                    Production-ready implementations demonstrating enterprise patterns and systematic problem-solving.
+                    Production systems and active skill development
                 </p>
             </div>
             
-            <div class="project-grid">
+            <div class="unified-project-grid">
                 <!-- Project 1: Authentik SSO -->
                 <a href="/authentik-sso" class="project-card">
+                    <div class="project-status-badge status-live">Live</div>
                     <div class="project-tag">Identity & Access Management</div>
                     
                     <h3 class="project-title">Enterprise SSO Implementation</h3>
@@ -720,6 +803,8 @@
                         Deployed forward authentication at the reverse proxy layer using Authentik + Active Directory. 
                         Built a reusable pattern that protects ANY web application, eliminating per-app credential management.
                     </p>
+                    
+                    <p class="project-cta-link">Learn more about this project →</p>
                     
                     <div class="project-meta">
                         <span>February 2026</span>
@@ -738,6 +823,7 @@
                 
                 <!-- Project 2: PBS Storage -->
                 <a href="/pbs-storage" class="project-card">
+                    <div class="project-status-badge status-live">Live</div>
                     <div class="project-tag">Infrastructure & Reliability</div>
                     
                     <h3 class="project-title">Backup Infrastructure Migration</h3>
@@ -746,6 +832,8 @@
                         Migrated from unreliable USB backups to Proxmox Backup Server with chunk-level deduplication. 
                         Achieved 100% backup success rate and 85% storage reduction through intelligent deduplication.
                     </p>
+                    
+                    <p class="project-cta-link">Learn more about this project →</p>
                     
                     <div class="project-meta">
                         <span>February 2026</span>
@@ -761,6 +849,63 @@
                         <span class="skill-badge">Linux</span>
                     </div>
                 </a>
+                
+                <!-- WIP Project 1: Monitoring Stack -->
+                <div class="project-card wip-card-style">
+                    <div class="project-status-badge status-wip">WIP</div>
+                    <div class="project-tag">Infrastructure & Observability</div>
+                    
+                    <h3 class="project-title">Monitoring Stack Deployment</h3>
+                    
+                    <p class="project-description">
+                        Building comprehensive observability with Prometheus, Loki, and Grafana 
+                        across the entire homelab infrastructure.
+                    </p>
+                    
+                    <div class="project-skills">
+                        <span class="skill-badge">Prometheus</span>
+                        <span class="skill-badge">Loki</span>
+                        <span class="skill-badge">Grafana</span>
+                    </div>
+                </div>
+                
+                <!-- WIP Project 2: RHCSA -->
+                <div class="project-card wip-card-style">
+                    <div class="project-status-badge status-wip">WIP</div>
+                    <div class="project-tag">Certification</div>
+                    
+                    <h3 class="project-title">RHCSA Preparation</h3>
+                    
+                    <p class="project-description">
+                        Developing production-grade Linux system administration skills through 
+                        hands-on labs and practice environments.
+                    </p>
+                    
+                    <div class="project-skills">
+                        <span class="skill-badge">Linux</span>
+                        <span class="skill-badge">System Administration</span>
+                        <span class="skill-badge">Red Hat</span>
+                    </div>
+                </div>
+                
+                <!-- WIP Project 3: AD CS -->
+                <div class="project-card wip-card-style">
+                    <div class="project-status-badge status-wip">WIP</div>
+                    <div class="project-tag">Identity & Access Management</div>
+                    
+                    <h3 class="project-title">AD CS Implementation</h3>
+                    
+                    <p class="project-description">
+                        Deploying Certificate Services for Proxmox RBAC and Active Directory 
+                        synchronization using enterprise PKI infrastructure.
+                    </p>
+                    
+                    <div class="project-skills">
+                        <span class="skill-badge">Active Directory</span>
+                        <span class="skill-badge">PKI</span>
+                        <span class="skill-badge">Proxmox</span>
+                    </div>
+                </div>
             </div>
         </section>
         
@@ -842,19 +987,18 @@
             </div>
             
             <div class="footer-links">
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
-                <a href="/cdn-cgi/l/email-protection#3f515e4b5a7f5a525e5653115c5052" aria-label="Email">Email</a>
+                <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+                <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
+                <a href="mailto:nnwaeze@gmail.com" aria-label="Email">Email</a>
             </div>
         </div>
     </footer>
     
     <!-- Mobile Menu Toggle Script -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         const menuToggle = document.querySelector('.menu-toggle');
         const navLinks = document.querySelector('.nav-links');
         
-        // Single event listener that works on both desktop and mobile
         menuToggle.addEventListener('click', function(e) {
             e.stopPropagation();
             const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
@@ -862,7 +1006,6 @@
             navLinks.classList.toggle('active');
         });
         
-        // Close menu when clicking outside
         document.addEventListener('click', function(e) {
             if (!e.target.closest('nav')) {
                 navLinks.classList.remove('active');
@@ -870,7 +1013,6 @@
             }
         });
         
-        // Close menu when clicking a link
         navLinks.querySelectorAll('a').forEach(function(link) {
             link.addEventListener('click', function() {
                 navLinks.classList.remove('active');
