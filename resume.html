@@ -265,11 +265,19 @@
             font-size: 1.2rem;
         }
         
-        /* ==================== Hero Section ==================== */
+        /* ==================== Hero Section (matches index page) ==================== */
         .hero {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: var(--space-2xl) var(--space-md);
+            min-height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .hero-content {
+            max-width: 800px;
         }
         
         .hero-label {
@@ -281,10 +289,10 @@
         }
         
         .hero h1 {
-            font-size: clamp(2rem, 4vw, 3rem);
+            font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 700;
             line-height: 1.2;
-            margin-bottom: var(--space-lg);
+            margin-bottom: var(--space-md);
             color: var(--color-text-primary);
         }
         
@@ -293,11 +301,11 @@
         }
         
         .hero-intro {
-            font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
+            font-size: 1.2rem;
             line-height: 1.7;
             color: var(--color-text-secondary);
             margin-bottom: var(--space-xl);
-            max-width: 750px;
+            max-width: 650px;
         }
         
         .hero-actions {
@@ -538,43 +546,120 @@
             gap: var(--space-lg);
         }
         
-        .project {
+        .project-card {
             background: var(--color-bg-secondary);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-md);
             padding: var(--space-lg);
-            transition: border-color 0.2s;
+            text-decoration: none;
+            color: var(--color-text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
         
-        .project:hover {
+        /* Live project cards - clickable with hover effects */
+        .project-card-live {
+            border-left: 3px solid var(--color-accent-primary);
+        }
+        
+        .project-card-live:hover {
             border-color: var(--color-accent-primary);
+            transform: translateY(-6px);
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.15);
         }
         
-        .project h3 {
+        /* WIP project cards - not clickable, no hover effects */
+        .project-card-wip {
+            border-left: 3px solid var(--color-accent-secondary);
+            cursor: default;
+            opacity: 0.9;
+        }
+        
+        .project-card-wip:hover {
+            transform: none;
+            border-color: var(--color-border);
+            border-left-color: var(--color-accent-secondary);
+            box-shadow: none;
+            opacity: 1;
+        }
+        
+        .project-tag {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--color-accent-secondary);
+            margin-bottom: var(--space-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .project-card h3 {
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: var(--space-sm);
-            color: var(--color-accent-primary);
+            color: var(--color-text-primary);
         }
         
-        .project p {
+        .project-card p {
             font-size: 0.95rem;
             line-height: 1.6;
             color: var(--color-text-secondary);
+            flex-grow: 1;
         }
         
-        .project-link {
-            display: inline-block;
-            margin-top: var(--space-sm);
+        .project-status-badge {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-sm);
+        }
+        
+        .status-live {
+            background: rgba(255, 107, 53, 0.15);
             color: var(--color-accent-primary);
-            text-decoration: none;
-            font-weight: 600;
+            border: 1px solid var(--color-accent-primary);
+        }
+        
+        .status-wip {
+            background: rgba(78, 201, 176, 0.15);
+            color: var(--color-accent-secondary);
+            border: 1px solid var(--color-accent-secondary);
+        }
+        
+        .project-cta-link {
             font-size: 0.9rem;
+            color: var(--color-accent-primary);
+            margin-top: var(--space-sm);
+            font-weight: 600;
             transition: color 0.2s;
         }
         
-        .project-link:hover {
+        .project-card-live:hover .project-cta-link {
             color: var(--color-accent-secondary);
+        }
+        
+        .project-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            margin-top: auto;
+            padding-top: var(--space-md);
+        }
+        
+        .skill-badge {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            border-radius: var(--radius-sm);
         }
         
         /* ==================== Contact / CTA Section ==================== */
@@ -752,7 +837,7 @@
                 box-shadow: none !important;
             }
             
-            .skill-box, .job, .cert, .project {
+            .skill-box, .job, .cert, .project-card {
                 border: 1px solid #333 !important;
                 page-break-inside: avoid;
             }
@@ -796,15 +881,17 @@
     <main id="main-content" role="main">
         <!-- Hero Section -->
         <section class="hero">
-            <div class="hero-label">Tier 2 Support &rarr; Junior Systems Administrator</div>
-            <h1>From <span class="highlight">restaurants</span> to <span class="highlight">infrastructure</span></h1>
-            <p class="hero-intro">
-                Picture a restaurant. A networking tech is running cable while someone watches every move, asking what each port does and why the switch matters. Not another engineer. The general manager. That was me three years ago, and that moment rewired my career. I started building home labs after my shifts, teaching myself the systems I'd spent years walking past. When a former colleague saw my name on a help desk application, he vouched for me without hesitation, zero IT experience and all. Three companies, 350+ users, and countless solved tickets later, I'm ready to move from fixing what's broken to building infrastructure that doesn't break.
-            </p>
-            <div class="hero-actions">
-                <a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener noreferrer" class="btn btn-green">Let's Chat</a>
-                <a href="mailto:nate@seggsy.co" class="btn btn-primary">Email</a>
-                <a href="nate-resume.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Resume PDF</a>
+            <div class="hero-content">
+                <div class="hero-label">Building Toward What's Next</div>
+                <h1>From <span class="highlight">restaurants</span> to <span class="highlight">infrastructure</span></h1>
+                <p class="hero-intro">
+                    Picture a restaurant. A networking tech is running cable while someone watches every move, asking what each port does and why the switch matters. Not another engineer. The general manager. That was me three years ago, and that moment rewired my career. I started building home labs after my shifts, teaching myself the systems I'd spent years walking past. When a former colleague saw my name on a help desk application, he vouched for me without hesitation, zero IT experience and all. Three companies, 350+ users, and countless solved tickets later, I'm ready to move from fixing what's broken to building infrastructure that doesn't break.
+                </p>
+                <div class="hero-actions">
+                    <a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener noreferrer" class="btn btn-green">Let's Chat</a>
+                    <a href="mailto:nate@seggsy.co" class="btn btn-primary">Email</a>
+                    <a href="nate-resume.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Resume PDF</a>
+                </div>
             </div>
         </section>
         
@@ -937,23 +1024,53 @@
             </div>
         </section>
         
-        <!-- Always Learning (synced with index page) -->
+        <!-- Always Learning (mirrors index page card style) -->
         <section class="section">
             <h2 class="section-title">Always Learning</h2>
             <div class="projects-grid">
-                <div class="project">
+                <!-- Live: SSO -->
+                <a href="/authentik-sso" target="_blank" rel="noopener noreferrer" class="project-card project-card-live">
+                    <div class="project-status-badge status-live">Live</div>
+                    <div class="project-tag">Identity & Access Management</div>
                     <h3>Enterprise SSO Implementation</h3>
                     <p>Deployed forward authentication at the reverse proxy layer using Authentik + Active Directory. Built a reusable pattern that protects ANY web application, eliminating per-app credential management.</p>
-                    <a href="/authentik-sso" target="_blank" rel="noopener noreferrer" class="project-link">View detailed project breakdown &rarr;</a>
-                </div>
-                <div class="project">
+                    <p class="project-cta-link">View detailed project breakdown &rarr;</p>
+                    <div class="project-skills">
+                        <span class="skill-badge">Active Directory</span>
+                        <span class="skill-badge">LDAP</span>
+                        <span class="skill-badge">Authentik</span>
+                        <span class="skill-badge">nginx</span>
+                        <span class="skill-badge">Docker</span>
+                    </div>
+                </a>
+                
+                <!-- Live: PBS -->
+                <a href="/pbs-storage" target="_blank" rel="noopener noreferrer" class="project-card project-card-live">
+                    <div class="project-status-badge status-live">Live</div>
+                    <div class="project-tag">Infrastructure & Reliability</div>
                     <h3>Backup Infrastructure Migration</h3>
                     <p>Migrated from unreliable USB backups to Proxmox Backup Server with chunk-level deduplication. Achieved 100% backup success rate (from 60%) and 85% storage reduction.</p>
-                    <a href="/pbs-storage" target="_blank" rel="noopener noreferrer" class="project-link">View detailed project breakdown &rarr;</a>
-                </div>
-                <div class="project">
+                    <p class="project-cta-link">View detailed project breakdown &rarr;</p>
+                    <div class="project-skills">
+                        <span class="skill-badge">Proxmox</span>
+                        <span class="skill-badge">PBS</span>
+                        <span class="skill-badge">Storage Engineering</span>
+                        <span class="skill-badge">NFS</span>
+                        <span class="skill-badge">Linux</span>
+                    </div>
+                </a>
+                
+                <!-- WIP: RHCSA -->
+                <div class="project-card project-card-wip">
+                    <div class="project-status-badge status-wip">WIP</div>
+                    <div class="project-tag">Certification</div>
                     <h3>RHCSA Preparation</h3>
                     <p>Developing production-grade Linux system administration skills through hands-on labs and practice environments. Building toward Red Hat certification.</p>
+                    <div class="project-skills">
+                        <span class="skill-badge">Linux</span>
+                        <span class="skill-badge">System Administration</span>
+                        <span class="skill-badge">Red Hat</span>
+                    </div>
                 </div>
             </div>
         </section>

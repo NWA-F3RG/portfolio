@@ -451,7 +451,10 @@
         }
         
         .wip-card-style:hover {
-            border-color: var(--color-accent-secondary);
+            transform: none;
+            border-color: var(--color-border);
+            border-left-color: var(--color-accent-secondary);
+            box-shadow: none;
             opacity: 1;
         }
         
@@ -1042,10 +1045,12 @@
             }
         });
         
-            navLinks.querySelectorAll('a').forEach(function(link) {
-                link.addEventListener('click', function() {
-                    navLinks.classList.remove('active');
-                    menuToggle.setAttribute('aria-expanded', 'false');
+                navLinks.querySelectorAll('a').forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        navLinks.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                    });
                 });
-            });
-        </script>
+            </script>
+        </body>
+        </html>
