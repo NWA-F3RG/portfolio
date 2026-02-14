@@ -49,7 +49,7 @@
             --color-bg-tertiary: #2d2d30;
             --color-bg-code: #1e1e1e;
             --color-text-primary: #d4d4d4;
-            --color-text-secondary: #808080;
+            --color-text-secondary: #909090;
             --color-text-muted: #6a6a6a;
             --color-accent-primary: #ff6b35;
             --color-accent-secondary: #4ec9b0;
@@ -124,6 +124,16 @@
         .skip-link:focus {
             top: var(--space-sm);
             left: var(--space-sm);
+        }
+        
+        /* ==================== Focus States (Accessibility) ==================== */
+        *:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+        
+        *:focus:not(:focus-visible) {
+            outline: none;
         }
         
         /* ==================== Header ==================== */

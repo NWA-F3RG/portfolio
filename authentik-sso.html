@@ -49,7 +49,7 @@
             --color-bg-tertiary: #2d2d30;
             --color-bg-code: #1e1e1e;
             --color-text-primary: #d4d4d4;
-            --color-text-secondary: #808080;
+            --color-text-secondary: #909090;
             --color-text-muted: #6a6a6a;
             --color-accent-primary: #ff6b35;
             --color-accent-secondary: #4ec9b0;
@@ -124,6 +124,16 @@
         .skip-link:focus {
             top: var(--space-sm);
             left: var(--space-sm);
+        }
+        
+        /* ==================== Focus States (Accessibility) ==================== */
+        *:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+        
+        *:focus:not(:focus-visible) {
+            outline: none;
         }
         
         /* ==================== Header ==================== */
@@ -781,10 +791,10 @@ LDAP bind failed with error: Invalid credentials</pre>
                         
                         <h4>Solution:</h4>
                         <div class="warning-box">
-                            <strong>❌ Wrong:</strong> <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="601316034d01151408050e14090b20080f0d050c01024e0c0f03010c">[email&#160;protected]</a></code> (UPN)
+                            <strong>[WRONG]</strong> <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="601316034d01151408050e14090b20080f0d050c01024e0c0f03010c">[email&#160;protected]</a></code> (UPN)
                         </div>
                         <div class="success-box">
-                            <strong>✅ Correct:</strong> <code>CN=svc-authentik,CN=Users,DC=homelab,DC=local</code> (DN)
+                            <strong>[CORRECT]</strong> <code>CN=svc-authentik,CN=Users,DC=homelab,DC=local</code> (DN)
                         </div>
                         
                         <div class="info-box">
@@ -874,11 +884,11 @@ location @goauthentik_proxy_signin {
             
             <h3>Measurable Results</h3>
             <ul>
-                <li>✅ <strong>8+ applications</strong> protected with centralized SSO</li>
-                <li>✅ <strong>Zero password sprawl</strong> - users authenticate once with AD credentials</li>
-                <li>✅ <strong>5-minute onboarding</strong> for new applications (reusable pattern)</li>
-                <li>✅ <strong>100% authentication success</strong> rate since deployment</li>
-                <li>✅ All authentication events logged centrally in Authentik</li>
+                <li><strong>8+ applications</strong> protected with centralized SSO</li>
+                <li><strong>Zero password sprawl</strong> - users authenticate once with AD credentials</li>
+                <li><strong>5-minute onboarding</strong> for new applications (reusable pattern)</li>
+                <li><strong>100% authentication success</strong> rate since deployment</li>
+                <li>All authentication events logged centrally in Authentik</li>
             </ul>
             
             <h3>Skills Demonstrated</h3>
@@ -1017,4 +1027,13 @@ location @goauthentik_proxy_signin {
     </footer>
     
     <!-- Collapsible Toggle Script -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts
+    <script>
+        document.querySelectorAll('.collapsible-header').forEach(function(header) {
+            header.addEventListener('click', function() {
+                var collapsible = this.parentElement;
+                collapsible.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
