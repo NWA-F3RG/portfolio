@@ -55,7 +55,7 @@
             
             /* Text Colors */
             --color-text-primary: #d4d4d4;
-            --color-text-secondary: #808080;
+            --color-text-secondary: #909090;
             --color-text-muted: #6a6a6a;
             
             /* Accent Colors */
@@ -145,6 +145,16 @@
         .skip-link:focus {
             top: var(--space-sm);
             left: var(--space-sm);
+        }
+        
+        /* ==================== Focus States (Accessibility) ==================== */
+        *:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+        
+        *:focus:not(:focus-visible) {
+            outline: none;
         }
         
         /* ==================== Header ==================== */
@@ -364,10 +374,17 @@
             max-width: 600px;
         }
         
-        /* Unified Project Grid */
-        .unified-project-grid {
+        /* Project Grids - Live row and WIP row */
+        .live-project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .wip-project-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: var(--space-lg);
         }
         
@@ -622,13 +639,23 @@
         }
         
         /* ==================== Responsive ==================== */
+        @media (max-width: 1024px) {
+            .wip-project-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
         @media (max-width: 768px) {
             .hero-stats {
                 flex-direction: column;
                 gap: var(--space-md);
             }
             
-            .unified-project-grid {
+            .live-project-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .wip-project-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -791,7 +818,7 @@
                 </p>
             </div>
             
-            <div class="unified-project-grid">
+            <div class="live-project-grid">
                 <!-- Project 1: Authentik SSO -->
                 <a href="/authentik-sso" class="project-card">
                     <div class="project-status-badge status-live">Live</div>
@@ -804,7 +831,7 @@
                         Built a reusable pattern that protects ANY web application, eliminating per-app credential management.
                     </p>
                     
-                    <p class="project-cta-link">Learn more about this project →</p>
+                    <p class="project-cta-link">Learn more about this project &rarr;</p>
                     
                     <div class="project-meta">
                         <span>February 2026</span>
@@ -833,7 +860,7 @@
                         Achieved 100% backup success rate and 85% storage reduction through intelligent deduplication.
                     </p>
                     
-                    <p class="project-cta-link">Learn more about this project →</p>
+                    <p class="project-cta-link">Learn more about this project &rarr;</p>
                     
                     <div class="project-meta">
                         <span>February 2026</span>
@@ -849,7 +876,9 @@
                         <span class="skill-badge">Linux</span>
                     </div>
                 </a>
-                
+            </div>
+            
+            <div class="wip-project-grid">
                 <!-- WIP Project 1: Monitoring Stack -->
                 <div class="project-card wip-card-style">
                     <div class="project-status-badge status-wip">WIP</div>
@@ -989,13 +1018,13 @@
             <div class="footer-links">
                 <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
                 <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
-                <a href="mailto:nnwaeze@gmail.com" aria-label="Email">Email</a>
+                <a href="/cdn-cgi/l/email-protection#85ebebf2e4e0ffe0c5e2e8e4ece9abe6eae8" aria-label="Email">Email</a>
             </div>
         </div>
     </footer>
     
     <!-- Mobile Menu Toggle Script -->
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         const menuToggle = document.querySelector('.menu-toggle');
         const navLinks = document.querySelector('.nav-links');
         
@@ -1013,12 +1042,10 @@
             }
         });
         
-        navLinks.querySelectorAll('a').forEach(function(link) {
-            link.addEventListener('click', function() {
-                navLinks.classList.remove('active');
-                menuToggle.setAttribute('aria-expanded', 'false');
+            navLinks.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    navLinks.classList.remove('active');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                });
             });
-        });
-    </script>
-</body>
-</html>
+        </script>
