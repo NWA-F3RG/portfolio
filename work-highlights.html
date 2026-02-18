@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Real-world IT support examples from 2+ years of enterprise experience - troubleshooting methodology, systems thinking, and technical depth demonstrated through actual work scenarios.">
+    <meta name="keywords" content="IT support, troubleshooting, CyberArk, Active Directory, Entra ID, Microsoft 365, systems administration, privileged access management">
+    <meta name="author" content="Nate">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
+    <title>Work Experience Highlights - Nate</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://seggsy.co/work-highlights">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Work Experience Highlights - Nate">
+    <meta property="og:description" content="Real-world IT support examples demonstrating troubleshooting methodology and systems thinking from 2+ years of enterprise experience.">
+    <meta property="og:image" content="https://seggsy.co/og-image.png">
+    <meta property="og:url" content="https://seggsy.co/work-highlights">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Nate - Systems Administration Portfolio">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Work Experience Highlights - Nate">
+    <meta name="twitter:description" content="Real-world IT support examples demonstrating troubleshooting methodology and systems thinking.">
+    <meta name="twitter:image" content="https://seggsy.co/og-image.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==================== CSS Variables (Unified Design System) ==================== */
+        :root {
+            /* Background Colors */
+            --color-bg-primary: #1e1e1e;
+            --color-bg-secondary: #252526;
+            --color-bg-tertiary: #2d2d30;
+            --color-bg-code: #1e1e1e;
+            
+            /* Text Colors */
+            --color-text-primary: #d4d4d4;
+            --color-text-secondary: #909090;
+            --color-text-muted: #6a6a6a;
+            
+            /* Accent Colors */
+            --color-accent-primary: #ff6b35;
+            --color-accent-secondary: #4ec9b0;
+            --color-accent-warning: #ce9178;
+            
+            /* Border Colors */
+            --color-border: #3e3e42;
+            --color-border-hover: #5a5a5f;
+            
+            /* Typography */
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Fluid Typography */
+            --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+            --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+            --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+            --font-size-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+            --font-size-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+            --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+            --font-size-3xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+            
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+            --space-2xl: 4rem;
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+        
+        /* ==================== Reset & Base Styles ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        /* ==================== Skip Link ==================== */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--color-accent-primary);
+            color: var(--color-bg-primary);
+            padding: var(--space-sm);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            z-index: 100;
+        }
+        
+        .skip-link:focus {
+            top: var(--space-sm);
+            left: var(--space-sm);
+        }
+        
+        /* ==================== Focus States ==================== */
+        *:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+        
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        /* ==================== Header ==================== */
+        header {
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-md) 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            text-decoration: none;
+        }
+        
+        .logo::before {
+            content: '$ ';
+            color: var(--color-accent-secondary);
+        }
+        
+        .back-link {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: var(--color-text-primary);
+        }
+        
+        .back-link::before {
+            content: '← ';
+            color: var(--color-accent-primary);
+        }
+        
+        /* ==================== Main Content ==================== */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-2xl) var(--space-md);
+        }
+        
+        /* ==================== Hero Section ==================== */
+        .hero {
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .hero-label {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: var(--font-size-sm);
+            color: var(--color-accent-secondary);
+            background: var(--color-bg-secondary);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .hero h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: var(--space-md);
+        }
+        
+        .hero p {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+            margin-bottom: var(--space-md);
+        }
+        
+        .confidentiality-note {
+            background: var(--color-bg-secondary);
+            border-left: 3px solid var(--color-accent-warning);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .confidentiality-note p {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+        
+        .confidentiality-note strong {
+            color: var(--color-text-primary);
+        }
+        
+        /* ==================== Work Example Cards ==================== */
+        .work-example {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .work-example h2 {
+            font-size: var(--font-size-2xl);
+            font-weight: 600;
+            margin-bottom: var(--space-lg);
+            color: var(--color-text-primary);
+        }
+        
+        .example-section {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .example-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .example-section h3 {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .example-section p {
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .example-section p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .example-section ol,
+        .example-section ul {
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+            padding-left: var(--space-lg);
+        }
+        
+        .example-section li {
+            margin-bottom: var(--space-xs);
+        }
+        
+        .example-section li:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Skills Demonstrated */
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            list-style: none;
+            padding: 0;
+        }
+        
+        .skill-badge {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            background: var(--color-bg-tertiary);
+            color: var(--color-accent-secondary);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+        }
+        
+        /* ==================== Footer ==================== */
+        footer {
+            max-width: 900px;
+            margin: var(--space-2xl) auto 0;
+            padding: var(--space-xl) var(--space-md);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--color-text-muted);
+            font-size: var(--font-size-sm);
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: var(--space-lg);
+        }
+        
+        .footer-links a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--color-text-primary);
+        }
+        
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            main {
+                padding: var(--space-lg) var(--space-md);
+            }
+            
+            .work-example {
+                padding: var(--space-lg);
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Header -->
+    <header>
+        <nav aria-label="Main navigation">
+            <a href="/" class="logo">nate</a>
+            <a href="/" class="back-link">Back to Portfolio</a>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-label">Professional Experience</div>
+            <h1>Work Experience Highlights</h1>
+            <p>
+                Real-world examples from 2+ years of enterprise IT support, demonstrating 
+                troubleshooting methodology and systems thinking in production environments.
+            </p>
+        </section>
+        
+        <!-- Confidentiality Note -->
+        <div class="confidentiality-note">
+            <p><strong>Note:</strong> Examples below have been sanitized to protect client confidentiality 
+            while preserving technical accuracy and troubleshooting methodology.</p>
+        </div>
+        
+        <!-- Example 1: CyberArk + LAPS -->
+        <article class="work-example">
+            <h2>Privileged Access Management: CyberArk + LAPS Recovery</h2>
+            
+            <div class="example-section">
+                <h3>The Challenge</h3>
+                <p>
+                    User unable to connect to corporate VPN. Error message indicated "Umbrella inactive" 
+                    but standard troubleshooting (network diagnostics, VPN client reinstall) showed no 
+                    connectivity issues. This required deeper investigation at the service level.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Identified this as a potential service-level failure requiring privileged access to diagnose</li>
+                    <li>Used CyberArk to request temporary administrative credentials</li>
+                    <li>Encountered permission configuration issue - CyberArk role wasn't properly selected</li>
+                    <li>Cleared browser cache and reselected correct privileged access role in CyberArk</li>
+                    <li>Successfully retrieved LAPS password from Entra ID (Azure AD)</li>
+                    <li>Accessed Windows services console (services.msc) with admin credentials</li>
+                    <li>Discovered Cisco Secure Client VPN services were stopped</li>
+                    <li>Restarted required services and validated VPN connectivity</li>
+                </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    User was back online within 15 minutes. This case demonstrated understanding that 
+                    VPN connectivity issues aren't always network problems - sometimes they're endpoint 
+                    service failures that require elevated troubleshooting with proper privileged access 
+                    management workflows.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">CyberArk PAM</li>
+                    <li class="skill-badge">LAPS</li>
+                    <li class="skill-badge">Entra ID</li>
+                    <li class="skill-badge">Windows Service Management</li>
+                    <li class="skill-badge">VPN Troubleshooting</li>
+                    <li class="skill-badge">Systematic Diagnostics</li>
+                </ul>
+            </div>
+        </article>
+        
+        <!-- Example 2: Active Directory Access Management -->
+        <article class="work-example">
+            <h2>Identity & Access: Active Directory Security Groups</h2>
+            
+            <div class="example-section">
+                <h3>The Challenge</h3>
+                <p>
+                    User requested access to a network file share for a project they were joining. 
+                    This required following proper approval workflows and implementing least-privilege 
+                    security principles while ensuring the user could work immediately after approval.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Accessed Active Directory Users and Computers (ADUC) to identify the security group controlling folder access</li>
+                    <li>Reviewed NTFS permissions on the network share to confirm which AD group provided appropriate access level</li>
+                    <li>Identified the group owner (department manager) responsible for access approvals</li>
+                    <li>Contacted data owner via Teams to explain user's business need and requested approval for read/write access</li>
+                    <li>After receiving approval, added user to appropriate security group in ADUC</li>
+                    <li>Instructed user to restart their computer to refresh their access token with new group membership</li>
+                    <li>Validated user could access the share with proper permissions</li>
+                </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    User had functional access to required resources within 10 minutes of approval. 
+                    More importantly, the process followed least-privilege principles - user received 
+                    only the specific access level needed (read/write to one folder) rather than broader 
+                    permissions. This approach maintains security while enabling productivity.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">Active Directory</li>
+                    <li class="skill-badge">ADUC</li>
+                    <li class="skill-badge">Security Groups</li>
+                    <li class="skill-badge">NTFS Permissions</li>
+                    <li class="skill-badge">Least-Privilege Security</li>
+                    <li class="skill-badge">Business Communication</li>
+                    <li class="skill-badge">Access Token Concepts</li>
+                </ul>
+            </div>
+        </article>
+        
+        <!-- Example 3: Mobile Device Management -->
+        <article class="work-example">
+            <h2>Mobile Device Management: Secure Teams Access Configuration</h2>
+            
+            <div class="example-section">
+                <h3>The Challenge</h3>
+                <p>
+                    User needed Microsoft Teams access on their personal mobile device to stay connected 
+                    with work communications. Company policy requires all mobile devices accessing 
+                    corporate resources to be managed through Intune MDM with security policies enforced, 
+                    making this more complex than simply downloading an app from the store.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Configured user's Entra ID profile with required group memberships for mobile access</li>
+                    <li>Added user to SecureW2 security group for certificate-based authentication</li>
+                    <li>Assigned appropriate MDM profile for corporate device management policies</li>
+                    <li>Walked user through downloading Microsoft Company Portal app on their device</li>
+                    <li>Guided user through sign-in process with MFA approval (authentication app verification)</li>
+                    <li>Validated device enrolled successfully in Intune and appeared as compliant</li>
+                    <li>Instructed user to download Teams through Company Portal (not App Store) to ensure managed app deployment</li>
+                    <li>Confirmed Teams launched with corporate policies applied (PIN requirement, no screenshot capability, etc.)</li>
+                </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    User successfully gained secure access to Microsoft Teams on their mobile device with 
+                    all corporate security policies enforced. Device appeared in Intune management console 
+                    as compliant, enabling access to Conditional Access-protected resources. This approach 
+                    balances user productivity (mobile access) with security requirements (managed devices, 
+                    MFA, policy enforcement).
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">Entra ID / Azure AD</li>
+                    <li class="skill-badge">Intune MDM</li>
+                    <li class="skill-badge">SecureW2</li>
+                    <li class="skill-badge">Company Portal</li>
+                    <li class="skill-badge">MFA</li>
+                    <li class="skill-badge">Mobile Security Policies</li>
+                    <li class="skill-badge">End-User Training</li>
+                </ul>
+            </div>
+        </article>
+        
+        <!-- Example 4: Network Infrastructure Support -->
+        <article class="work-example">
+            <h2>Network Infrastructure: Office Move VLAN Reconfiguration</h2>
+            
+            <div class="example-section">
+                <h3>The Challenge</h3>
+                <p>
+                    Team relocated to a different office suite during a facilities reorganization. When 
+                    they attempted to set up their HP multifunction printer, it wouldn't connect to 
+                    network file shares for scan-to-folder functionality, despite having a valid IP 
+                    address and network connectivity.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Verified printer had IP address and could ping gateway - layer 2/3 connectivity was functional</li>
+                    <li>Identified the issue: new office was on guest network VLAN, printer needed infrastructure VLAN for SMB access</li>
+                    <li>Coordinated with network team to determine correct VLAN assignment for new office location</li>
+                    <li>Physically traced ethernet cable from printer to network closet to identify patch panel port</li>
+                    <li>Located corresponding switch port by following patch panel connections</li>
+                    <li>Worked with network team to move patch panel connection to switch with infrastructure VLAN configured</li>
+                    <li>Configured switch port with correct VLAN tag via management interface</li>
+                    <li>Validated printer obtained new IP on correct subnet and could access file shares</li>
+                </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    Printer came online on the appropriate network segment with full scan-to-folder 
+                    functionality restored. Users could scan documents directly to their department 
+                    file share. This work required understanding both physical infrastructure (patch 
+                    panels, cable tracing) and logical network design (VLAN segmentation, switch 
+                    port configuration) to properly resolve the issue.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">VLAN Configuration</li>
+                    <li class="skill-badge">Switch Port Management</li>
+                    <li class="skill-badge">Patch Panel Coordination</li>
+                    <li class="skill-badge">Network Segmentation</li>
+                    <li class="skill-badge">Physical Layer Troubleshooting</li>
+                    <li class="skill-badge">Cross-Team Collaboration</li>
+                </ul>
+            </div>
+        </article>
+        
+        <!-- CTA Section -->
+        <section class="hero" style="margin-top: var(--space-2xl); text-align: center;">
+            <p>
+                These examples represent systematic troubleshooting methodology applied across 
+                identity management, endpoint security, and network infrastructure. Each case 
+                required understanding how different systems interact, following proper security 
+                procedures, and documenting solutions for future reference.
+            </p>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-text">
+                © 2026 Nate. Built with intention, documented with care.
+            </div>
+            
+            <div class="footer-links">
+                <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+                <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
+                <a href="mailto:nnwaeze@seggsy.co" aria-label="Email">Email</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
