@@ -579,10 +579,10 @@
             </div>
             
             <div class="tldr">
-                <div class="tldr-title">TL;DR - Why This Matters</div>
-                <p>Built enterprise-grade Single Sign-On protecting multiple applications using <strong>forward authentication</strong> at the reverse proxy layer. This pattern works with ANY web application - even those without native SSO support - by intercepting requests at the network edge and validating sessions before proxying to backends.</p>
+                <div class="tldr-title">TL;DR - What I Built</div>
+                <p>Set up a single sign-on system so I only need one password to access all my homelab applications. Instead of managing 8 different passwords, I log in once and everything just works. The system checks Active Directory (like what companies use for employee logins), then lets me through to whichever app I'm trying to use.</p>
                 <div class="key-achievement">
-                    <strong>Key Achievement:</strong> Universal authentication pattern that eliminated per-application credential management and provided centralized access control.
+                    <strong>Why This Matters:</strong> This is how enterprises protect their applications. One login, centralized control, better security than scattered passwords everywhere.
                 </div>
             </div>
         </div>
@@ -591,25 +591,24 @@
         <section class="section">
             <h2>The Problem</h2>
             
-            <h3>Initial State</h3>
+            <h3>What I Started With</h3>
             <ul>
-                <li>8+ self-hosted applications (Bookstack, Glance, code-server, Portainer, etc.)</li>
-                <li>Each app managing its own users and passwords</li>
-                <li>No centralized access control</li>
-                <li>No audit trail of who accessed what</li>
-                <li>Password fatigue (same password reused, or forgot which password for which app)</li>
+                <li>8+ applications running in my homelab (documentation wiki, dashboard, code editor, etc.)</li>
+                <li>Each app had its own login page and password</li>
+                <li>I was either reusing passwords (bad security) or forgetting which password went with which app</li>
+                <li>No way to see who accessed what, or block access globally if needed</li>
             </ul>
             
-            <h3>Business Impact</h3>
+            <h3>Why This Sucks</h3>
             <ul>
-                <li>Security risk: Weak/reused passwords across services</li>
-                <li>Operational overhead: Managing users in 8 different systems</li>
-                <li>No way to revoke access globally when needed</li>
-                <li>Inconsistent authentication experience</li>
+                <li><strong>Security risk:</strong> Weak passwords get reused, or you write them down</li>
+                <li><strong>Time waste:</strong> Managing users in 8 different places</li>
+                <li><strong>No control:</strong> Can't revoke someone's access to everything at once</li>
+                <li><strong>Annoying:</strong> Logging in 8 times to check 8 things</li>
             </ul>
             
             <div class="info-box">
-                <strong>Enterprise Parallel:</strong> This mirrors the challenge companies face when they have dozens of SaaS apps (Salesforce, Jira, GitHub, etc.) - without SSO, users create weak passwords and IT has no centralized control.
+                <strong>Real-World Example:</strong> This is the same problem companies have with SaaS apps. Without SSO, employees have 20+ different passwords for Salesforce, Jira, Slack, etc. That's why enterprise IT implements SSO - and that's what I learned to do here.
             </div>
         </section>
         
@@ -617,87 +616,83 @@
         <section class="section">
             <h2>The Solution</h2>
             
-            <h3>Architecture Overview</h3>
+            <h3>How It Works (The Simple Version)</h3>
+            <p>Think of it like a security checkpoint at an airport:</p>
+            
             <div class="architecture">
-                <pre>┌─────────────┐
-│  End User   │
-│   Browser   │
-└──────┬──────┘
-       │ 1. HTTPS request
-       ▼
-┌─────────────────────────┐
-│  Nginx Proxy Manager    │ ← SSL termination, initial request
-│  (Reverse Proxy)        │
-└──────┬──────────────────┘
-       │ 2. auth_request (nginx subrequest)
-       ▼
-┌─────────────────────────┐
-│  Authentik Outpost      │ ← Session validation
-│  (Forward Auth)         │
-└──────┬──────────────────┘
-       │ 3. If no session → redirect to login
-       │    If valid session → return 200 + headers
-       ▼
-┌─────────────────────────┐
-│  Authentik Server       │ ← Login flows, LDAP queries
-│  (Identity Provider)    │
-└──────┬──────────────────┘
-       │ 4. LDAP authentication
-       ▼
-┌─────────────────────────┐
-│  Active Directory       │ ← User/group directory
-│  (Identity Source)      │
-└─────────────────────────┘</pre>
+                <pre>You → Security Gate → Plane
+
+If you have a boarding pass (session cookie):
+  ✅ Security waves you through to your gate
+
+If you don't have a boarding pass:
+  ❌ Security redirects you to check-in
+  → You show your ID (Active Directory login)
+  → Get boarding pass (session cookie)
+  → Now you can access all gates (apps)</pre>
             </div>
             
-            <h3>How It Works (Step-by-Step)</h3>
+            <h3>What Actually Happens Behind the Scenes</h3>
             
-            <h4>Unauthenticated Request:</h4>
+            <h4>First Time Visiting an App:</h4>
             <ol>
-                <li>User navigates to <code>https://docs.homelab.local</code></li>
-                <li>Nginx receives request, makes internal <code>auth_request</code> to Authentik outpost</li>
-                <li>Outpost checks for valid session cookie → None found → Returns <code>401 Unauthorized</code></li>
-                <li>Nginx catches the 401, redirects browser to Authentik login page</li>
-                <li>User enters credentials (validated against Active Directory via LDAP)</li>
-                <li>Authentik creates session, sets cookie, redirects back to original URL</li>
-                <li>Request repeats (now with session cookie) → Outpost validates → Returns <code>200 OK</code></li>
-                <li>Nginx proxies request to backend application with user identity headers</li>
-                <li>User sees the protected application</li>
+                <li>You type in the URL: <code>https://docs.homelab.local</code></li>
+                <li>Reverse proxy (like a security guard) stops you: "Show me your session cookie"</li>
+                <li>You don't have one yet, so it redirects you to the login page</li>
+                <li>You enter your username/password (which gets checked against Active Directory)</li>
+                <li>Login works → You get a session cookie → Redirected back to the app</li>
+                <li>Now the security guard sees your cookie and lets you through</li>
             </ol>
             
-            <h4>Authenticated Request:</h4>
+            <h4>Every Time After That:</h4>
             <ul>
-                <li>Every subsequent request includes session cookie</li>
-                <li>Outpost validates instantly (no AD query needed - session already established)</li>
-                <li>Application receives authenticated request with user info in headers</li>
+                <li>Your browser automatically sends the session cookie with each request</li>
+                <li>Security guard checks cookie → Valid → Lets you through</li>
+                <li>You don't see any of this - the app just loads instantly</li>
+            </ul>
+            
+            <h3>The Tech Stack (What I Used)</h3>
+            <ul>
+                <li><strong>Active Directory:</strong> 2 servers storing users/passwords (like a company directory)</li>
+                <li><strong>Authentik:</strong> The login page and session manager</li>
+                <li><strong>Nginx Proxy Manager:</strong> The security gate that checks cookies before letting you through</li>
+                <li><strong>Docker:</strong> All these pieces run in containers on my server</li>
             </ul>
         </section>
         
         <!-- Technical Implementation -->
         <section class="section">
-            <h2>Technical Implementation</h2>
+            <h2>What I Actually Built</h2>
             
-            <h3>Component Stack</h3>
+            <h3>The Main Pieces</h3>
             
-            <h4>Identity Layer:</h4>
+            <h4>Active Directory (The User Database)</h4>
             <ul>
-                <li><strong>Active Directory:</strong> 2 domain controllers (DC01, DC02) for redundancy</li>
-                <li><strong>LDAP Protocol:</strong> StartTLS encryption (port 389) for AD queries</li>
-                <li><strong>Authentik:</strong> Modern IdP with web UI for managing auth flows</li>
-                <li><strong>Distributed Architecture:</strong> Main Authentik server + outpost for forward auth</li>
+                <li>Set up 2 domain controllers for redundancy (if one goes down, the other keeps working)</li>
+                <li>This is where all usernames and passwords live</li>
+                <li>Same tech that companies use for Windows logins</li>
             </ul>
             
-            <h4>Network Layer:</h4>
+            <h4>Authentik (The Login System)</h4>
             <ul>
-                <li><strong>VLAN Segmentation:</strong> Infrastructure (10.x.x.0/24), Clients, IoT, Guests</li>
-                <li><strong>Firewall Policies:</strong> Zone-based rules with default-deny stance</li>
-                <li><strong>Reverse Proxy:</strong> Nginx Proxy Manager with SSL/TLS termination</li>
+                <li>The pretty login page you see when you need to sign in</li>
+                <li>Talks to Active Directory to check if your password is correct</li>
+                <li>Creates and manages session cookies</li>
             </ul>
             
-            <h4>Application Layer:</h4>
+            <h4>Nginx Proxy Manager (The Security Gate)</h4>
             <ul>
-                <li><strong>Docker Networks:</strong> Internal <code>proxy-net</code> bridge for container communication</li>
-                <li><strong>Protected Apps:</strong> Bookstack (docs), Glance (dashboard), code-server (IDE)</li>
+                <li>Sits in front of all applications</li>
+                <li>Checks every request: "Do you have a valid session?"</li>
+                <li>If yes → Let you through. If no → Send you to login.</li>
+            </ul>
+            
+            <h4>Docker (How It All Runs)</h4>
+            <ul>
+                <li>Each component runs in its own container (isolated environment)</li>
+                <li>Containers talk to each other over an internal network</li>
+                <li>Easy to update or restart individual pieces without breaking everything</li>
+            </ul>
                 <li><strong>Centralized Certs:</strong> Let's Encrypt wildcard via Cloudflare DNS challenge</li>
             </ul>
             
@@ -762,43 +757,42 @@
             
             <div class="collapsible">
                 <div class="collapsible-header">
-                    <div class="collapsible-title">Challenge 1: LDAP Bind Authentication Failure</div>
+                    <div class="collapsible-title">Challenge 1: Wrong Username Format for LDAP</div>
                     <div class="collapsible-icon">▼</div>
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
-                        <h4>Symptom:</h4>
+                        <h4>What Went Wrong:</h4>
                         <div class="terminal">
-                            <pre>Error initializing SSL/TLS
-LDAP bind failed with error: Invalid credentials</pre>
+                            <pre>Error: LDAP bind failed - Invalid credentials</pre>
                         </div>
                         
-                        <h4>Root Cause Discovery:</h4>
+                        <h4>The Problem:</h4>
                         <ul>
-                            <li>Initially used User Principal Name (UPN) format: <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3d4e4b5e105c48495558534954567d55525058515c5f1351525e5c51">[email&#160;protected]</a></code></li>
-                            <li>LDAP bind operations require Distinguished Name (DN) format</li>
-                            <li>UPN is Windows/Kerberos-specific, not universal LDAP</li>
+                            <li>I was using email format: <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4d2e2b3e702c383924292239242601252a282029242770222128">[email&#160;protected]</a></code></li>
+                            <li>LDAP doesn't understand email format - it needs a specific path</li>
+                            <li>Think of it like: email is your nickname, but the system needs your full legal name and address</li>
                         </ul>
                         
-                        <h4>Investigation Process:</h4>
+                        <h4>How I Figured It Out:</h4>
                         <ol>
-                            <li>Verified service account password in AD (correct)</li>
-                            <li>Tested network connectivity to DC (reachable)</li>
-                            <li>Read Microsoft LDAP documentation on bind requirements</li>
-                            <li>Discovered DN vs UPN distinction</li>
-                            <li>Changed bind credential format</li>
+                            <li>Checked password was correct in Active Directory (it was)</li>
+                            <li>Verified network could reach the server (it could)</li>
+                            <li>Read Microsoft docs about LDAP connection formats</li>
+                            <li>Learned about DN (Distinguished Name) vs UPN (User Principal Name)</li>
+                            <li>Changed the format to what LDAP actually expects</li>
                         </ol>
                         
-                        <h4>Solution:</h4>
+                        <h4>The Fix:</h4>
                         <div class="warning-box">
-                            <strong>[WRONG]</strong> <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="601316034d01151408050e14090b20080f0d050c01024e0c0f03010c">[email&#160;protected]</a></code> (UPN)
+                            <strong>❌ WRONG:</strong> <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1c6f6a7f316d797832393279646645616e6c646d60633f6d6e62606d">[email&#160;protected]</a></code> (email-style)
                         </div>
                         <div class="success-box">
-                            <strong>[CORRECT]</strong> <code>CN=svc-authentik,CN=Users,DC=homelab,DC=local</code> (DN)
+                            <strong>✅ CORRECT:</strong> <code>CN=svc-authentik,CN=Users,DC=homelab,DC=local</code> (full path)
                         </div>
                         
                         <div class="info-box">
-                            <strong>Why This Matters:</strong> This is a common integration pitfall. Many authentication systems accept UPN for user login convenience, but backend LDAP bind operations are protocol-specific and require DN format. Understanding this distinction is critical for troubleshooting any LDAP-based integration.
+                            <strong>What I Learned:</strong> Different systems talk different languages. What works for logging into Windows doesn't always work for backend connections. Reading documentation and understanding the protocol matters.
                         </div>
                     </div>
                 </div>
@@ -806,39 +800,32 @@ LDAP bind failed with error: Invalid credentials</pre>
             
             <div class="collapsible">
                 <div class="collapsible-header">
-                    <div class="collapsible-title">Challenge 2: nginx 500 Errors (auth_request Status Codes)</div>
+                    <div class="collapsible-title">Challenge 2: 500 Errors Because nginx Got Confused</div>
                     <div class="collapsible-icon">▼</div>
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
-                        <h4>Symptom:</h4>
+                        <h4>What Went Wrong:</h4>
                         <div class="terminal">
                             <pre>500 Internal Server Error
-nginx error log: "auth request unexpected status: 302"</pre>
+nginx logs: "auth request unexpected status: 302"</pre>
                         </div>
                         
-                        <h4>Root Cause:</h4>
+                        <h4>The Problem:</h4>
                         <ul>
-                            <li>nginx <code>auth_request</code> directive expects either <code>2xx</code> (authenticated) or <code>401/403</code> (not authenticated)</li>
-                            <li>Authentik outpost was returning <code>302 Redirect</code> for unauthenticated users</li>
-                            <li>nginx treats unexpected status codes as errors</li>
+                            <li>nginx expected a simple yes/no answer: "Is this user authenticated?"</li>
+                            <li>Authentik was sending a redirect response (302) instead</li>
+                            <li>nginx didn't know how to handle that, so it just gave up with a 500 error</li>
                         </ul>
                         
-                        <h4>Solution:</h4>
-                        <p>Added <code>error_page</code> handler to nginx configuration:</p>
-                        <pre><code>location / {
-    auth_request /outpost.goauthentik.io/auth/nginx;
-    error_page 401 = @goauthentik_proxy_signin;  # Catch 401, redirect gracefully
-    # ... rest of config
-}
-
-location @goauthentik_proxy_signin {
-    internal;
-    return 302 /outpost.goauthentik.io/start?rd=$scheme://$http_host$request_uri;
-}</code></pre>
+                        <h4>The Fix:</h4>
+                        <p>Taught nginx how to handle redirects by adding error handling:</p>
+                        <pre><code># Tell nginx: if you get a 401 (not authenticated), 
+# don't panic - redirect them to the login page instead
+error_page 401 = @goauthentik_proxy_signin;</code></pre>
                         
                         <div class="info-box">
-                            <strong>Why This Matters:</strong> nginx's <code>auth_request</code> is powerful but opinionated. Understanding its behavior model (status code expectations, subrequest mechanics, error handling) is essential for implementing reverse proxy authentication patterns.
+                            <strong>What I Learned:</strong> nginx is picky about how authentication works. It wants specific status codes. When integrating systems, you have to make them speak the same language. Reading error logs and nginx docs helped me figure out what was expected.
                         </div>
                     </div>
                 </div>
@@ -846,32 +833,33 @@ location @goauthentik_proxy_signin {
             
             <div class="collapsible">
                 <div class="collapsible-header">
-                    <div class="collapsible-title">Challenge 3: Authentication Loop (Cookie Management)</div>
+                    <div class="collapsible-title">Challenge 3: Infinite Login Loop (Cookie Problems)</div>
                     <div class="collapsible-icon">▼</div>
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
-                        <h4>Symptom:</h4>
-                        <p>User successfully authenticated in Authentik, but kept getting redirected back to login page infinitely.</p>
+                        <h4>What Went Wrong:</h4>
+                        <p>User would log in successfully, but then immediately get sent back to the login page. Over and over. Forever.</p>
                         
-                        <h4>Root Cause:</h4>
+                        <h4>The Problem:</h4>
                         <ul>
-                            <li>Authentik session cookie was being set with <code>SameSite=Strict</code></li>
-                            <li>Redirect from Authentik back to protected app was cross-domain (different subdomain)</li>
-                            <li>Browser blocked cookie transmission due to <code>SameSite</code> policy</li>
-                            <li>Each request appeared unauthenticated, triggering new login redirect</li>
+                            <li>Authentik was setting a session cookie, but the browser wasn't sending it back</li>
+                            <li>Why? Cookie security settings were too strict</li>
+                            <li>The cookie was set to <code>SameSite=Strict</code> (only works on exact same domain)</li>
+                            <li>But the login page was <code>auth.homelab.local</code> and the app was <code>docs.homelab.local</code></li>
+                            <li>Browser blocked the cookie because of the different subdomains</li>
                         </ul>
                         
-                        <h4>Solution:</h4>
-                        <p>Changed Authentik cookie settings to <code>SameSite=Lax</code>:</p>
+                        <h4>The Fix:</h4>
+                        <p>Changed cookie setting to <code>SameSite=Lax</code>:</p>
                         <ul>
-                            <li>Allows cookies on same-site navigation (subdomain redirects)</li>
-                            <li>Still protects against CSRF attacks</li>
-                            <li>Balances security and functionality</li>
+                            <li>Still secure (protects against attacks)</li>
+                            <li>But allows cookies across subdomains (auth.homelab → docs.homelab)</li>
+                            <li>Browser happy, login works, everyone moves on</li>
                         </ul>
                         
                         <div class="info-box">
-                            <strong>Why This Matters:</strong> Modern browsers enforce strict cookie policies for security. Understanding <code>SameSite</code> attributes (None, Lax, Strict) is essential when implementing authentication flows that involve redirects across subdomains.
+                            <strong>What I Learned:</strong> Modern browsers are really picky about cookies for security reasons. When login involves redirects between subdomains, you have to understand cookie policies. This took reading browser documentation and testing different settings.
                         </div>
                     </div>
                 </div>

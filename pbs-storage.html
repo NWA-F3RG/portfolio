@@ -648,10 +648,10 @@
             </div>
             
             <div class="tldr">
-                <div class="tldr-title">TL;DR - Why This Matters</div>
-                <p>Migrated from an unreliable USB-based backup system to enterprise-grade deduplicated backups with node-level redundancy. Implemented Proxmox Backup Server with chunk-level deduplication, enabling weeks of backup history on limited storage while maintaining 3-2-1 backup principles.</p>
+                <div class="tldr-title">TL;DR - What I Fixed</div>
+                <p>My backups were failing 40% of the time because I was using an unreliable USB hard drive. I replaced it with proper internal drives and set up Proxmox Backup Server, which is designed for this exact job. Now backups work 100% of the time, and I can keep weeks of backup history using smart compression that saves 85% of storage space.</p>
                 <div class="key-achievement">
-                    <strong>Key Achievement:</strong> Transformed backup reliability from ~60% success rate to 100%, while reducing storage requirements by 85% through deduplication.
+                    <strong>Result:</strong> Went from ~60% backup success rate to 100%, while storing way more backup history in less space.
                 </div>
             </div>
         </div>
@@ -660,22 +660,20 @@
         <section class="section">
             <h2>The Problem</h2>
             
-            <h3>Initial State</h3>
+            <h3>What I Started With</h3>
             <ul>
-                <li>4.5TB external USB hard drive for backups</li>
-                <li>Connected via USB 3.0 to single Proxmox node</li>
-                <li>Shared to cluster via NFS</li>
-                <li>~420GB of VM/container data across 3-node cluster</li>
-                <li>Daily backup jobs configured via Proxmox <code>vzdump</code></li>
+                <li>One big 4.5TB USB hard drive plugged into my server</li>
+                <li>Nightly backups of all my VMs and containers (~420GB total)</li>
+                <li>Drive shared across my 3-server cluster using NFS</li>
             </ul>
             
-            <h3>Failure Modes</h3>
+            <h3>What Kept Breaking</h3>
             <ul>
-                <li>USB drive randomly disconnecting during overnight backup jobs</li>
-                <li>Drive entering sleep mode, causing mount path to disappear mid-backup</li>
-                <li>VMs stuck in "backup" state indefinitely</li>
-                <li>Some VMs unexpectedly shutting down when backup path lost</li>
-                <li>vzdump errors: <code>cannot stat '/mnt/pve/exthdd-nfs/dump': No such file or directory</code></li>
+                <li>USB drive would randomly disconnect during backups (especially overnight)</li>
+                <li>Drive would go to sleep, then the backup job couldn't find it</li>
+                <li>VMs would get stuck in "backing up" state forever</li>
+                <li>Sometimes VMs would unexpectedly shut down when the drive disappeared</li>
+                <li>Error message: <code>cannot stat '/mnt/pve/exthdd-nfs/dump': No such file or directory</code></li>
             </ul>
             
             <div class="stats-grid">
@@ -685,7 +683,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">Multiple</div>
-                    <div class="stat-label">Weekly Manual Interventions</div>
+                    <div class="stat-label">Weekly Manual Fixes</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">High</div>
@@ -694,7 +692,7 @@
             </div>
             
             <div class="info-box">
-                <strong>Enterprise Parallel:</strong> This mirrors the challenge companies face when backup infrastructure isn't reliable. A backup that fails 40% of the time is effectively useless - you only discover it during a crisis when you need to restore.
+                <strong>Why This Matters:</strong> A backup that fails 40% of the time is basically useless. You only find out it doesn't work when you need to restore something after a disaster. That's the worst possible time to learn your backups are broken.
             </div>
         </section>
         
@@ -702,44 +700,43 @@
         <section class="section">
             <h2>The Solution</h2>
             
-            <h3>Architecture Overview</h3>
+            <h3>What I Built Instead</h3>
+            <p>Replaced the flaky USB drive with proper internal hard drives and backup software designed for this job.</p>
+            
             <div class="architecture">
-                <pre>┌──────────────────────────────────────────────────┐
-│            Proxmox VE Cluster (3 nodes)          │
-│                                                  │
-│  Node 1 (pve01)      Node 2 (pve02)    Node 3   │
-│  ├─ VMs/CTs          ├─ VMs/CTs        ├─ VMs   │
-│  └─ PBS Primary      ├─ PBS Sync       └─ (NVMe)│
-│     (1TB SATA)       ├─ NFS Share                │
-│                      └─ (1TB SATA)               │
-└──────────────────────────────────────────────────┘
-                      │
-                      ▼
-        ┌─────────────────────────────┐
-        │     Backup Flow (Daily)     │
-        ├─────────────────────────────┤
-        │  2:00 AM - VMs → PBS pve01  │
-        │  4:00 AM - PBS pve01 → pve02│
-        └─────────────────────────────┘</pre>
+                <pre>My 3 Servers:
+┌────────────────────────────────────────┐
+│ Server 1     Server 2        Server 3  │
+│ (pve01)      (pve02)         (pve03)   │
+│                                         │
+│ • 1TB drive  • 1TB drive     • No HDD  │
+│   for        • for backup      (just   │
+│   primary      copy            NVMe)   │
+│   backups    • Also shares               │
+│              ISOs via NFS                │
+└────────────────────────────────────────┘
+
+Daily Backup Flow:
+  2:00 AM → All VMs backup to Server 1
+  4:00 AM → Server 1 copies to Server 2
+             (so I have 2 copies)</pre>
             </div>
             
-            <h3>Technology Stack</h3>
+            <h3>The Main Pieces</h3>
             
-            <h4>Storage Layer:</h4>
+            <h4>Hardware:</h4>
             <ul>
-                <li><strong>Internal SATA HDDs:</strong> 2x 1TB WD drives (replaced external USB)</li>
-                <li><strong>NVMe SSDs:</strong> Boot drives + fast VM storage</li>
-                <li><strong>ext4 Filesystem:</strong> Simple, reliable, well-supported</li>
-                <li><strong>NFS:</strong> Cross-node ISO/template sharing</li>
+                <li>Two 1TB internal hard drives (way more reliable than USB)</li>
+                <li>Each server already had fast NVMe drives for running VMs</li>
+                <li>Added these SATA drives specifically for backups</li>
             </ul>
             
-            <h4>Backup Layer:</h4>
+            <h4>Software (Proxmox Backup Server):</h4>
             <ul>
-                <li><strong>Proxmox Backup Server (PBS):</strong> Deduplicated backup storage</li>
-                <li><strong>Primary Instance:</strong> Node 1 (backup target)</li>
-                <li><strong>Sync Instance:</strong> Node 2 (redundancy copy)</li>
-                <li><strong>Chunk-Level Deduplication:</strong> Incremental storage efficiency</li>
-                <li><strong>Built-in Verification:</strong> Integrity checking without full restore</li>
+                <li>Built specifically for backing up Proxmox virtual machines</li>
+                <li>Smart compression: only stores what changed, not full copies every time</li>
+                <li>One copy on Server 1, automatically synced to Server 2 for redundancy</li>
+                <li>Can verify backups work without actually restoring them</li>
             </ul>
             
             <h3>Key Technical Decisions</h3>
