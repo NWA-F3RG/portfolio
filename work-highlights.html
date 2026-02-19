@@ -618,12 +618,66 @@
             </div>
         </article>
         
+        <!-- Example 5: Apple Business Manager MDM Token Renewal -->
+        <article class="work-example">
+            <h2>Enterprise MDM: Apple Business Manager Token Renewal</h2>
+            
+            <div class="example-section">
+                <h3>The Challenge</h3>
+                <p>
+                    Annual MDM token renewal required to maintain automated device enrollment for 200+ Apple 
+                    devices across multiple ZenGuard client organizations. Token expiration would break zero-touch 
+                    provisioning through Apple Business Manager, forcing manual setup for every new device and 
+                    disrupting the automated enrollment experience that clients relied on for efficient device deployment.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Downloaded Addigy MDM public key certificate from the management portal</li>
+                    <li>Authenticated to Apple Business Manager using Managed Apple ID with reserved domain (avoiding authentication conflicts that occur with federated accounts)</li>
+                    <li>Navigated to MDM server preferences and replaced existing certificate with updated public key</li>
+                    <li>Downloaded new MDM server token from Apple Business Manager after certificate acceptance</li>
+                    <li>Uploaded renewed token to Addigy platform to complete the bidirectional renewal cycle</li>
+                    <li>Verified automated enrollment remained functional by testing with a demo device through the full ADE workflow</li>
+                    <li>Created comprehensive Scribe documentation with annotated screenshots for future annual renewals, enabling team members to perform the process independently</li>
+                </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    Successfully renewed MDM integration between Addigy and Apple Business Manager with zero 
+                    downtime, maintaining automated enrollment capability for all client Apple devices. The 
+                    Scribe documentation I created enabled other technicians to perform future renewals 
+                    independently, reducing dependency on senior staff and improving team efficiency. This 
+                    proactive documentation approach prevented knowledge silos and ensured business continuity 
+                    for critical annual maintenance tasks.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">Apple Business Manager (ABM)</li>
+                    <li class="skill-badge">Addigy MDM Platform</li>
+                    <li class="skill-badge">Mobile Device Management</li>
+                    <li class="skill-badge">Automated Device Enrollment (ADE)</li>
+                    <li class="skill-badge">Certificate Management</li>
+                    <li class="skill-badge">Token Authentication</li>
+                    <li class="skill-badge">Process Documentation (Scribe)</li>
+                    <li class="skill-badge">Knowledge Transfer</li>
+                </ul>
+            </div>
+        </article>
+        
         <!-- CTA Section -->
         <section class="hero" style="margin-top: var(--space-2xl); text-align: center;">
             <p>
                 These examples represent systematic troubleshooting methodology applied across 
-                identity management, endpoint security, and network infrastructure. Each case 
-                required understanding how different systems interact, following proper security 
+                identity management, endpoint security, mobile device management, and network infrastructure. 
+                Each case required understanding how different systems interact, following proper security 
                 procedures, and documenting solutions for future reference.
             </p>
         </section>
@@ -639,9 +693,5 @@
             <div class="footer-links">
                 <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
                 <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
-                <a href="mailto:nnwaeze@seggsy.co" aria-label="Email">Email</a>
+                <a href="/cdn-cgi/l/email-protection#254b4b5244405f406556404242565c0b464a" aria-label="Email">Email</a>
             </div>
-        </div>
-    </footer>
-</body>
-</html>
