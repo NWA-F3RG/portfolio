@@ -566,54 +566,64 @@
             </div>
         </article>
         
-        <!-- Example 4: Network Infrastructure Support -->
+        <!-- Example 4: Windows 365 Cloud PC Provisioning -->
         <article class="work-example">
-            <h2>Network Infrastructure: Office Move VLAN Reconfiguration</h2>
+            <h2>Cloud Identity: Windows 365 Cloud PC Provisioning Failure</h2>
             
             <div class="example-section">
                 <h3>The Challenge</h3>
                 <p>
-                    Team relocated to a different office suite during a facilities reorganization. When 
-                    they attempted to set up their HP multifunction printer, it wouldn't connect to 
-                    network file shares for scan-to-folder functionality, despite having a valid IP 
-                    address and network connectivity.
+                    End user reported their newly assigned Windows 365 Cloud PC license was not provisioning 
+                    and the Cloud PC was unavailable. The user had a valid license assigned but the 
+                    provisioning workflow never initiated, leaving them without access to their virtual 
+                    workspace.
                 </p>
             </div>
             
             <div class="example-section">
                 <h3>My Approach</h3>
                 <ol>
-                    <li>Verified printer had IP address and could ping gateway - layer 2/3 connectivity was functional</li>
-                    <li>Identified the issue: new office was on guest network VLAN, printer needed infrastructure VLAN for SMB access</li>
-                    <li>Coordinated with network team to determine correct VLAN assignment for new office location</li>
-                    <li>Physically traced ethernet cable from printer to network closet to identify patch panel port</li>
-                    <li>Located corresponding switch port by following patch panel connections</li>
-                    <li>Worked with network team to move patch panel connection to switch with infrastructure VLAN configured</li>
-                    <li>Configured switch port with correct VLAN tag via management interface</li>
-                    <li>Validated printer obtained new IP on correct subnet and could access file shares</li>
+                    <li>Confirmed the correct Windows 365 Cloud PC license was assigned to the user account</li>
+                    <li>User followed up — Cloud PC still not provisioning despite valid license, escalating investigation</li>
+                    <li>Located mirrored user objects in Entra ID (Azure AD) and added user to the MDM-Managed Users WVD group — issue persisted</li>
+                    <li>Identified in the user properties that this was a Cloud PC provisioning issue, not standard Azure Virtual Desktop</li>
+                    <li>Navigated to Intune → Devices → Windows 365 → Provisioning Policies and located the CloudPC Basic Policy</li>
+                    <li>Found the policy was scoped only to the Windows 365 Cloud PC User 16GB – Offshore group — user was missing from this group</li>
+                    <li>Added user to the Windows 365 Cloud PC User 16GB – Offshore provisioning group</li>
+                    <li>Provisioning workflow triggered successfully and Cloud PC became available</li>
                 </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>Root Cause</h3>
+                <p>
+                    For a Windows 365 Cloud PC to provision successfully, a user needs both the correct 
+                    license <em>and</em> membership in the provisioning policy group scoped in Intune. 
+                    The user had the license but was missing from the provisioning policy group. 
+                    A license alone is insufficient — Intune's provisioning policy must also target the user 
+                    for the workflow to initiate.
+                </p>
             </div>
             
             <div class="example-section">
                 <h3>Outcome</h3>
                 <p>
-                    Printer came online on the appropriate network segment with full scan-to-folder 
-                    functionality restored. Users could scan documents directly to their department 
-                    file share. This work required understanding both physical infrastructure (patch 
-                    panels, cable tracing) and logical network design (VLAN segmentation, switch 
-                    port configuration) to properly resolve the issue.
+                    Cloud PC provisioning initiated as expected and the issue was fully resolved. 
+                    This ticket required understanding the full dependency chain across the Microsoft 
+                    cloud stack: license assignment in M365 admin, group membership in Entra ID, 
+                    and provisioning policy scope in Intune — not just surface-level license verification.
                 </p>
             </div>
             
             <div class="example-section">
                 <h3>Skills Demonstrated</h3>
                 <ul class="skills-list">
-                    <li class="skill-badge">VLAN Configuration</li>
-                    <li class="skill-badge">Switch Port Management</li>
-                    <li class="skill-badge">Patch Panel Coordination</li>
-                    <li class="skill-badge">Network Segmentation</li>
-                    <li class="skill-badge">Physical Layer Troubleshooting</li>
-                    <li class="skill-badge">Cross-Team Collaboration</li>
+                    <li class="skill-badge">Windows 365</li>
+                    <li class="skill-badge">Microsoft Intune</li>
+                    <li class="skill-badge">Entra ID / Azure AD</li>
+                    <li class="skill-badge">Provisioning Policy Management</li>
+                    <li class="skill-badge">M365 License Management</li>
+                    <li class="skill-badge">Systematic Troubleshooting</li>
                 </ul>
             </div>
         </article>
