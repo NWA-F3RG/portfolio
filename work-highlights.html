@@ -804,6 +804,116 @@
             </div>
         </article>
         
+        <!-- Example 8: ABM/Addigy Recovery -->
+        <article class="work-example">
+            <h2>MDM Recovery: Apple Business Manager Integration Failure</h2>
+            
+            <div class="example-section">
+                <h3>The Challenge</h3>
+                <p>
+                    After a coworker departed and their access was revoked, the connection between Apple Business 
+                    Manager (ABM) and our Addigy MDM platform broke. This meant zero-touch enrollment was no longer 
+                    working for any Apple devices. New devices purchased from Apple or authorized resellers weren't 
+                    populating in ABM, and the automated device enrollment (ADE) workflow that clients depended on 
+                    was completely broken. The departing admin had been the only ABM administrator.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Discovered the issue when checking Addigy and noticing devices weren't appearing as expected</li>
+                    <li>Traced the problem to the ABM-Addigy token connection, which had been tied to the departed admin's access</li>
+                    <li>Escalated to obtain ABM admin access since the previous admin was the only one with privileges</li>
+                    <li>Once granted access, downloaded new MDM public key certificate from Addigy</li>
+                    <li>Authenticated to ABM using Managed Apple ID and navigated to MDM server preferences</li>
+                    <li>Replaced the expired/broken certificate with the updated public key</li>
+                    <li>Downloaded new MDM server token from ABM and uploaded to Addigy to complete the connection</li>
+                    <li>Reviewed and reconfigured tenant-specific enrollment profiles that had configuration issues</li>
+                    <li>Verified the fix by testing the full ADE workflow with a demo device</li>
+                </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>Root Cause</h3>
+                <p>
+                    The MDM token that connects ABM to Addigy was tied to the departed administrator's access. 
+                    When their account was revoked, the token became invalid, breaking the entire automated 
+                    enrollment pipeline. Additionally, we only had one ABM admin, creating a single point of 
+                    failure for a critical system.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    Restored zero-touch enrollment for 200+ Apple devices across all client tenants. Devices 
+                    purchased from Apple now properly populate in ABM and automatically enroll through Addigy 
+                    when users sign in. Created documentation for the annual token renewal process so other 
+                    technicians could handle it independently, and ensured multiple admins had ABM access to 
+                    prevent future single points of failure.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">Apple Business Manager</li>
+                    <li class="skill-badge">Addigy MDM</li>
+                    <li class="skill-badge">Automated Device Enrollment</li>
+                    <li class="skill-badge">Token/Certificate Management</li>
+                    <li class="skill-badge">Incident Recovery</li>
+                    <li class="skill-badge">Process Documentation</li>
+                </ul>
+            </div>
+        </article>
+        
+        <!-- Example 9: Huntress MITM Response -->
+        <article class="work-example">
+            <h2>Security Response: Man-in-the-Middle Attack Mitigation</h2>
+            
+            <div class="example-section">
+                <h3>The Challenge</h3>
+                <p>
+                    Received a Huntress security alert indicating a potential man-in-the-middle (MITM) attack 
+                    affecting a client endpoint. The alert showed indicators of a compromised session where 
+                    an attacker may have been intercepting or manipulating network traffic.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Reviewed the Huntress alert details to understand the nature and scope of the threat</li>
+                    <li>Identified the affected endpoint and user session</li>
+                    <li>Assessed the risk of lateral movement if the compromised session remained active</li>
+                    <li>Revoked access for the compromised session immediately to prevent further exploitation</li>
+                    <li>Documented the incident and response actions taken</li>
+                </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    Successfully mitigated the threat by revoking access before any lateral movement could occur. 
+                    The quick response prevented the attacker from using the compromised session to access 
+                    additional systems or data. While the detection came from Huntress, recognizing the severity 
+                    and responding quickly was critical to containing the incident.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">Huntress</li>
+                    <li class="skill-badge">Security Monitoring</li>
+                    <li class="skill-badge">Incident Response</li>
+                    <li class="skill-badge">Threat Mitigation</li>
+                    <li class="skill-badge">Access Revocation</li>
+                </ul>
+            </div>
+        </article>
+        
         <!-- CTA Section -->
         <section class="hero" style="margin-top: var(--space-2xl); text-align: center;">
             <p>
