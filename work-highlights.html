@@ -628,42 +628,59 @@
             </div>
         </article>
         
-        <!-- Example 5: Apple Business Manager MDM Token Renewal -->
+        <!-- Example 5: Apple Business Manager MDM Recovery & Documentation -->
         <article class="work-example">
-            <h2>Enterprise MDM: Apple Business Manager Token Renewal</h2>
+            <h2>Enterprise MDM: Apple Business Manager Recovery & Process Documentation</h2>
             
             <div class="example-section">
                 <h3>The Challenge</h3>
                 <p>
-                    Annual MDM token renewal required to maintain automated device enrollment for 200+ Apple 
-                    devices across multiple ZenGuard client organizations. Token expiration would break zero-touch 
-                    provisioning through Apple Business Manager, forcing manual setup for every new device and 
-                    disrupting the automated enrollment experience that clients relied on for efficient device deployment.
+                    After a coworker departed and their access was revoked, the connection between Apple Business 
+                    Manager (ABM) and our Addigy MDM platform broke completely. Zero-touch enrollment stopped working 
+                    for all Apple devices across multiple client organizations. New devices purchased from Apple weren't 
+                    populating in ABM, and the automated device enrollment (ADE) workflow that clients depended on 
+                    was completely broken. The departing admin had been the only ABM administrator, creating a 
+                    single point of failure for a system managing 200+ devices.
                 </p>
             </div>
             
             <div class="example-section">
                 <h3>My Approach</h3>
                 <ol>
-                    <li>Downloaded Addigy MDM public key certificate from the management portal</li>
-                    <li>Authenticated to Apple Business Manager using Managed Apple ID with reserved domain (avoiding authentication conflicts that occur with federated accounts)</li>
-                    <li>Navigated to MDM server preferences and replaced existing certificate with updated public key</li>
-                    <li>Downloaded new MDM server token from Apple Business Manager after certificate acceptance</li>
-                    <li>Uploaded renewed token to Addigy platform to complete the bidirectional renewal cycle</li>
-                    <li>Verified automated enrollment remained functional by testing with a demo device through the full ADE workflow</li>
-                    <li>Created comprehensive Scribe documentation with annotated screenshots for future annual renewals, enabling team members to perform the process independently</li>
+                    <li>Discovered the issue when checking Addigy and noticing devices weren't appearing as expected</li>
+                    <li>Traced the problem to the ABM-Addigy token connection, which had been tied to the departed admin's access</li>
+                    <li>Escalated to obtain ABM admin access since the previous admin was the only one with privileges</li>
+                    <li>Once granted access, downloaded new MDM public key certificate from Addigy</li>
+                    <li>Authenticated to ABM using Managed Apple ID and navigated to MDM server preferences</li>
+                    <li>Replaced the expired/broken certificate with the updated public key</li>
+                    <li>Downloaded new MDM server token from ABM and uploaded to Addigy to complete the connection</li>
+                    <li>Reviewed and reconfigured tenant-specific enrollment profiles that had configuration issues</li>
+                    <li>Verified the fix by testing the full ADE workflow with a demo device</li>
+                    <li>Created comprehensive Scribe documentation with annotated screenshots for future annual renewals</li>
+                    <li>Walked colleagues through the process using test devices to ensure knowledge transfer</li>
+                    <li>Ensured multiple admins had ABM access to prevent future single points of failure</li>
                 </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>Root Cause</h3>
+                <p>
+                    The MDM token that connects ABM to Addigy was tied to the departed administrator's access. 
+                    When their account was revoked, the token became invalid, breaking the entire automated 
+                    enrollment pipeline. The organization had only one ABM admin, which created the single point 
+                    of failure that allowed this disruption to occur.
+                </p>
             </div>
             
             <div class="example-section">
                 <h3>Outcome</h3>
                 <p>
-                    Successfully renewed MDM integration between Addigy and Apple Business Manager with zero 
-                    downtime, maintaining automated enrollment capability for all client Apple devices. The 
-                    Scribe documentation I created enabled other technicians to perform future renewals 
-                    independently, reducing dependency on senior staff and improving team efficiency. This 
-                    proactive documentation approach prevented knowledge silos and ensured business continuity 
-                    for critical annual maintenance tasks.
+                    Restored zero-touch enrollment for 200+ Apple devices across all client tenants with zero 
+                    permanent data loss or extended downtime. Devices purchased from Apple now properly populate 
+                    in ABM and automatically enroll through Addigy when users sign in. The Scribe documentation 
+                    I created enabled other technicians to perform future annual renewals independently, reducing 
+                    dependency on any single person. By ensuring multiple admins had ABM access, I eliminated the 
+                    single point of failure that caused the original incident.
                 </p>
             </div>
             
@@ -674,8 +691,8 @@
                     <li class="skill-badge">Addigy MDM Platform</li>
                     <li class="skill-badge">Mobile Device Management</li>
                     <li class="skill-badge">Automated Device Enrollment (ADE)</li>
-                    <li class="skill-badge">Certificate Management</li>
-                    <li class="skill-badge">Token Authentication</li>
+                    <li class="skill-badge">Token/Certificate Management</li>
+                    <li class="skill-badge">Incident Recovery</li>
                     <li class="skill-badge">Process Documentation (Scribe)</li>
                     <li class="skill-badge">Knowledge Transfer</li>
                 </ul>
@@ -804,71 +821,7 @@
             </div>
         </article>
         
-        <!-- Example 8: ABM/Addigy Recovery -->
-        <article class="work-example">
-            <h2>MDM Recovery: Apple Business Manager Integration Failure</h2>
-            
-            <div class="example-section">
-                <h3>The Challenge</h3>
-                <p>
-                    After a coworker departed and their access was revoked, the connection between Apple Business 
-                    Manager (ABM) and our Addigy MDM platform broke. This meant zero-touch enrollment was no longer 
-                    working for any Apple devices. New devices purchased from Apple or authorized resellers weren't 
-                    populating in ABM, and the automated device enrollment (ADE) workflow that clients depended on 
-                    was completely broken. The departing admin had been the only ABM administrator.
-                </p>
-            </div>
-            
-            <div class="example-section">
-                <h3>My Approach</h3>
-                <ol>
-                    <li>Discovered the issue when checking Addigy and noticing devices weren't appearing as expected</li>
-                    <li>Traced the problem to the ABM-Addigy token connection, which had been tied to the departed admin's access</li>
-                    <li>Escalated to obtain ABM admin access since the previous admin was the only one with privileges</li>
-                    <li>Once granted access, downloaded new MDM public key certificate from Addigy</li>
-                    <li>Authenticated to ABM using Managed Apple ID and navigated to MDM server preferences</li>
-                    <li>Replaced the expired/broken certificate with the updated public key</li>
-                    <li>Downloaded new MDM server token from ABM and uploaded to Addigy to complete the connection</li>
-                    <li>Reviewed and reconfigured tenant-specific enrollment profiles that had configuration issues</li>
-                    <li>Verified the fix by testing the full ADE workflow with a demo device</li>
-                </ol>
-            </div>
-            
-            <div class="example-section">
-                <h3>Root Cause</h3>
-                <p>
-                    The MDM token that connects ABM to Addigy was tied to the departed administrator's access. 
-                    When their account was revoked, the token became invalid, breaking the entire automated 
-                    enrollment pipeline. Additionally, we only had one ABM admin, creating a single point of 
-                    failure for a critical system.
-                </p>
-            </div>
-            
-            <div class="example-section">
-                <h3>Outcome</h3>
-                <p>
-                    Restored zero-touch enrollment for 200+ Apple devices across all client tenants. Devices 
-                    purchased from Apple now properly populate in ABM and automatically enroll through Addigy 
-                    when users sign in. Created documentation for the annual token renewal process so other 
-                    technicians could handle it independently, and ensured multiple admins had ABM access to 
-                    prevent future single points of failure.
-                </p>
-            </div>
-            
-            <div class="example-section">
-                <h3>Skills Demonstrated</h3>
-                <ul class="skills-list">
-                    <li class="skill-badge">Apple Business Manager</li>
-                    <li class="skill-badge">Addigy MDM</li>
-                    <li class="skill-badge">Automated Device Enrollment</li>
-                    <li class="skill-badge">Token/Certificate Management</li>
-                    <li class="skill-badge">Incident Recovery</li>
-                    <li class="skill-badge">Process Documentation</li>
-                </ul>
-            </div>
-        </article>
-        
-        <!-- Example 9: Huntress MITM Response -->
+        <!-- Example 8: Huntress MITM Response -->
         <article class="work-example">
             <h2>Security Response: Man-in-the-Middle Attack Mitigation</h2>
             
