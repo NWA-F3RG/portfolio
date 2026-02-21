@@ -585,11 +585,11 @@
                 <ol>
                     <li>Confirmed the correct Windows 365 Cloud PC license was assigned to the user account</li>
                     <li>User followed up — Cloud PC still not provisioning despite valid license, escalating investigation</li>
-                    <li>Located mirrored user objects in Entra ID (Azure AD) and added user to the MDM-Managed Users WVD group — issue persisted</li>
+                    <li>Located mirrored user objects in Entra ID (Azure AD) and added user to the required MDM device management group — issue persisted</li>
                     <li>Identified in the user properties that this was a Cloud PC provisioning issue, not standard Azure Virtual Desktop</li>
-                    <li>Navigated to Intune → Devices → Windows 365 → Provisioning Policies and located the CloudPC Basic Policy</li>
-                    <li>Found the policy was scoped only to the Windows 365 Cloud PC User 16GB – Offshore group — user was missing from this group</li>
-                    <li>Added user to the Windows 365 Cloud PC User 16GB – Offshore provisioning group</li>
+                    <li>Navigated to Intune → Devices → Windows 365 → Provisioning Policies and located the relevant CloudPC provisioning policy</li>
+                    <li>Found the policy was scoped only to a specific Windows 365 provisioning group — user was missing from this group</li>
+                    <li>Added user to the correct Windows 365 provisioning policy group</li>
                     <li>Provisioning workflow triggered successfully and Cloud PC became available</li>
                 </ol>
             </div>
