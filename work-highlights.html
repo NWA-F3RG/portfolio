@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Real-world IT support examples from 2+ years of enterprise experience - troubleshooting methodology, systems thinking, and technical depth demonstrated through actual work scenarios.">
+    <meta name="description" content="Real-world IT support examples from 3 years of enterprise experience - troubleshooting methodology, systems thinking, and technical depth demonstrated through actual work scenarios.">
     <meta name="keywords" content="IT support, troubleshooting, CyberArk, Active Directory, Entra ID, Microsoft 365, systems administration, privileged access management">
     <meta name="author" content="Nate">
     
@@ -27,7 +27,7 @@
     
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="Work Experience Highlights - Nate">
-    <meta property="og:description" content="Real-world IT support examples demonstrating troubleshooting methodology and systems thinking from 2+ years of enterprise experience.">
+    <meta property="og:description" content="Real-world IT support examples demonstrating troubleshooting methodology and systems thinking from 3 years of enterprise experience.">
     <meta property="og:image" content="https://seggsy.co/og-image.png">
     <meta property="og:url" content="https://seggsy.co/work-highlights">
     <meta property="og:type" content="website">
@@ -678,6 +678,128 @@
                     <li class="skill-badge">Token Authentication</li>
                     <li class="skill-badge">Process Documentation (Scribe)</li>
                     <li class="skill-badge">Knowledge Transfer</li>
+                </ul>
+            </div>
+        </article>
+        
+        <!-- Example 6: PowerShell Printer Deployment Script -->
+        <article class="work-example">
+            <h2>Automation: PowerShell Printer Deployment Script</h2>
+            
+            <div class="example-section">
+                <h3>The Challenge</h3>
+                <p>
+                    Deploying network printers to end-user devices across multiple medical office locations 
+                    was a repetitive, time-consuming process. Each printer addition required opening File Explorer, 
+                    typing the full network path to the print server, scrolling through the printer list, and 
+                    adding printers one at a time. With 30-40+ printers spread across 4-5 doctor's office locations, 
+                    this manual process was eating significant time on routine tickets.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Identified the repetitive workflow: network path entry, scroll, select, repeat</li>
+                    <li>Wrote a PowerShell script that queries available printers and presents a numbered menu</li>
+                    <li>Added location-based filtering so technicians see only relevant printers for each site</li>
+                    <li>Built in verification step that runs Get-Printer after installation to confirm success</li>
+                    <li>Tested across different Windows versions to ensure compatibility</li>
+                </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>The Script Logic</h3>
+                <p>
+                    The script connects to the print server, retrieves the printer list, and displays each 
+                    printer with a number. The technician types the number (or multiple numbers separated by 
+                    commas), the script installs each selected printer, then automatically runs 
+                    <code>Get-Printer</code> to verify the installation succeeded. No more manually navigating 
+                    network paths or hoping the printer actually added.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    Reduced per-device printer setup time from 5+ minutes to under 1 minute. What used to be 
+                    a tedious click-through process became a quick numbered selection. The verification step 
+                    eliminated the "did it actually add?" uncertainty. Other technicians on the team started 
+                    using the script, reducing printer-related ticket time across the board.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">PowerShell Scripting</li>
+                    <li class="skill-badge">Process Automation</li>
+                    <li class="skill-badge">Print Server Management</li>
+                    <li class="skill-badge">User Experience Design</li>
+                    <li class="skill-badge">Tool Development</li>
+                </ul>
+            </div>
+        </article>
+        
+        <!-- Example 7: VPN Authentication Failure Resolution -->
+        <article class="work-example">
+            <h2>Network Identity: VPN Authentication Failure Resolution</h2>
+            
+            <div class="example-section">
+                <h3>The Challenge</h3>
+                <p>
+                    15-20 remote users suddenly unable to authenticate to VPN, all receiving "invalid credentials" 
+                    errors despite entering correct passwords. Users were verified active in Active Directory, 
+                    and local VPN client configurations hadn't changed. The issue appeared to affect all remote 
+                    users simultaneously, suggesting an infrastructure problem rather than individual account issues.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Verified affected user accounts were active and not locked in Active Directory</li>
+                    <li>Confirmed VPN client configurations were unchanged on multiple affected devices</li>
+                    <li>Ruled out local issues since the problem affected all remote users simultaneously</li>
+                    <li>Began tracing the authentication flow: VPN client connects, sends credentials, something validates them</li>
+                    <li>Examined VPN authentication configuration and noticed it was using LDAP to validate against Active Directory</li>
+                    <li>Discovered the environment had multiple domain controllers, and the VPN was configured to authenticate against a specific LDAP server</li>
+                    <li>Identified that the targeted DC may have had issues, causing all LDAP auth requests to fail</li>
+                    <li>Escalated finding to infrastructure team with specific recommendation to check DC health or retarget LDAP</li>
+                </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>Root Cause</h3>
+                <p>
+                    The VPN's LDAP authentication was hardcoded to a specific domain controller that was 
+                    experiencing issues. When that DC couldn't process LDAP bind requests properly, every 
+                    VPN authentication attempt failed with "invalid credentials" even though the credentials 
+                    were correct. The error message was misleading because the actual problem was the LDAP 
+                    server, not the credentials themselves.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    Infrastructure team confirmed the diagnosis and updated the VPN configuration to target 
+                    a healthy domain controller. VPN authentication was restored same-day rather than waiting 
+                    for the next maintenance window. The key insight was recognizing that "invalid credentials" 
+                    doesn't always mean the credentials are wrong; it can mean the authentication backend 
+                    failed to validate them.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">VPN Troubleshooting</li>
+                    <li class="skill-badge">LDAP Authentication</li>
+                    <li class="skill-badge">Active Directory</li>
+                    <li class="skill-badge">Root Cause Analysis</li>
+                    <li class="skill-badge">Cross-Team Collaboration</li>
+                    <li class="skill-badge">Infrastructure Debugging</li>
                 </ul>
             </div>
         </article>
