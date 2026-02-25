@@ -628,7 +628,72 @@
             </div>
         </article>
         
-        <!-- Example 5: Apple Business Manager MDM Recovery & Documentation -->
+        <!-- Example 5: Windows 365 Cloud PC Authentication Failure (TokenBroker) -->
+        <article class="work-example">
+            <h2>Cloud Identity: Windows 365 Cloud PC Authentication Failure (HTTP 400 / TokenBroker Cache)</h2>
+            
+            <div class="example-section">
+                <h3>The Challenge</h3>
+                <p>
+                    A user was unable to connect to their Windows 365 Cloud PC via the Remote Desktop app (msrdc.exe). 
+                    The connection failed with an HTTP 400 error during the authentication flow, and Remote Desktop 
+                    would not complete the login sequence. A 400 (Bad Request) on an RDP auth flow doesn't point 
+                    to an obvious cause at the surface level — it looked like it could be a network issue, a license 
+                    issue, or a client version problem before digging into logs.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Confirmed the user was running msrdc.exe (Win32 Remote Desktop), not the Microsoft Store version — relevant because the Store app has a different reset path, and the Store is blocked in this environment</li>
+                    <li>Verified Remote Desktop cache folders — no MS Store package folder present, ruling out a Store app cache issue</li>
+                    <li>Navigated to Event Viewer &#x2192; Applications and Services Logs &#x2192; Microsoft &#x2192; Windows &#x2192; AAD &#x2192; Operational on the local device</li>
+                    <li>Found multiple entries for Event IDs 1097 and 1241 (AADTokenBrokerPlugin), indicating stale or mismatched Azure AD authentication context</li>
+                    <li>Logs confirmed TokenBroker was attempting partial resets of its auth state, and that msrdc was querying a Microsoft login endpoint with a stale or invalid resource tenant value — producing the 400</li>
+                    <li>Determined that clearing the TokenBroker cache contents (not the folder itself) was safe and aligned with Microsoft support procedures for repairing broken AAD authentication states</li>
+                    <li>Cleared all contents inside <code>%localappdata%\Microsoft\TokenBroker\Cache</code> without deleting the folder</li>
+                    <li>Initiated reboot so Windows could rebuild a clean authentication state on next login</li>
+                </ol>
+            </div>
+            
+            <div class="example-section">
+                <h3>Root Cause</h3>
+                <p>
+                    The user had corrupted or stale TokenBroker cached tokens (.TBRES files) in the local AAD/WAM 
+                    token metadata cache. When msrdc attempted to authenticate, it used these stale tokens to query 
+                    a Microsoft login endpoint, which returned HTTP 400 because the resource tenant value was no 
+                    longer valid. The fix required clearing the cache so Windows could regenerate fresh WAM/AAD tokens 
+                    on reboot &#x2014; not a network issue, not a license issue, and not visible without knowing to 
+                    look in the AAD Operational event log on the local device.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    After reboot, the user confirmed no issues connecting to their Cloud PC. Windows regenerated 
+                    fresh WAM/AAD tokens, msrdc successfully requested new access and refresh tokens, and the 
+                    authentication endpoint resolved correctly with no further 400 errors. Event IDs 1097/1241 
+                    stopped appearing in the AAD Operational log.
+                </p>
+            </div>
+            
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">Windows 365</li>
+                    <li class="skill-badge">Entra ID / Azure AD</li>
+                    <li class="skill-badge">Event Viewer (AAD Operational)</li>
+                    <li class="skill-badge">WAM / TokenBroker</li>
+                    <li class="skill-badge">msrdc / Remote Desktop</li>
+                    <li class="skill-badge">AAD Authentication Forensics</li>
+                    <li class="skill-badge">Systematic Troubleshooting</li>
+                </ul>
+            </div>
+        </article>
+        
+        <!-- Example 6: Apple Business Manager MDM Recovery & Documentation -->
         <article class="work-example">
             <h2>Enterprise MDM: Apple Business Manager Recovery & Process Documentation</h2>
             

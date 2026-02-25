@@ -985,7 +985,7 @@
                         <li>Audited AD permissions for access requests, identifying overprivileged accounts and coordinating with data owners to tighten access across file shares and applications</li>
                         <li>Resolved printer scan-to-file failures by identifying DNS name resolution issues and reconfiguring scan paths to use IP addresses, including setting up service accounts with proper permissions for network folder access</li>
                         <li>Guided remote users through Intune MDM enrollment without line-of-sight access to their devices, verbally walking non-technical users through profile installation and compliance verification to enable secure access to corporate apps</li>
-                        <li>Resolved Windows 365 Cloud PC provisioning failures by tracing the dependency chain from license assignment through Entra ID group membership to Intune provisioning policy scope, identifying missing group assignment as root cause and restoring the provisioning workflow</li>
+                        <li>Diagnosed Windows 365 Cloud PC failures across two distinct issue types: traced provisioning failures through the license → Entra ID group → Intune policy scope dependency chain to identify missing group assignments; separately resolved authentication failures by pulling AAD Operational logs from Event Viewer on the local device (Event IDs 1097 &amp; 1241), confirming corrupted TokenBroker cache as the source of HTTP 400 errors during msrdc login</li>
                     </ul>
                 </div>
                 
