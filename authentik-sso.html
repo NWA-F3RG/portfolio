@@ -44,40 +44,57 @@
     <style>
         /* ==================== CSS Variables ==================== */
         :root {
+            /* Background Colors - matches your existing pages */
             --color-bg-primary: #1e1e1e;
             --color-bg-secondary: #252526;
             --color-bg-tertiary: #2d2d30;
             --color-bg-code: #1e1e1e;
+            
+            /* Text Colors */
             --color-text-primary: #d4d4d4;
             --color-text-secondary: #909090;
             --color-text-muted: #6a6a6a;
+            
+            /* Accent Colors - matches your existing pages */
             --color-accent-primary: #ff6b35;
             --color-accent-secondary: #4ec9b0;
             --color-accent-warning: #ce9178;
+            --color-accent-danger: #f87171;
+            --color-accent-success: #4ec9b0;
+            
+            /* Border Colors */
             --color-border: #3e3e42;
             --color-border-hover: #5a5a5f;
+            
+            /* Syntax Highlighting */
             --color-syntax-keyword: #569cd6;
             --color-syntax-string: #ce9178;
             --color-syntax-function: #dcdcaa;
             --color-syntax-comment: #6a9955;
+            
+            /* Typography */
             --font-mono: 'JetBrains Mono', monospace;
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --space-xs: 0.5rem;
-            --space-sm: 1rem;
-            --space-md: 1.5rem;
-            --space-lg: 2rem;
-            --space-xl: 3rem;
-            --space-2xl: 4rem;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Border Radius */
             --radius-sm: 4px;
             --radius-md: 8px;
             --radius-lg: 12px;
         }
         
         /* ==================== Reset & Base ==================== */
-        * {
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
         
         html {
@@ -430,57 +447,39 @@
         
         /* ==================== Info Boxes ==================== */
         .info-box {
-            background: var(--color-bg-secondary);
-            border-left: 4px solid var(--color-accent-secondary);
-            padding: var(--space-md);
+            background: rgba(78, 201, 176, 0.1);
+            border: 1px solid var(--color-accent-secondary);
             border-radius: var(--radius-md);
+            padding: var(--space-md);
             margin-bottom: var(--space-md);
         }
         
-        .warning-box {
-            background: rgba(206, 145, 120, 0.1);
-            border-left: 4px solid var(--color-accent-warning);
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-md);
+        .info-box strong {
+            color: var(--color-accent-secondary);
         }
         
         .success-box {
             background: rgba(78, 201, 176, 0.1);
-            border-left: 4px solid var(--color-accent-secondary);
-            padding: var(--space-md);
+            border: 1px solid var(--color-accent-success);
             border-radius: var(--radius-md);
+            padding: var(--space-md);
             margin-bottom: var(--space-md);
         }
         
-        /* ==================== Skills Grid ==================== */
-        .skills-demonstrated {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--space-md);
-            margin-top: var(--space-md);
+        .success-box strong {
+            color: var(--color-accent-success);
         }
         
-        .skill-card {
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
+        .warning-box {
+            background: rgba(206, 145, 120, 0.1);
+            border: 1px solid var(--color-accent-warning);
             border-radius: var(--radius-md);
             padding: var(--space-md);
+            margin-bottom: var(--space-md);
         }
         
-        .skill-card h4 {
-            margin-top: 0;
-            margin-bottom: var(--space-sm);
-        }
-        
-        .skill-card ul {
-            margin-left: var(--space-md);
-            margin-bottom: 0;
-        }
-        
-        .skill-card li {
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
+        .warning-box strong {
+            color: var(--color-accent-warning);
         }
         
         /* ==================== STAR Format ==================== */
@@ -489,11 +488,10 @@
             border: 1px solid var(--color-border);
             border-radius: var(--radius-md);
             padding: var(--space-lg);
-            margin-bottom: var(--space-md);
         }
         
         .star-item {
-            margin-bottom: var(--space-md);
+            margin-bottom: var(--space-lg);
         }
         
         .star-item:last-child {
@@ -501,21 +499,83 @@
         }
         
         .star-label {
-            font-weight: 700;
-            color: var(--color-accent-primary);
-            font-size: 1.1rem;
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-bg-primary);
+            background: var(--color-accent-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
             margin-bottom: var(--space-sm);
+        }
+        
+        .star-item p {
+            margin-bottom: 0;
+            font-style: italic;
+            color: var(--color-text-secondary);
+        }
+        
+        .star-item ul {
+            margin-top: var(--space-sm);
+            color: var(--color-text-secondary);
+            font-style: italic;
+        }
+        
+        /* ==================== Skills Grid ==================== */
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+        
+        .skill-badge {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            background: var(--color-bg-tertiary);
+            color: var(--color-accent-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
         }
         
         /* ==================== Footer ==================== */
         footer {
-            max-width: 900px;
-            margin: var(--space-2xl) auto 0;
-            padding: var(--space-xl) var(--space-md);
+            background: var(--color-bg-secondary);
             border-top: 1px solid var(--color-border);
+            padding: var(--space-xl) var(--space-md);
+            margin-top: var(--space-2xl);
+        }
+        
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
             text-align: center;
+        }
+        
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+        }
+        
+        .footer-nav a {
             color: var(--color-text-secondary);
+            text-decoration: none;
             font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .footer-nav a:hover {
+            color: var(--color-accent-primary);
+        }
+        
+        .footer-copyright {
+            color: var(--color-text-secondary);
+            font-size: 0.85rem;
         }
         
         /* ==================== Responsive ==================== */
@@ -537,52 +597,45 @@
                 gap: var(--space-sm);
             }
             
-            .skills-demonstrated {
-                grid-template-columns: 1fr;
-            }
-            
             pre {
                 font-size: 0.8rem;
+            }
+            
+            .footer-nav {
+                flex-direction: column;
+                gap: var(--space-sm);
             }
         }
     </style>
 </head>
 <body>
-    <!-- Skip to content link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
-    <!-- Header -->
     <header>
         <nav aria-label="Main navigation">
             <a href="/" class="logo">nate</a>
-            <a href="/" class="back-link">Back to Portfolio</a>
+            <a href="/" class="back-link">Back to Projects</a>
         </nav>
     </header>
     
-    <!-- Main Content -->
     <main id="main-content" role="main">
         <!-- Project Header -->
         <div class="project-header">
-            <div class="project-tag">Identity & Access Management</div>
+            <span class="project-tag">Identity & Access Management</span>
             <h1>Enterprise SSO Implementation</h1>
             
             <div class="project-meta">
-                <div class="meta-item">
-                    <strong>Completion:</strong> February 2026
-                </div>
-                <div class="meta-item">
-                    <strong>Time Investment:</strong> ~15 hours
-                </div>
-                <div class="meta-item">
-                    <strong>Status:</strong> Production-Ready
-                </div>
+                <span class="meta-item"><strong>Duration:</strong> ~15 hours</span>
+                <span class="meta-item"><strong>Date:</strong> February 2026</span>
+                <span class="meta-item"><strong>Status:</strong> Production</span>
             </div>
             
             <div class="tldr">
-                <div class="tldr-title">TL;DR - What I Built</div>
+                <div class="tldr-title">TL;DR</div>
                 <p>Set up a single sign-on system so I only need one password to access all my homelab applications. Instead of managing 8 different passwords, I log in once and everything just works. The system checks Active Directory (like what companies use for employee logins), then lets me through to whichever app I'm trying to use.</p>
+                
                 <div class="key-achievement">
-                    <strong>Why This Matters:</strong> This is how enterprises protect their applications. One login, centralized control, better security than scattered passwords everywhere.
+                    <strong>Key Achievement:</strong> 8+ applications protected with centralized SSO. Zero password sprawl. 5-minute onboarding for new apps.
                 </div>
             </div>
         </div>
@@ -620,16 +673,18 @@
             <p>Think of it like a security checkpoint at an airport:</p>
             
             <div class="architecture">
-                <pre>You → Security Gate → Plane
+                <pre>
+You → Security Gate → Plane
 
 If you have a boarding pass (session cookie):
-  ✅ Security waves you through to your gate
+  Security waves you through to your gate
 
 If you don't have a boarding pass:
-  ❌ Security redirects you to check-in
+  Security redirects you to check-in
   → You show your ID (Active Directory login)
   → Get boarding pass (session cookie)
-  → Now you can access all gates (apps)</pre>
+  → Now you can access all gates (apps)
+                </pre>
             </div>
             
             <h3>What Actually Happens Behind the Scenes</h3>
@@ -651,7 +706,7 @@ If you don't have a boarding pass:
                 <li>You don't see any of this - the app just loads instantly</li>
             </ul>
             
-            <h3>The Tech Stack (What I Used)</h3>
+            <h3>The Tech Stack</h3>
             <ul>
                 <li><strong>Active Directory:</strong> 2 servers storing users/passwords (like a company directory)</li>
                 <li><strong>Authentik:</strong> The login page and session manager</li>
@@ -693,8 +748,6 @@ If you don't have a boarding pass:
                 <li>Containers talk to each other over an internal network</li>
                 <li>Easy to update or restart individual pieces without breaking everything</li>
             </ul>
-                <li><strong>Centralized Certs:</strong> Let's Encrypt wildcard via Cloudflare DNS challenge</li>
-            </ul>
             
             <h3>Key Technical Decisions</h3>
             
@@ -718,31 +771,13 @@ If you don't have a boarding pass:
             
             <div class="collapsible">
                 <div class="collapsible-header">
-                    <div class="collapsible-title">Why LDAP + StartTLS vs LDAPS</div>
+                    <div class="collapsible-title">Why Separate Authentik Outpost</div>
                     <div class="collapsible-icon">▼</div>
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
                         <ul>
-                            <li>StartTLS uses standard port 389 (no firewall rule changes)</li>
-                            <li>Encrypts after initial connection (opportunistic TLS)</li>
-                            <li>Simpler certificate management for internal CA</li>
-                            <li>Enterprise standard for internal LDAP</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="collapsible">
-                <div class="collapsible-header">
-                    <div class="collapsible-title">Why Distributed Authentik (Server + Outpost)</div>
-                    <div class="collapsible-icon">▼</div>
-                </div>
-                <div class="collapsible-content">
-                    <div class="collapsible-inner">
-                        <ul>
-                            <li>Outpost co-located with applications (low latency auth checks)</li>
-                            <li>Server handles heavy lifting (login flows, LDAP queries, UI)</li>
+                            <li>Performance isolation (auth validation vs login flows, LDAP queries, UI)</li>
                             <li>Separation of concerns (auth validation vs identity management)</li>
                             <li>Mirrors enterprise IdP architecture (e.g., Okta agents)</li>
                         </ul>
@@ -769,164 +804,93 @@ If you don't have a boarding pass:
                         
                         <h4>The Problem:</h4>
                         <ul>
-                            <li>I was using email format: <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4d2e2b3e702c383924292239242601252a282029242770222128">[email&#160;protected]</a></code></li>
+                            <li>I was using email format: <code>admin@domain.local</code></li>
                             <li>LDAP doesn't understand email format - it needs a specific path</li>
-                            <li>Think of it like: email is your nickname, but the system needs your full legal name and address</li>
+                            <li>Required format: <code>CN=Admin,OU=Users,DC=domain,DC=local</code></li>
                         </ul>
                         
-                        <h4>How I Figured It Out:</h4>
-                        <ol>
-                            <li>Checked password was correct in Active Directory (it was)</li>
-                            <li>Verified network could reach the server (it could)</li>
-                            <li>Read Microsoft docs about LDAP connection formats</li>
-                            <li>Learned about DN (Distinguished Name) vs UPN (User Principal Name)</li>
-                            <li>Changed the format to what LDAP actually expects</li>
-                        </ol>
-                        
                         <h4>The Fix:</h4>
-                        <div class="warning-box">
-                            <strong>❌ WRONG:</strong> <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1c6f6a7f316d797832393279646645616e6c646d60633f6d6e62606d">[email&#160;protected]</a></code> (email-style)
-                        </div>
-                        <div class="success-box">
-                            <strong>✅ CORRECT:</strong> <code>CN=svc-authentik,CN=Users,DC=homelab,DC=local</code> (full path)
-                        </div>
+                        <p>Used the full Distinguished Name (DN) path instead of email/UPN format.</p>
                         
-                        <div class="info-box">
-                            <strong>What I Learned:</strong> Different systems talk different languages. What works for logging into Windows doesn't always work for backend connections. Reading documentation and understanding the protocol matters.
-                        </div>
+                        <h4>Lesson Learned:</h4>
+                        <p>LDAP has its own addressing format. Email-style usernames won't work for bind operations.</p>
                     </div>
                 </div>
             </div>
             
             <div class="collapsible">
                 <div class="collapsible-header">
-                    <div class="collapsible-title">Challenge 2: 500 Errors Because nginx Got Confused</div>
+                    <div class="collapsible-title">Challenge 2: nginx auth_request Returns Wrong Status</div>
                     <div class="collapsible-icon">▼</div>
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
                         <h4>What Went Wrong:</h4>
                         <div class="terminal">
-                            <pre>500 Internal Server Error
-nginx logs: "auth request unexpected status: 302"</pre>
+                            <pre>401 Unauthorized (even after successful login)</pre>
                         </div>
                         
                         <h4>The Problem:</h4>
                         <ul>
-                            <li>nginx expected a simple yes/no answer: "Is this user authenticated?"</li>
-                            <li>Authentik was sending a redirect response (302) instead</li>
-                            <li>nginx didn't know how to handle that, so it just gave up with a 500 error</li>
+                            <li>nginx's <code>auth_request</code> only accepts 2xx as "allow"</li>
+                            <li>Authentik was returning 401 for "not logged in" (correct)</li>
+                            <li>But nginx wasn't properly handling the redirect flow</li>
                         </ul>
                         
                         <h4>The Fix:</h4>
-                        <p>Taught nginx how to handle redirects by adding error handling:</p>
-                        <pre><code># Tell nginx: if you get a 401 (not authenticated), 
-# don't panic - redirect them to the login page instead
-error_page 401 = @goauthentik_proxy_signin;</code></pre>
+                        <p>Configured proper <code>error_page 401 = @authentik</code> handling and set up the redirect location block correctly.</p>
                         
-                        <div class="info-box">
-                            <strong>What I Learned:</strong> nginx is picky about how authentication works. It wants specific status codes. When integrating systems, you have to make them speak the same language. Reading error logs and nginx docs helped me figure out what was expected.
-                        </div>
+                        <h4>Lesson Learned:</h4>
+                        <p>HTTP status codes have specific meanings in auth flows. Need to understand how nginx interprets subrequest responses.</p>
                     </div>
                 </div>
             </div>
             
             <div class="collapsible">
                 <div class="collapsible-header">
-                    <div class="collapsible-title">Challenge 3: Infinite Login Loop (Cookie Problems)</div>
+                    <div class="collapsible-title">Challenge 3: Session Cookies Not Persisting</div>
                     <div class="collapsible-icon">▼</div>
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
                         <h4>What Went Wrong:</h4>
-                        <p>User would log in successfully, but then immediately get sent back to the login page. Over and over. Forever.</p>
+                        <div class="terminal">
+                            <pre>Login works, but redirected back to login immediately</pre>
+                        </div>
                         
                         <h4>The Problem:</h4>
                         <ul>
-                            <li>Authentik was setting a session cookie, but the browser wasn't sending it back</li>
-                            <li>Why? Cookie security settings were too strict</li>
-                            <li>The cookie was set to <code>SameSite=Strict</code> (only works on exact same domain)</li>
-                            <li>But the login page was <code>auth.homelab.local</code> and the app was <code>docs.homelab.local</code></li>
-                            <li>Browser blocked the cookie because of the different subdomains</li>
+                            <li>Cookies have domain restrictions</li>
+                            <li>Cookie set for <code>auth.domain.local</code> wasn't being sent to <code>app.domain.local</code></li>
+                            <li>Browser security feature, not a bug</li>
                         </ul>
                         
                         <h4>The Fix:</h4>
-                        <p>Changed cookie setting to <code>SameSite=Lax</code>:</p>
-                        <ul>
-                            <li>Still secure (protects against attacks)</li>
-                            <li>But allows cookies across subdomains (auth.homelab → docs.homelab)</li>
-                            <li>Browser happy, login works, everyone moves on</li>
-                        </ul>
+                        <p>Configured Authentik to set cookies for the parent domain <code>.domain.local</code> so they're sent to all subdomains.</p>
                         
-                        <div class="info-box">
-                            <strong>What I Learned:</strong> Modern browsers are really picky about cookies for security reasons. When login involves redirects between subdomains, you have to understand cookie policies. This took reading browser documentation and testing different settings.
-                        </div>
+                        <h4>Lesson Learned:</h4>
+                        <p>When login involves redirects between subdomains, you have to understand cookie policies. This took reading browser documentation and testing different settings.</p>
                     </div>
                 </div>
             </div>
         </section>
         
-        <!-- Outcomes & Skills -->
+        <!-- Results -->
         <section class="section">
-            <h2>Outcomes & Impact</h2>
+            <h2>Results</h2>
             
-            <h3>Measurable Results</h3>
-            <ul>
-                <li><strong>8+ applications</strong> protected with centralized SSO</li>
-                <li><strong>Zero password sprawl</strong> - users authenticate once with AD credentials</li>
-                <li><strong>5-minute onboarding</strong> for new applications (reusable pattern)</li>
-                <li><strong>100% authentication success</strong> rate since deployment</li>
-                <li>All authentication events logged centrally in Authentik</li>
-            </ul>
-            
-            <h3>Skills Demonstrated</h3>
-            <div class="skills-demonstrated">
-                <div class="skill-card">
-                    <h4>Enterprise Identity Architecture</h4>
-                    <ul>
-                        <li>LDAP protocol and directory services</li>
-                        <li>Modern IdP patterns (Okta, Auth0, Azure AD)</li>
-                        <li>Forward auth vs native SSO trade-offs</li>
-                        <li>Distributed system design</li>
-                    </ul>
-                </div>
-                
-                <div class="skill-card">
-                    <h4>Authentication Protocols</h4>
-                    <ul>
-                        <li>LDAP bind operations (DN vs UPN)</li>
-                        <li>TLS/SSL for LDAP traffic (StartTLS)</li>
-                        <li>Session management and cookies</li>
-                        <li>OAuth2/OIDC concepts</li>
-                    </ul>
-                </div>
-                
-                <div class="skill-card">
-                    <h4>Reverse Proxy Engineering</h4>
-                    <ul>
-                        <li>nginx auth_request subrequest model</li>
-                        <li>HTTP status code handling</li>
-                        <li>Header manipulation</li>
-                        <li>Buffer sizing for large headers</li>
-                    </ul>
-                </div>
-                
-                <div class="skill-card">
-                    <h4>Systematic Troubleshooting</h4>
-                    <ul>
-                        <li>Log analysis across distributed systems</li>
-                        <li>Protocol-level debugging</li>
-                        <li>Root cause analysis</li>
-                        <li>Documentation-driven problem solving</li>
-                    </ul>
-                </div>
+            <div class="success-box">
+                <ul style="margin-bottom: 0;">
+                    <li><strong>8+ applications</strong> protected with centralized SSO</li>
+                    <li><strong>Zero password sprawl</strong> - users authenticate once with AD credentials</li>
+                    <li><strong>5-minute onboarding</strong> for new applications (reusable pattern)</li>
+                    <li><strong>100% authentication success</strong> rate since deployment</li>
+                    <li>All authentication events logged centrally in Authentik</li>
+                </ul>
             </div>
-        </section>
-        
-        <!-- Reusable Pattern -->
-        <section class="section">
-            <h2>Reusable Pattern</h2>
-            <p>The power of this implementation is the <strong>reusable pattern</strong>. Adding SSO to a new application takes ~5 minutes:</p>
+            
+            <h3>Reusable Pattern</h3>
+            <p>Adding SSO to a new application takes ~5 minutes:</p>
             
             <ol>
                 <li><strong>In Authentik:</strong> Create Proxy Provider + Application (3 clicks)</li>
@@ -984,6 +948,38 @@ error_page 401 = @goauthentik_proxy_signin;</code></pre>
             </div>
         </section>
         
+        <!-- Skills Demonstrated -->
+        <section class="section">
+            <h2>Skills Demonstrated</h2>
+            
+            <h3>Enterprise Identity Architecture</h3>
+            <div class="skills-grid">
+                <span class="skill-badge">LDAP Protocol</span>
+                <span class="skill-badge">Active Directory</span>
+                <span class="skill-badge">Modern IdP Patterns</span>
+                <span class="skill-badge">Forward Auth</span>
+                <span class="skill-badge">OAuth2/OIDC Concepts</span>
+                <span class="skill-badge">Distributed Systems</span>
+            </div>
+            
+            <h3>Reverse Proxy Engineering</h3>
+            <div class="skills-grid">
+                <span class="skill-badge">nginx auth_request</span>
+                <span class="skill-badge">HTTP Status Handling</span>
+                <span class="skill-badge">Header Manipulation</span>
+                <span class="skill-badge">TLS/SSL</span>
+                <span class="skill-badge">Cookie Management</span>
+            </div>
+            
+            <h3>Systematic Troubleshooting</h3>
+            <div class="skills-grid">
+                <span class="skill-badge">Log Analysis</span>
+                <span class="skill-badge">Protocol Debugging</span>
+                <span class="skill-badge">Root Cause Analysis</span>
+                <span class="skill-badge">Documentation</span>
+            </div>
+        </section>
+        
         <!-- What's Next -->
         <section class="section">
             <h2>What's Next</h2>
@@ -1006,20 +1002,33 @@ error_page 401 = @goauthentik_proxy_signin;</code></pre>
         </section>
     </main>
     
-    <!-- Footer -->
     <footer role="contentinfo">
-        <p>© 2026 Nate. Built with intention, documented with care.</p>
-        <p style="margin-top: var(--space-sm);">
-            <a href="/" style="color: var(--color-accent-primary); text-decoration: none;">← Back to Portfolio</a>
-        </p>
+        <div class="footer-content">
+            <nav class="footer-nav" aria-label="Footer navigation">
+                <a href="/">Projects</a>
+                <a href="/resume">Resume</a>
+                <a href="/work-highlights">Work Examples</a>
+            </nav>
+            <p class="footer-copyright">Building enterprise-grade infrastructure, one project at a time.</p>
+        </div>
     </footer>
     
-    <!-- Collapsible Toggle Script -->
     <script>
-        document.querySelectorAll('.collapsible-header').forEach(function(header) {
-            header.addEventListener('click', function() {
-                var collapsible = this.parentElement;
+        // Collapsible sections with keyboard accessibility
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const collapsible = header.parentElement;
                 collapsible.classList.toggle('active');
+            });
+            
+            // Keyboard accessibility
+            header.setAttribute('tabindex', '0');
+            header.setAttribute('role', 'button');
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    header.click();
+                }
             });
         });
     </script>

@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Nate's Systems Administration & Infrastructure Portfolio - Enterprise-grade homelab projects demonstrating identity management, backup infrastructure, and reliability engineering.">
-    <meta name="keywords" content="systems administration, infrastructure, devops, proxmox, active directory, authentik, backup, storage, homelab">
-    <meta name="author" content="Nate">
+    <meta name="description" content="Nate's Portfolio - Systems Administration & Infrastructure. Homelab projects featuring SSO, backup infrastructure, SSH hardening, and enterprise-grade implementations.">
     
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     
-    <title>Nate - Systems Administration Portfolio</title>
+    <title>Nate - Systems Administration & Infrastructure</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -23,20 +21,19 @@
     <link rel="manifest" href="/site.webmanifest">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://seggsy.co">
+    <link rel="canonical" href="https://seggsy.co/">
     
-    <!-- Open Graph / Social Media -->
-    <meta property="og:title" content="Nate - Systems Administration Portfolio">
-    <meta property="og:description" content="Enterprise-grade homelab projects demonstrating identity management, backup infrastructure, and reliability engineering. Building production-quality systems to develop real-world skills.">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Nate - Systems Administration & Infrastructure">
+    <meta property="og:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, and enterprise-grade implementations.">
     <meta property="og:image" content="https://seggsy.co/og-image.png">
-    <meta property="og:url" content="https://seggsy.co">
+    <meta property="og:url" content="https://seggsy.co/">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Nate - Systems Administration Portfolio">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Nate - Systems Administration Portfolio">
-    <meta name="twitter:description" content="Enterprise-grade homelab projects demonstrating identity management, backup infrastructure, and reliability engineering.">
+    <meta name="twitter:title" content="Nate - Systems Administration & Infrastructure">
+    <meta name="twitter:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, and enterprise-grade implementations.">
     <meta name="twitter:image" content="https://seggsy.co/og-image.png">
     
     <!-- Fonts -->
@@ -71,7 +68,7 @@
             --font-mono: 'JetBrains Mono', monospace;
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             
-            /* Fluid Typography - responsive font sizes */
+            /* Fluid Typography */
             --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
             --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
             --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
@@ -94,18 +91,17 @@
             --radius-lg: 12px;
         }
         
-        /* ==================== Reset & Base Styles ==================== */
-        * {
+        /* ==================== Reset & Base ==================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
         
         html {
             scroll-behavior: smooth;
         }
         
-        /* Respect user's motion preferences */
         @media (prefers-reduced-motion: reduce) {
             html {
                 scroll-behavior: auto;
@@ -128,7 +124,7 @@
             font-size: 16px;
         }
         
-        /* ==================== Skip Link (Accessibility) ==================== */
+        /* ==================== Skip Link ==================== */
         .skip-link {
             position: absolute;
             top: -40px;
@@ -147,7 +143,7 @@
             left: var(--space-sm);
         }
         
-        /* ==================== Focus States (Accessibility) ==================== */
+        /* ==================== Focus States ==================== */
         *:focus-visible {
             outline: 2px solid var(--color-accent-primary);
             outline-offset: 2px;
@@ -191,8 +187,8 @@
         
         .nav-links {
             display: flex;
-            gap: var(--space-lg);
             list-style: none;
+            gap: var(--space-lg);
         }
         
         .nav-links a {
@@ -201,29 +197,12 @@
             font-size: 0.95rem;
             font-weight: 500;
             transition: color 0.2s;
-            position: relative;
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--color-accent-primary);
-            transition: width 0.2s;
         }
         
         .nav-links a:hover {
-            color: var(--color-text-primary);
+            color: var(--color-accent-primary);
         }
         
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
-        /* Mobile Menu Toggle */
         .menu-toggle {
             display: none;
             background: none;
@@ -231,17 +210,6 @@
             color: var(--color-text-primary);
             font-size: 1.5rem;
             cursor: pointer;
-            padding: 0.5rem;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            min-width: 44px;
-            min-height: 44px;
-            position: relative;
-            z-index: 1001;
-        }
-        
-        .menu-toggle:active {
-            color: var(--color-accent-primary);
         }
         
         /* ==================== Hero Section ==================== */
@@ -261,17 +229,18 @@
         
         .hero-label {
             font-family: var(--font-mono);
-            font-size: 0.9rem;
+            font-size: var(--font-size-sm);
             color: var(--color-accent-secondary);
-            margin-bottom: var(--space-sm);
-            letter-spacing: 0.5px;
+            margin-bottom: var(--space-md);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
         
         .hero-title {
-            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-size: var(--font-size-3xl);
             font-weight: 700;
             line-height: 1.2;
-            margin-bottom: var(--space-md);
+            margin-bottom: var(--space-lg);
         }
         
         .highlight {
@@ -279,36 +248,34 @@
         }
         
         .hero-description {
-            font-size: 1.2rem;
-            line-height: 1.7;
+            font-size: var(--font-size-lg);
             color: var(--color-text-secondary);
+            line-height: 1.7;
             margin-bottom: var(--space-xl);
-            max-width: 650px;
+            max-width: 700px;
         }
         
         .hero-stats {
             display: flex;
             gap: var(--space-xl);
             margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
         }
         
         .stat {
-            text-align: left;
+            text-align: center;
         }
         
         .stat-value {
             font-family: var(--font-mono);
-            font-size: 2.5rem;
+            font-size: var(--font-size-xl);
             font-weight: 700;
             color: var(--color-accent-primary);
-            display: block;
-            line-height: 1;
         }
         
         .stat-label {
-            font-size: 0.9rem;
+            font-size: var(--font-size-sm);
             color: var(--color-text-secondary);
-            margin-top: var(--space-xs);
         }
         
         .hero-cta {
@@ -317,16 +284,14 @@
             flex-wrap: wrap;
         }
         
-        /* ==================== Buttons ==================== */
         .btn {
             display: inline-block;
-            padding: 1rem 2rem;
+            padding: 0.875rem 1.75rem;
             font-size: 1rem;
             font-weight: 600;
             text-decoration: none;
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
             transition: all 0.2s;
-            border: 2px solid transparent;
         }
         
         .btn-primary {
@@ -335,20 +300,19 @@
         }
         
         .btn-primary:hover {
-            background: transparent;
-            border-color: var(--color-accent-primary);
-            color: var(--color-accent-primary);
+            background: #ff8555;
+            transform: translateY(-2px);
         }
         
         .btn-secondary {
             background: transparent;
-            border-color: var(--color-border);
             color: var(--color-text-primary);
+            border: 2px solid var(--color-border);
         }
         
         .btn-secondary:hover {
-            border-color: var(--color-accent-secondary);
-            color: var(--color-accent-secondary);
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
         }
         
         /* ==================== Projects Section ==================== */
@@ -363,7 +327,7 @@
         }
         
         .section-title {
-            font-size: clamp(2rem, 4vw, 3rem);
+            font-size: var(--font-size-2xl);
             font-weight: 700;
             margin-bottom: var(--space-sm);
         }
@@ -374,17 +338,17 @@
             max-width: 600px;
         }
         
-        /* Project Grids - Live row and WIP row */
+        /* Project Grids */
         .live-project-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: var(--space-lg);
             margin-bottom: var(--space-lg);
         }
         
         .wip-project-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: var(--space-lg);
         }
         
@@ -443,7 +407,7 @@
             box-shadow: 0 8px 24px rgba(255, 107, 53, 0.15);
         }
         
-        /* WIP cards get green left border and slight dim */
+        /* WIP cards styling */
         .wip-card-style {
             border-left: 3px solid var(--color-accent-secondary);
             cursor: default;
@@ -482,7 +446,6 @@
             flex-grow: 1;
         }
         
-        /* "Learn more" link for clickable projects */
         .project-cta-link {
             font-size: 0.9rem;
             color: var(--color-accent-primary);
@@ -495,7 +458,6 @@
             color: var(--color-accent-secondary);
         }
         
-        /* Hide on WIP cards since they're not clickable */
         .wip-card-style .project-cta-link {
             display: none;
         }
@@ -529,8 +491,6 @@
         .skills {
             background: var(--color-bg-secondary);
             padding: var(--space-2xl) var(--space-md);
-            border-top: 1px solid var(--color-border);
-            border-bottom: 1px solid var(--color-border);
         }
         
         .skills-content {
@@ -547,23 +507,22 @@
         
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-md);
-            margin-bottom: var(--space-xl);
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
         }
         
         .skill-category {
-            background: var(--color-bg-tertiary);
-            padding: var(--space-md);
-            border-radius: var(--radius-sm);
-            border-left: 3px solid var(--color-accent-primary);
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
         }
         
         .skill-category h3 {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: var(--space-sm);
             color: var(--color-accent-secondary);
+            margin-bottom: var(--space-md);
         }
         
         .skill-category ul {
@@ -571,42 +530,92 @@
         }
         
         .skill-category li {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--color-text-secondary);
-            padding: 0.25rem 0;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--color-border);
         }
         
-        .skill-category li::before {
-            content: '▸ ';
-            color: var(--color-accent-primary);
-            font-weight: bold;
+        .skill-category li:last-child {
+            border-bottom: none;
         }
         
-        .resume-cta {
-            background: var(--color-bg-primary);
-            border: 2px solid var(--color-accent-primary);
-            border-radius: var(--radius-md);
-            padding: var(--space-lg);
+        /* ==================== Contact Section ==================== */
+        .contact {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-2xl) var(--space-md);
             text-align: center;
         }
         
-        .resume-cta h3 {
-            font-size: 1.5rem;
+        .contact-quote-wrapper {
+            max-width: 900px;
+            margin: 0 auto var(--space-xl);
+        }
+        
+        .contact-quote {
+            font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+            font-style: italic;
+            line-height: 1.6;
             margin-bottom: var(--space-sm);
             color: var(--color-text-primary);
         }
         
-        .resume-cta p {
-            font-size: 1rem;
-            color: var(--color-text-secondary);
+        .contact-attribution {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            color: var(--color-accent-primary);
             margin-bottom: var(--space-md);
+        }
+        
+        .contact-tagline {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+        
+        .contact-grid {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: all 0.2s;
+        }
+        
+        .contact-btn--green {
+            background: var(--color-accent-secondary);
+            color: var(--color-bg-primary);
+        }
+        
+        .contact-btn--green:hover {
+            background: #5ddbc4;
+            transform: translateY(-2px);
+        }
+        
+        .contact-info {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
         }
         
         /* ==================== Footer ==================== */
         footer {
-            background: var(--color-bg-primary);
+            background: var(--color-bg-secondary);
             border-top: 1px solid var(--color-border);
-            padding: var(--space-xl) var(--space-md);
+            padding: var(--space-lg) var(--space-md);
         }
         
         .footer-content {
@@ -643,6 +652,10 @@
         
         /* ==================== Responsive ==================== */
         @media (max-width: 1024px) {
+            .live-project-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
             .wip-project-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -697,21 +710,11 @@
                 animation: fadeInUp 0.3s forwards;
             }
             
-            .nav-links.active li:nth-child(1) {
-                animation-delay: 0.1s;
-            }
-            
-            .nav-links.active li:nth-child(2) {
-                animation-delay: 0.2s;
-            }
-            
-            .nav-links.active li:nth-child(3) {
-                animation-delay: 0.3s;
-            }
-            
-            .nav-links.active li:nth-child(4) {
-                animation-delay: 0.4s;
-            }
+            .nav-links.active li:nth-child(1) { animation-delay: 0.1s; }
+            .nav-links.active li:nth-child(2) { animation-delay: 0.2s; }
+            .nav-links.active li:nth-child(3) { animation-delay: 0.3s; }
+            .nav-links.active li:nth-child(4) { animation-delay: 0.4s; }
+            .nav-links.active li:nth-child(5) { animation-delay: 0.5s; }
             
             @keyframes fadeInUp {
                 from {
@@ -757,7 +760,7 @@
             <a href="/" class="logo">nate</a>
             
             <button type="button" class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
-                ☰
+                &#9776;
             </button>
             
             <ul class="nav-links">
@@ -794,14 +797,14 @@
                 <div class="hero-stats">
                     <div class="stat">
                         <div class="stat-value">8 Apps</div>
-                        <div class="stat-label">Protected</div>
+                        <div class="stat-label">Protected by SSO</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-value">3 Nodes</div>
-                        <div class="stat-label">Clustered</div>
+                        <div class="stat-value">6 Systems</div>
+                        <div class="stat-label">SSH Hardened</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-value">60% → 100%</div>
+                        <div class="stat-value">100%</div>
                         <div class="stat-label">Backup Success</div>
                     </div>
                 </div>
@@ -822,6 +825,7 @@
                 </p>
             </div>
             
+            <!-- Live Projects (3 cards) -->
             <div class="live-project-grid">
                 <!-- Project 1: Authentik SSO -->
                 <a href="/authentik-sso" class="project-card">
@@ -840,7 +844,6 @@
                     <div class="project-meta">
                         <span>February 2026</span>
                         <span>~15 hours</span>
-                        <span>Production</span>
                     </div>
                     
                     <div class="project-skills">
@@ -848,7 +851,6 @@
                         <span class="skill-badge">LDAP</span>
                         <span class="skill-badge">Authentik</span>
                         <span class="skill-badge">nginx</span>
-                        <span class="skill-badge">Docker</span>
                     </div>
                 </a>
                 
@@ -861,38 +863,81 @@
                     
                     <p class="project-description">
                         Migrated from unreliable USB backups to Proxmox Backup Server with chunk-level deduplication. 
-                        Achieved 100% backup success rate and 85% storage reduction through intelligent deduplication.
+                        Achieved 100% backup success rate and 85% storage reduction.
                     </p>
                     
                     <p class="project-cta-link">Learn more about this project &rarr;</p>
                     
                     <div class="project-meta">
                         <span>February 2026</span>
-                        <span>~10 hours</span>
-                        <span>Production</span>
+                        <span>~8 hours</span>
                     </div>
                     
                     <div class="project-skills">
                         <span class="skill-badge">Proxmox</span>
                         <span class="skill-badge">PBS</span>
-                        <span class="skill-badge">Storage Engineering</span>
-                        <span class="skill-badge">NFS</span>
+                        <span class="skill-badge">Storage</span>
+                        <span class="skill-badge">Linux</span>
+                    </div>
+                </a>
+                
+                <!-- Project 3: SSH Hardening (NEW) -->
+                <a href="/ssh-hardening" class="project-card">
+                    <div class="project-status-badge status-live">Live</div>
+                    <div class="project-tag">Security & Hardening</div>
+                    
+                    <h3 class="project-title">SSH Hardening Implementation</h3>
+                    
+                    <p class="project-description">
+                        Implemented enterprise-grade SSH hardening across 6 systems with Ed25519 key-based authentication 
+                        and fail2ban intrusion prevention. Zero downtime, SOC 2 compliant patterns.
+                    </p>
+                    
+                    <p class="project-cta-link">Learn more about this project &rarr;</p>
+                    
+                    <div class="project-meta">
+                        <span>February 2026</span>
+                        <span>~2 hours</span>
+                    </div>
+                    
+                    <div class="project-skills">
+                        <span class="skill-badge">SSH</span>
+                        <span class="skill-badge">fail2ban</span>
+                        <span class="skill-badge">Ed25519</span>
                         <span class="skill-badge">Linux</span>
                     </div>
                 </a>
             </div>
             
+            <!-- WIP Projects (4 cards) -->
             <div class="wip-project-grid">
-                <!-- WIP Project 1: Monitoring Stack -->
+                <!-- WIP 1: MFA Implementation (NEW) -->
                 <div class="project-card wip-card-style">
                     <div class="project-status-badge status-wip">WIP</div>
-                    <div class="project-tag">Infrastructure & Observability</div>
+                    <div class="project-tag">Identity & Access Management</div>
                     
-                    <h3 class="project-title">Monitoring Stack Deployment</h3>
+                    <h3 class="project-title">MFA Implementation</h3>
                     
                     <p class="project-description">
-                        Building comprehensive observability with Prometheus, Loki, and Grafana 
-                        across the entire homelab infrastructure.
+                        Adding TOTP/WebAuthn second factor to Authentik SSO for enhanced security across all protected applications.
+                    </p>
+                    
+                    <div class="project-skills">
+                        <span class="skill-badge">Authentik</span>
+                        <span class="skill-badge">TOTP</span>
+                        <span class="skill-badge">WebAuthn</span>
+                    </div>
+                </div>
+                
+                <!-- WIP 2: Monitoring Stack -->
+                <div class="project-card wip-card-style">
+                    <div class="project-status-badge status-wip">WIP</div>
+                    <div class="project-tag">Observability</div>
+                    
+                    <h3 class="project-title">Monitoring Stack</h3>
+                    
+                    <p class="project-description">
+                        Building comprehensive observability with Prometheus, Loki, and Grafana across the entire homelab.
                     </p>
                     
                     <div class="project-skills">
@@ -902,7 +947,7 @@
                     </div>
                 </div>
                 
-                <!-- WIP Project 2: RHCSA -->
+                <!-- WIP 3: RHCSA -->
                 <div class="project-card wip-card-style">
                     <div class="project-status-badge status-wip">WIP</div>
                     <div class="project-tag">Certification</div>
@@ -910,33 +955,31 @@
                     <h3 class="project-title">RHCSA Preparation</h3>
                     
                     <p class="project-description">
-                        Developing production-grade Linux system administration skills through 
-                        hands-on labs and practice environments.
+                        Developing production-grade Linux administration skills through hands-on labs and practice environments.
                     </p>
                     
                     <div class="project-skills">
                         <span class="skill-badge">Linux</span>
-                        <span class="skill-badge">System Administration</span>
                         <span class="skill-badge">Red Hat</span>
+                        <span class="skill-badge">System Admin</span>
                     </div>
                 </div>
                 
-                <!-- WIP Project 3: AD CS -->
+                <!-- WIP 4: AD CS -->
                 <div class="project-card wip-card-style">
                     <div class="project-status-badge status-wip">WIP</div>
-                    <div class="project-tag">Identity & Access Management</div>
+                    <div class="project-tag">Identity & PKI</div>
                     
                     <h3 class="project-title">AD CS Implementation</h3>
                     
                     <p class="project-description">
-                        Deploying Certificate Services for Proxmox RBAC and Active Directory 
-                        synchronization using enterprise PKI infrastructure.
+                        Deploying Certificate Services for Proxmox RBAC and Active Directory using enterprise PKI.
                     </p>
                     
                     <div class="project-skills">
                         <span class="skill-badge">Active Directory</span>
                         <span class="skill-badge">PKI</span>
-                        <span class="skill-badge">Proxmox</span>
+                        <span class="skill-badge">Certificates</span>
                     </div>
                 </div>
             </div>
@@ -983,14 +1026,12 @@
                     </div>
                     
                     <div class="skill-category">
-                        <h3>Microsoft 365</h3>
+                        <h3>Security</h3>
                         <ul>
-                            <li>Entra ID / Azure AD</li>
-                            <li>Exchange Online</li>
-                            <li>PowerShell</li>
-                            <li>Conditional Access</li>
-                            <li>Intune / MDM</li>
-                            <li>Windows 365</li>
+                            <li>SSH Hardening</li>
+                            <li>fail2ban IPS</li>
+                            <li>Key-Based Auth</li>
+                            <li>Defense-in-Depth</li>
                         </ul>
                     </div>
                     
@@ -1004,33 +1045,47 @@
                         </ul>
                     </div>
                 </div>
-                
-                <div class="resume-cta">
-                    <h3>Want to see more?</h3>
-                    <p>View my full work experience, certifications, and detailed technical background</p>
-                    <a href="/resume" class="btn btn-primary">View Full Resume →</a>
-                </div>
             </div>
+        </section>
+        
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <div class="contact-quote-wrapper">
+                <blockquote class="contact-quote">
+                    "He never stopped asking questions. I knew that would take him somewhere."
+                </blockquote>
+                <div class="contact-attribution">
+                    Helpdesk Operations Manager (and former colleague)
+                </div>
+                <p class="contact-tagline">
+                    I owe a lot to that moment. Still learning, still building.
+                </p>
+            </div>
+            
+            <div class="contact-grid">
+                <a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener noreferrer" class="contact-btn contact-btn--green">
+                    Let's Chat
+                </a>
+            </div>
+            <div class="contact-info">Austin, TX based &middot; Always happy to chat about new opportunities.</div>
         </section>
     </main>
     
     <!-- Footer -->
-    <footer id="contact" role="contentinfo">
+    <footer role="contentinfo">
         <div class="footer-content">
             <div class="footer-text">
-                © 2026 Nate. Built with intention, documented with care.
+                &copy; 2026 Nate. Built with intention, documented with care.
             </div>
-            
             <div class="footer-links">
                 <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
                 <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
-                <a href="/cdn-cgi/l/email-protection#85ebebf2e4e0ffe0c5e2e8e4ece9abe6eae8" aria-label="Email">Email</a>
             </div>
         </div>
     </footer>
     
     <!-- Mobile Menu Toggle Script -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         const menuToggle = document.querySelector('.menu-toggle');
         const navLinks = document.querySelector('.nav-links');
         
@@ -1048,12 +1103,12 @@
             }
         });
         
-                navLinks.querySelectorAll('a').forEach(function(link) {
-                    link.addEventListener('click', function() {
-                        navLinks.classList.remove('active');
-                        menuToggle.setAttribute('aria-expanded', 'false');
-                    });
-                });
-            </script>
-        </body>
-        </html>
+        navLinks.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                navLinks.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+    </script>
+</body>
+</html>
