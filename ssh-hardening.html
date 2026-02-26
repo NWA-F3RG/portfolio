@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SSH Hardening Implementation - Enterprise-grade SSH security with key-based authentication and automated intrusion prevention across homelab infrastructure.">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
+    <title>SSH Hardening Implementation - Nate's Portfolio</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://seggsy.co/ssh-hardening">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="SSH Hardening Implementation - Nate's Portfolio">
+    <meta property="og:description" content="Enterprise-grade SSH hardening across 6 systems with key-based authentication, fail2ban intrusion prevention, and zero downtime deployment.">
+    <meta property="og:image" content="https://seggsy.co/og-image.png">
+    <meta property="og:url" content="https://seggsy.co/ssh-hardening">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SSH Hardening Implementation - Nate's Portfolio">
+    <meta name="twitter:description" content="Enterprise-grade SSH hardening across 6 systems with key-based authentication and automated intrusion prevention.">
+    <meta name="twitter:image" content="https://seggsy.co/og-image.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==================== CSS Variables ==================== */
+        :root {
+            /* Background Colors - matches your existing pages */
+            --color-bg-primary: #1e1e1e;
+            --color-bg-secondary: #252526;
+            --color-bg-tertiary: #2d2d30;
+            --color-bg-code: #1e1e1e;
+            
+            /* Text Colors */
+            --color-text-primary: #d4d4d4;
+            --color-text-secondary: #909090;
+            --color-text-muted: #6a6a6a;
+            
+            /* Accent Colors - matches your existing pages */
+            --color-accent-primary: #ff6b35;
+            --color-accent-secondary: #4ec9b0;
+            --color-accent-warning: #ce9178;
+            --color-accent-danger: #f87171;
+            --color-accent-success: #4ec9b0;
+            
+            /* Border Colors */
+            --color-border: #3e3e42;
+            --color-border-hover: #5a5a5f;
+            
+            /* Syntax Highlighting */
+            --color-syntax-keyword: #569cd6;
+            --color-syntax-string: #ce9178;
+            --color-syntax-function: #dcdcaa;
+            --color-syntax-comment: #6a9955;
+            
+            /* Typography */
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+        
+        /* ==================== Reset & Base ==================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        /* ==================== Skip Link (Accessibility) ==================== */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--color-accent-primary);
+            color: var(--color-bg-primary);
+            padding: var(--space-sm);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            z-index: 100;
+        }
+        
+        .skip-link:focus {
+            top: var(--space-sm);
+            left: var(--space-sm);
+        }
+        
+        /* ==================== Focus States (Accessibility) ==================== */
+        *:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+        
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        /* ==================== Header ==================== */
+        header {
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-md) 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            text-decoration: none;
+        }
+        
+        .logo::before {
+            content: '$ ';
+            color: var(--color-accent-secondary);
+        }
+        
+        .back-link {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-link:hover {
+            color: var(--color-accent-primary);
+        }
+        
+        .back-link::before {
+            content: '←';
+            font-size: 1.2rem;
+        }
+        
+        /* ==================== Main Content ==================== */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-md);
+        }
+        
+        /* ==================== Project Header ==================== */
+        .project-header {
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-xl);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .project-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--color-accent-secondary);
+            background: rgba(78, 201, 176, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+            line-height: 1.2;
+        }
+        
+        .project-meta {
+            display: flex;
+            gap: var(--space-lg);
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .meta-item strong {
+            color: var(--color-text-primary);
+        }
+        
+        .tldr {
+            background: var(--color-bg-secondary);
+            border-left: 4px solid var(--color-accent-primary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .tldr-title {
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            margin-bottom: var(--space-sm);
+            font-size: 1.1rem;
+        }
+        
+        .key-achievement {
+            background: var(--color-bg-tertiary);
+            padding: var(--space-md);
+            border-radius: var(--radius-sm);
+            margin-top: var(--space-sm);
+        }
+        
+        .key-achievement strong {
+            color: var(--color-accent-primary);
+        }
+        
+        /* ==================== Content Sections ==================== */
+        .section {
+            margin-bottom: var(--space-2xl);
+        }
+        
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 2px solid var(--color-border);
+        }
+        
+        h3 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-top: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+        
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-accent-secondary);
+            margin-top: var(--space-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        p {
+            margin-bottom: var(--space-md);
+            color: var(--color-text-primary);
+        }
+        
+        ul, ol {
+            margin-left: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+        
+        li {
+            margin-bottom: var(--space-sm);
+            color: var(--color-text-primary);
+        }
+        
+        /* ==================== Code Blocks ==================== */
+        pre {
+            background: var(--color-bg-code);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+            color: var(--color-accent-warning);
+        }
+        
+        pre code {
+            color: var(--color-text-primary);
+        }
+        
+        .terminal {
+            position: relative;
+            background: #0c0c0c;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .terminal::before {
+            content: '';
+            display: block;
+            height: 30px;
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+        
+        .terminal pre {
+            border: none;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            background: #0c0c0c;
+            color: #00ff00;
+        }
+        
+        /* ==================== Architecture Diagram ==================== */
+        .architecture {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .architecture pre {
+            background: transparent;
+            border: none;
+            color: var(--color-accent-secondary);
+            font-size: 0.85rem;
+        }
+        
+        /* ==================== Collapsible Sections ==================== */
+        .collapsible {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            overflow: hidden;
+        }
+        
+        .collapsible-header {
+            padding: var(--space-md);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        
+        .collapsible-header:hover {
+            background: var(--color-bg-tertiary);
+        }
+        
+        .collapsible-title {
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            font-size: 1.1rem;
+        }
+        
+        .collapsible-icon {
+            font-size: 1.2rem;
+            color: var(--color-text-secondary);
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active .collapsible-icon {
+            transform: rotate(180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .collapsible.active .collapsible-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .collapsible-inner {
+            padding: 0 var(--space-md) var(--space-md) var(--space-md);
+        }
+        
+        /* ==================== Comparison Boxes ==================== */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        @media (max-width: 600px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .before-box, .after-box {
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+        }
+        
+        .before-box {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid var(--color-accent-danger);
+        }
+        
+        .before-box h4 {
+            color: var(--color-accent-danger);
+        }
+        
+        .after-box {
+            background: rgba(78, 201, 176, 0.1);
+            border: 1px solid var(--color-accent-success);
+        }
+        
+        .after-box h4 {
+            color: var(--color-accent-success);
+        }
+        
+        /* ==================== Success Box ==================== */
+        .success-box {
+            background: rgba(78, 201, 176, 0.1);
+            border: 1px solid var(--color-accent-success);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .success-box strong {
+            color: var(--color-accent-success);
+        }
+        
+        /* ==================== Warning Box ==================== */
+        .warning-box {
+            background: rgba(206, 145, 120, 0.1);
+            border: 1px solid var(--color-accent-warning);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .warning-box strong {
+            color: var(--color-accent-warning);
+        }
+        
+        /* ==================== STAR Format ==================== */
+        .star-format {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+        }
+        
+        .star-item {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .star-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .star-label {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-bg-primary);
+            background: var(--color-accent-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .star-item p {
+            margin-bottom: 0;
+            font-style: italic;
+            color: var(--color-text-secondary);
+        }
+        
+        /* ==================== Skills Grid ==================== */
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+        
+        .skill-badge {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            background: var(--color-bg-tertiary);
+            color: var(--color-accent-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+        }
+        
+        /* ==================== Footer ==================== */
+        footer {
+            background: var(--color-bg-secondary);
+            border-top: 1px solid var(--color-border);
+            padding: var(--space-xl) var(--space-md);
+            margin-top: var(--space-2xl);
+        }
+        
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+        }
+        
+        .footer-nav a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .footer-nav a:hover {
+            color: var(--color-accent-primary);
+        }
+        
+        .footer-copyright {
+            color: var(--color-text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            h3 {
+                font-size: 1.2rem;
+            }
+            
+            .project-meta {
+                flex-direction: column;
+                gap: var(--space-sm);
+            }
+            
+            pre {
+                font-size: 0.8rem;
+            }
+            
+            .footer-nav {
+                flex-direction: column;
+                gap: var(--space-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <header>
+        <nav aria-label="Main navigation">
+            <a href="/" class="logo">nate</a>
+            <a href="/" class="back-link">Back to Projects</a>
+        </nav>
+    </header>
+    
+    <main id="main-content" role="main">
+        <!-- Project Header -->
+        <div class="project-header">
+            <span class="project-tag">Security & System Hardening</span>
+            <h1>SSH Hardening Implementation</h1>
+            
+            <div class="project-meta">
+                <span class="meta-item"><strong>Duration:</strong> ~2 hours</span>
+                <span class="meta-item"><strong>Date:</strong> February 2026</span>
+                <span class="meta-item"><strong>Status:</strong> Production</span>
+            </div>
+            
+            <div class="tldr">
+                <div class="tldr-title">TL;DR</div>
+                <p>Implemented enterprise-grade SSH hardening across 6 systems (3 Proxmox hypervisors + 3 Linux VMs) using Ed25519 key-based authentication and fail2ban intrusion prevention. Zero downtime deployment with SOC 2 compliant authentication patterns.</p>
+                
+                <div class="key-achievement">
+                    <strong>Key Achievement:</strong> 100% elimination of password-based attack surface with automated threat response (5 failed attempts → 10-minute IP ban)
+                </div>
+            </div>
+        </div>
+        
+        <!-- The Problem -->
+        <section class="section">
+            <h2>The Problem</h2>
+            
+            <p>My homelab infrastructure was accessible via Tailscale VPN for remote administration—a common and reasonable pattern. However, all systems used <strong>password-based SSH authentication</strong>, which creates several security risks:</p>
+            
+            <div class="comparison-grid">
+                <div class="before-box">
+                    <h4>Before (Vulnerable)</h4>
+                    <ul>
+                        <li>Password-based SSH on all systems</li>
+                        <li>Unlimited authentication attempts</li>
+                        <li>No automated threat response</li>
+                        <li>Single factor (password only)</li>
+                        <li>Compromised password = full access</li>
+                    </ul>
+                </div>
+                <div class="after-box">
+                    <h4>After (Hardened)</h4>
+                    <ul>
+                        <li>Ed25519 key-based authentication</li>
+                        <li>Password authentication disabled</li>
+                        <li>fail2ban monitoring all access</li>
+                        <li>Automatic IP banning on failures</li>
+                        <li>Defense-in-depth architecture</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <p>The risk model: if my Tailscale account were ever compromised, an attacker would have direct network access to infrastructure. Password-based SSH would then allow brute force attacks against any exposed system.</p>
+        </section>
+        
+        <!-- The Solution -->
+        <section class="section">
+            <h2>The Solution</h2>
+            
+            <h3>Security Architecture</h3>
+            <p>I implemented a defense-in-depth approach with two complementary layers:</p>
+            
+            <div class="architecture">
+                <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                    SSH HARDENING ARCHITECTURE                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   LAYER 1: Authentication Hardening                             │
+│   ┌─────────────────────────────────────────────────────────┐   │
+│   │  Ed25519 Key-Based Authentication                       │   │
+│   │  • Private key never leaves client device               │   │
+│   │  • Public key deployed to all servers                   │   │
+│   │  • Password authentication completely disabled          │   │
+│   └─────────────────────────────────────────────────────────┘   │
+│                              │                                   │
+│                              ▼                                   │
+│   LAYER 2: Intrusion Prevention                                 │
+│   ┌─────────────────────────────────────────────────────────┐   │
+│   │  fail2ban Active Monitoring                             │   │
+│   │  • Watches /var/log/auth.log for failures               │   │
+│   │  • 5 failed attempts → 10-minute IP ban                 │   │
+│   │  • VPN network whitelisted to prevent self-lockout      │   │
+│   └─────────────────────────────────────────────────────────┘   │
+│                                                                  │
+├─────────────────────────────────────────────────────────────────┤
+│   SYSTEMS PROTECTED                                              │
+│   • 3 Proxmox Hypervisors (root with keys, prohibit-password)   │
+│   • 3 Linux VMs (user account + sudo, root login disabled)      │
+└─────────────────────────────────────────────────────────────────┘
+                </pre>
+            </div>
+            
+            <h3>Different Security Models by System Type</h3>
+            <p>Enterprise environments treat hypervisors differently from application servers. I applied the same principle:</p>
+            
+            <div class="comparison-grid">
+                <div class="before-box" style="background: rgba(96, 165, 250, 0.1); border-color: #60a5fa;">
+                    <h4 style="color: #60a5fa;">Proxmox Hypervisors</h4>
+                    <pre><code>PermitRootLogin prohibit-password
+PasswordAuthentication no
+PubkeyAuthentication yes</code></pre>
+                    <p style="margin-top: var(--space-sm); margin-bottom: 0; font-size: 0.9rem; color: var(--color-text-secondary);">Root access required for Proxmox management, but only via SSH keys.</p>
+                </div>
+                <div class="after-box">
+                    <h4>Linux VMs</h4>
+                    <pre><code>PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes</code></pre>
+                    <p style="margin-top: var(--space-sm); margin-bottom: 0; font-size: 0.9rem; color: var(--color-text-secondary);">Root cannot SSH at all. User account with sudo for all admin tasks.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Implementation Details -->
+        <section class="section">
+            <h2>Implementation Details</h2>
+            
+            <h3>Phase 1: SSH Key Deployment</h3>
+            <p>Using existing Ed25519 keys (stored securely in password manager), I deployed public keys to all systems using <code>ssh-copy-id</code>:</p>
+            
+            <div class="terminal">
+                <pre># Deploy to each system, test immediately
+ssh-copy-id root@proxmox-node
+ssh root@proxmox-node  # Verify key auth works
+
+ssh-copy-id user@linux-vm
+ssh user@linux-vm      # Verify key auth works</pre>
+            </div>
+            
+            <div class="warning-box">
+                <strong>Critical Safety Pattern:</strong> Always test SSH key authentication in a NEW terminal before closing your existing session. Keep the old session open as a safety net until the new one is verified working.
+            </div>
+            
+            <h3>Phase 2: Disable Password Authentication</h3>
+            <p>With key authentication verified on all systems, I disabled password auth:</p>
+            
+            <div class="terminal">
+                <pre># Edit SSH config
+sudo nano /etc/ssh/sshd_config
+
+# Verify changes
+grep -E "^PermitRootLogin|^PasswordAuthentication|^PubkeyAuthentication" /etc/ssh/sshd_config
+
+# Restart SSH service
+sudo systemctl restart ssh    # Ubuntu/Debian VMs
+systemctl restart sshd        # Proxmox nodes</pre>
+            </div>
+            
+            <h3>Phase 3: Deploy fail2ban</h3>
+            <p>Installed and configured fail2ban for automated intrusion prevention:</p>
+            
+            <div class="terminal">
+                <pre># Install
+sudo apt update && sudo apt install fail2ban -y
+
+# Create local config
+sudo nano /etc/fail2ban/jail.local</pre>
+            </div>
+            
+            <p>Configuration applied:</p>
+            <pre><code>[DEFAULT]
+bantime = 10m
+findtime = 10m
+maxretry = 5
+ignoreip = 127.0.0.1/8 ::1
+
+[sshd]
+enabled = true
+port = ssh
+logpath = /var/log/auth.log
+backend = systemd</code></pre>
+            
+            <div class="success-box">
+                <strong>Why these settings:</strong>
+                <ul style="margin-bottom: 0;">
+                    <li><strong>10-minute bans:</strong> Slows attackers without permanent blocks (avoids self-lockout)</li>
+                    <li><strong>5 attempts:</strong> Balance between security and usability</li>
+                    <li><strong>VPN whitelist:</strong> Never ban legitimate remote access</li>
+                    <li><strong>/var/log/auth.log:</strong> Correct log path for Debian/Ubuntu/Proxmox</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- The Challenges -->
+        <section class="section">
+            <h2>The Challenges</h2>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Challenge 1: fail2ban Couldn't Find Log File</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>What Went Wrong:</h4>
+                        <div class="terminal">
+                            <pre>ERROR Failed during configuration: Have not found any log file for sshd jail</pre>
+                        </div>
+                        
+                        <h4>The Problem:</h4>
+                        <p>Default fail2ban config looks for <code>/var/log/sshd.log</code>, but Debian/Ubuntu/Proxmox use <code>/var/log/auth.log</code>.</p>
+                        
+                        <h4>The Fix:</h4>
+                        <p>Created <code>/etc/fail2ban/jail.local</code> with explicit log path:</p>
+                        <pre><code>[sshd]
+enabled = true
+logpath = /var/log/auth.log
+backend = systemd</code></pre>
+                        
+                        <h4>Lesson Learned:</h4>
+                        <p>Always check distro-specific paths. Default configs assume RHEL/CentOS conventions that don't apply to Debian-family systems.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Challenge 2: SSH Service Name Varies by Distro</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>What Went Wrong:</h4>
+                        <div class="terminal">
+                            <pre>Failed to restart sshd.service: Unit sshd.service not found</pre>
+                        </div>
+                        
+                        <h4>The Problem:</h4>
+                        <p>Different distributions use different service names:</p>
+                        <ul>
+                            <li><strong>Ubuntu/Debian:</strong> Service is called <code>ssh</code></li>
+                            <li><strong>RHEL/CentOS/Proxmox:</strong> Service is called <code>sshd</code></li>
+                        </ul>
+                        
+                        <h4>The Fix:</h4>
+                        <pre><code># On Ubuntu/Debian VMs
+sudo systemctl restart ssh
+
+# On Proxmox nodes  
+systemctl restart sshd</code></pre>
+                        
+                        <h4>Lesson Learned:</h4>
+                        <p>Know your target systems. This is exactly the kind of detail that matters when managing heterogeneous infrastructure.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Challenge 3: Proxmox Enterprise Repository 401 Errors</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>What Went Wrong:</h4>
+                        <div class="terminal">
+                            <pre>E: Failed to fetch https://enterprise.proxmox.com/... 401 Unauthorized</pre>
+                        </div>
+                        
+                        <h4>The Problem:</h4>
+                        <p>Proxmox comes with enterprise repository enabled by default, which requires a paid subscription.</p>
+                        
+                        <h4>The Fix:</h4>
+                        <pre><code># Disable enterprise repository
+mv /etc/apt/sources.list.d/pbs-enterprise.list \
+   /etc/apt/sources.list.d/pbs-enterprise.list.disabled
+
+# Now apt update works
+apt update && apt install fail2ban -y</code></pre>
+                        
+                        <h4>Lesson Learned:</h4>
+                        <p>Proxmox defaults to enterprise repos. For homelab use, disable these or add the no-subscription repository.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Results -->
+        <section class="section">
+            <h2>Results</h2>
+            
+            <div class="success-box">
+                <ul style="margin-bottom: 0;">
+                    <li><strong>100% password attack surface eliminated</strong> - No system accepts password authentication</li>
+                    <li><strong>Zero downtime</strong> - Parallel testing methodology prevented any lockouts</li>
+                    <li><strong>Automated threat response</strong> - 5 failed attempts triggers 10-minute IP ban</li>
+                    <li><strong>SOC 2 compliant authentication</strong> - Key-based auth meets compliance requirements</li>
+                    <li><strong>Defense-in-depth</strong> - Authentication hardening + intrusion prevention layers</li>
+                    <li><strong>Proper role separation</strong> - Hypervisors vs VMs have appropriate security models</li>
+                </ul>
+            </div>
+            
+            <h3>Verification</h3>
+            <p>Confirmed hardening is working correctly:</p>
+            
+            <div class="terminal">
+                <pre># Test that password auth is disabled
+$ ssh -o PubkeyAuthentication=no root@proxmox-node
+Permission denied (publickey).
+
+# Verify fail2ban is active
+$ fail2ban-client status sshd
+Status for the jail: sshd
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- File list:        /var/log/auth.log
+`- Actions
+   |- Currently banned: 0
+   |- Total banned:     0
+   `- Banned IP list:</pre>
+            </div>
+        </section>
+        
+        <!-- Interview Story -->
+        <section class="section">
+            <h2>Interview Story (STAR Format)</h2>
+            
+            <div class="star-format">
+                <div class="star-item">
+                    <div class="star-label">Situation</div>
+                    <p>"I had homelab infrastructure with 3 Proxmox hypervisors and 3 Linux VMs accessible via VPN. All systems used password-based SSH authentication, creating vulnerability to brute force attacks if the VPN were ever compromised."</p>
+                </div>
+                
+                <div class="star-item">
+                    <div class="star-label">Task</div>
+                    <p>"Implement enterprise-grade SSH hardening across all 6 systems without service disruption. Required maintaining different security models—hypervisors need root access for management, while application VMs should use user accounts with sudo."</p>
+                </div>
+                
+                <div class="star-item">
+                    <div class="star-label">Action</div>
+                    <p>"I implemented a defense-in-depth approach: First, deployed Ed25519 SSH keys to all systems using ssh-copy-id, testing each before proceeding. Then disabled password authentication with role-appropriate configs—'prohibit-password' for Proxmox root, 'no' for VM root login. Finally, deployed fail2ban on all systems with 10-minute bans after 5 failed attempts, whitelisting the VPN network to prevent self-lockout."</p>
+                </div>
+                
+                <div class="star-item">
+                    <div class="star-label">Result</div>
+                    <p>"Achieved 100% elimination of password-based attack surface across all 6 systems in about 2 hours with zero downtime. Implemented SOC 2 compliant authentication and automated threat response. Created comprehensive documentation including emergency recovery procedures."</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Skills Demonstrated -->
+        <section class="section">
+            <h2>Skills Demonstrated</h2>
+            
+            <h3>Technical Skills</h3>
+            <div class="skills-grid">
+                <span class="skill-badge">SSH/OpenSSH</span>
+                <span class="skill-badge">Ed25519 Cryptography</span>
+                <span class="skill-badge">fail2ban</span>
+                <span class="skill-badge">Linux System Administration</span>
+                <span class="skill-badge">Debian/Ubuntu</span>
+                <span class="skill-badge">Proxmox VE</span>
+                <span class="skill-badge">systemd</span>
+                <span class="skill-badge">Defense-in-Depth</span>
+            </div>
+            
+            <h3>Professional Skills</h3>
+            <div class="skills-grid">
+                <span class="skill-badge">Risk Assessment</span>
+                <span class="skill-badge">Change Management</span>
+                <span class="skill-badge">Zero-Downtime Deployment</span>
+                <span class="skill-badge">Technical Documentation</span>
+                <span class="skill-badge">Security Compliance (SOC 2)</span>
+                <span class="skill-badge">Troubleshooting</span>
+            </div>
+        </section>
+    </main>
+    
+    <footer role="contentinfo">
+        <div class="footer-content">
+            <nav class="footer-nav" aria-label="Footer navigation">
+                <a href="/">Projects</a>
+                <a href="/resume">Resume</a>
+                <a href="/work-highlights">Work Examples</a>
+            </nav>
+            <p class="footer-copyright">Building enterprise-grade infrastructure, one project at a time.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Collapsible sections with keyboard accessibility
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const collapsible = header.parentElement;
+                collapsible.classList.toggle('active');
+            });
+            
+            // Keyboard accessibility
+            header.setAttribute('tabindex', '0');
+            header.setAttribute('role', 'button');
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    header.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
