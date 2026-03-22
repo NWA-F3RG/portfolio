@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Full-stack observability across a 3-node Proxmox cluster using Prometheus, Grafana, and Loki. OS metrics, per-VM breakdowns via REST API, and 4 live-tested alert rules routing to Discord.">
+
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+
+    <title>Monitoring &amp; Observability Stack - Nate's Portfolio</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://seggsy.co/monitoring-stack">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Monitoring &amp; Observability Stack - Nate's Portfolio">
+    <meta property="og:description" content="Full-stack observability across a 3-node Proxmox cluster using Prometheus, Grafana, and Loki. OS metrics, per-VM breakdowns via REST API, and 4 live-tested alert rules routing to Discord.">
+    <meta property="og:image" content="https://seggsy.co/og-image.png">
+    <meta property="og:url" content="https://seggsy.co/monitoring-stack">
+    <meta property="og:type" content="article">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Monitoring &amp; Observability Stack - Nate's Portfolio">
+    <meta name="twitter:description" content="Full-stack observability across a 3-node Proxmox cluster using Prometheus, Grafana, and Loki. OS metrics, per-VM breakdowns via REST API, and 4 live-tested alert rules routing to Discord.">
+    <meta name="twitter:image" content="https://seggsy.co/og-image.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==================== CSS Variables ==================== */
+        :root {
+            --color-bg-primary: #1e1e1e;
+            --color-bg-secondary: #252526;
+            --color-bg-tertiary: #2d2d30;
+            --color-bg-code: #1e1e1e;
+
+            --color-text-primary: #d4d4d4;
+            --color-text-secondary: #909090;
+            --color-text-muted: #6a6a6a;
+
+            --color-accent-primary: #ff6b35;
+            --color-accent-secondary: #4ec9b0;
+            --color-accent-warning: #ce9178;
+            --color-accent-danger: #f87171;
+            --color-accent-success: #4ec9b0;
+
+            --color-border: #3e3e42;
+            --color-border-hover: #5a5a5f;
+
+            --color-syntax-keyword: #569cd6;
+            --color-syntax-string: #ce9178;
+            --color-syntax-function: #dcdcaa;
+            --color-syntax-comment: #6a9955;
+
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        /* ==================== Reset & Base ==================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        /* ==================== Skip Link ==================== */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--color-accent-primary);
+            color: var(--color-bg-primary);
+            padding: var(--space-sm);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            z-index: 100;
+        }
+        .skip-link:focus { top: var(--space-sm); left: var(--space-sm); }
+
+        /* ==================== Focus States ==================== */
+        *:focus-visible { outline: 2px solid var(--color-accent-primary); outline-offset: 2px; }
+        *:focus:not(:focus-visible) { outline: none; }
+
+        /* ==================== Header ==================== */
+        header {
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-md) 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            text-decoration: none;
+        }
+        .logo::before { content: '$ '; color: var(--color-accent-secondary); }
+
+        .back-link {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .back-link:hover { color: var(--color-accent-primary); }
+        .back-link::before { content: '←'; font-size: 1.2rem; }
+
+        /* ==================== Main Content ==================== */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-md);
+        }
+
+        /* ==================== Project Header ==================== */
+        .project-header {
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-xl);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .project-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--color-accent-secondary);
+            background: rgba(78, 201, 176, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+            line-height: 1.2;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: var(--space-lg);
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .meta-item { display: flex; align-items: center; gap: 0.5rem; }
+        .meta-item strong { color: var(--color-text-primary); }
+
+        .tldr {
+            background: var(--color-bg-secondary);
+            border-left: 4px solid var(--color-accent-primary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .tldr-title {
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            margin-bottom: var(--space-sm);
+            font-size: 1.1rem;
+        }
+
+        .key-achievement {
+            background: var(--color-bg-tertiary);
+            padding: var(--space-md);
+            border-radius: var(--radius-sm);
+            margin-top: var(--space-sm);
+        }
+        .key-achievement strong { color: var(--color-accent-primary); }
+
+        /* ==================== Content Sections ==================== */
+        .section { margin-bottom: var(--space-2xl); }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        h3 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-top: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-accent-secondary);
+            margin-top: var(--space-md);
+            margin-bottom: var(--space-sm);
+        }
+
+        p { margin-bottom: var(--space-md); color: var(--color-text-primary); }
+
+        ul, ol { margin-left: var(--space-lg); margin-bottom: var(--space-md); }
+        li { margin-bottom: var(--space-sm); color: var(--color-text-primary); }
+
+        /* ==================== Code Blocks ==================== */
+        pre {
+            background: var(--color-bg-code);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+            color: var(--color-accent-warning);
+        }
+
+        pre code { color: var(--color-text-primary); }
+
+        .terminal {
+            position: relative;
+            background: #0c0c0c;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .terminal::before {
+            content: '';
+            display: block;
+            height: 30px;
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+
+        .terminal pre {
+            border: none;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            background: #0c0c0c;
+            color: #00ff00;
+        }
+
+        /* ==================== Architecture Diagram ==================== */
+        .architecture {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .architecture pre {
+            background: transparent;
+            border: none;
+            color: var(--color-accent-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* ==================== Collapsible Sections ==================== */
+        .collapsible {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            padding: var(--space-md);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .collapsible-header:hover { background: var(--color-bg-tertiary); }
+
+        .collapsible-title {
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            font-size: 1.1rem;
+        }
+
+        .collapsible-icon {
+            font-size: 1.2rem;
+            color: var(--color-text-secondary);
+            transition: transform 0.3s;
+        }
+
+        .collapsible.active .collapsible-icon { transform: rotate(180deg); }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible.active .collapsible-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .collapsible-inner { padding: 0 var(--space-md) var(--space-md) var(--space-md); }
+
+        /* ==================== Comparison Boxes ==================== */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        @media (max-width: 600px) {
+            .comparison-grid { grid-template-columns: 1fr; }
+        }
+
+        .before-box, .after-box {
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+        }
+
+        .before-box {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid var(--color-accent-danger);
+        }
+        .before-box h4 { color: var(--color-accent-danger); }
+
+        .after-box {
+            background: rgba(78, 201, 176, 0.1);
+            border: 1px solid var(--color-accent-success);
+        }
+        .after-box h4 { color: var(--color-accent-success); }
+
+        /* ==================== Success Box ==================== */
+        .success-box {
+            background: rgba(78, 201, 176, 0.1);
+            border: 1px solid var(--color-accent-success);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        .success-box strong { color: var(--color-accent-success); }
+
+        /* ==================== Warning Box ==================== */
+        .warning-box {
+            background: rgba(206, 145, 120, 0.1);
+            border: 1px solid var(--color-accent-warning);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        .warning-box strong { color: var(--color-accent-warning); }
+
+        /* ==================== Info Box ==================== */
+        .info-box {
+            background: rgba(86, 156, 214, 0.1);
+            border: 1px solid #569cd6;
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        .info-box strong { color: #569cd6; }
+
+        /* ==================== Alert Table ==================== */
+        .alert-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--space-md);
+            font-size: 0.9rem;
+        }
+
+        .alert-table th {
+            background: var(--color-bg-tertiary);
+            color: var(--color-accent-secondary);
+            font-family: var(--font-mono);
+            font-weight: 600;
+            padding: var(--space-sm) var(--space-md);
+            text-align: left;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .alert-table td {
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+        }
+
+        .alert-table tr:last-child td { border-bottom: none; }
+        .alert-table tr:hover td { background: var(--color-bg-secondary); }
+
+        .badge-critical {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: var(--radius-sm);
+            background: rgba(248, 113, 113, 0.2);
+            color: var(--color-accent-danger);
+            border: 1px solid var(--color-accent-danger);
+        }
+
+        .badge-warning {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: var(--radius-sm);
+            background: rgba(206, 145, 120, 0.2);
+            color: var(--color-accent-warning);
+            border: 1px solid var(--color-accent-warning);
+        }
+
+        /* ==================== STAR Format ==================== */
+        .star-format {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+        }
+
+        .star-item { margin-bottom: var(--space-lg); }
+        .star-item:last-child { margin-bottom: 0; }
+
+        .star-label {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-bg-primary);
+            background: var(--color-accent-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-sm);
+        }
+
+        .star-item p {
+            margin-bottom: 0;
+            font-style: italic;
+            color: var(--color-text-secondary);
+        }
+
+        /* ==================== Skills Grid ==================== */
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .skill-badge {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            background: var(--color-bg-tertiary);
+            color: var(--color-accent-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+        }
+
+        /* ==================== Footer ==================== */
+        footer {
+            background: var(--color-bg-secondary);
+            border-top: 1px solid var(--color-border);
+            padding: var(--space-xl) var(--space-md);
+            margin-top: var(--space-2xl);
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .footer-nav a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .footer-nav a:hover { color: var(--color-accent-primary); }
+
+        .footer-copyright {
+            color: var(--color-text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.2rem; }
+            .project-meta { flex-direction: column; gap: var(--space-sm); }
+            pre { font-size: 0.8rem; }
+            .footer-nav { flex-direction: column; gap: var(--space-sm); }
+            .alert-table { font-size: 0.8rem; }
+            .alert-table th, .alert-table td { padding: var(--space-sm) var(--space-sm); }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <nav aria-label="Main navigation">
+            <a href="/" class="logo">nate</a>
+            <a href="/" class="back-link">Back to Projects</a>
+        </nav>
+    </header>
+
+    <main id="main-content" role="main">
+
+        <!-- ==================== Project Header ==================== -->
+        <div class="project-header">
+            <span class="project-tag">Observability &amp; SRE</span>
+            <h1>Monitoring &amp; Observability Stack</h1>
+
+            <div class="project-meta">
+                <span class="meta-item"><strong>Duration:</strong> ~1 session</span>
+                <span class="meta-item"><strong>Completed:</strong> March 2026</span>
+                <span class="meta-item"><strong>Status:</strong> Production</span>
+                <span class="meta-item"><strong>Priority:</strong> Highest — strongest interview differentiator after RBAC/PKI</span>
+            </div>
+
+            <div class="tldr">
+                <div class="tldr-title">TL;DR</div>
+                <p>Deployed a full Prometheus/Grafana/Loki observability stack across a 3-node Proxmox homelab cluster. Collects OS-level metrics from all 3 hypervisors via node_exporter, per-VM metrics via the Proxmox REST API, aggregates logs with Loki, and routes 4 live-tested alert rules to Discord — the same open-source stack SRE teams use as a self-hosted alternative to Datadog and New Relic.</p>
+
+                <div class="key-achievement">
+                    <strong>Key Achievement:</strong> Full cluster visibility — OS metrics, per-VM breakdowns, log aggregation, and live alerting — using the same open-source toolchain SRE teams run in production
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== The Problem ==================== -->
+        <section class="section">
+            <h2>The Problem</h2>
+
+            <p>Running a 3-node Proxmox cluster with a dozen VMs is a lot to keep track of. Before this project, there was no visibility into what was actually happening at the infrastructure level — no answer to basic questions like <em>"is any node running hot right now?"</em>, <em>"which VM is eating all the memory?"</em>, or <em>"did anything go down last night?"</em></p>
+
+            <p>That's not a homelab problem — it's an enterprise problem. Every SRE and SysAdmin team deals with the same requirement: you need to know your systems are healthy before your users do.</p>
+
+            <div class="comparison-grid">
+                <div class="before-box">
+                    <h4>Before (Blind)</h4>
+                    <ul>
+                        <li>No metrics collection anywhere</li>
+                        <li>No visibility into per-VM resource usage</li>
+                        <li>No alerting — issues found reactively</li>
+                        <li>No log aggregation across hosts</li>
+                        <li>Proxmox REST API completely unused</li>
+                    </ul>
+                </div>
+                <div class="after-box">
+                    <h4>After (Observable)</h4>
+                    <ul>
+                        <li>OS metrics from all 3 Proxmox nodes</li>
+                        <li>Per-VM CPU, memory, and status via API</li>
+                        <li>4 alert rules routing to Discord</li>
+                        <li>Loki stack deployed for log aggregation</li>
+                        <li>Grafana protected behind HTTPS via NPM</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>Enterprise Equivalent:</strong> This is the self-hosted version of Datadog or New Relic. Companies that don't want to pay $15–30/host/month run exactly this stack — Prometheus for metrics, Grafana for visualization and alerting, Loki for logs.
+            </div>
+        </section>
+
+        <!-- ==================== Architecture ==================== -->
+        <section class="section">
+            <h2>Architecture</h2>
+
+            <p>The entire stack runs as a Docker Compose deployment on a dedicated monitoring VM, isolated on the infrastructure VLAN. Exporters run on each Proxmox host as systemd services — keeping the collection agents at the OS level while the processing and visualization layer lives in containers.</p>
+
+            <div class="architecture">
+<pre>
+monitoring-vm (pve03)
+└── Docker Compose stack:
+    ├── Prometheus (metrics collection, port 9090)
+    │   ├── node_exporter on pve, pve02, pve03 (OS-level metrics)
+    │   └── pve-exporter (per-VM metrics via Proxmox REST API)
+    ├── Loki (log aggregation, port 3100)
+    └── Grafana (visualization + alerting, port 3000)
+        ├── Dashboard: Node Exporter Full (ID 1860) — cluster OS metrics
+        ├── Dashboard: Proxmox via Prometheus (ID 10347) — per-VM metrics
+        └── Alerting → Discord webhook (grafana-alerts channel)
+</pre>
+            </div>
+
+            <h3>Infrastructure</h3>
+
+            <table class="alert-table">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Location</th>
+                        <th>IP / Port</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>monitoring-vm</code></td>
+                        <td>pve03</td>
+                        <td>[internal]</td>
+                        <td>Ubuntu 24.04, 2 vCPU, 4GB RAM, 50GB disk</td>
+                    </tr>
+                    <tr>
+                        <td>Grafana</td>
+                        <td>monitoring-vm</td>
+                        <td>:3000</td>
+                        <td>https://grafana.seggsy.co via NPM</td>
+                    </tr>
+                    <tr>
+                        <td>Prometheus</td>
+                        <td>monitoring-vm</td>
+                        <td>:9090</td>
+                        <td>Internal only</td>
+                    </tr>
+                    <tr>
+                        <td>Loki</td>
+                        <td>monitoring-vm</td>
+                        <td>:3100</td>
+                        <td>Internal only</td>
+                    </tr>
+                    <tr>
+                        <td>pve-exporter</td>
+                        <td>monitoring-vm</td>
+                        <td>:9221</td>
+                        <td>Proxmox REST API proxy</td>
+                    </tr>
+                    <tr>
+                        <td>node_exporter (pve)</td>
+                        <td>[internal]</td>
+                        <td>:9100</td>
+                        <td>systemd service, runs on host</td>
+                    </tr>
+                    <tr>
+                        <td>node_exporter (pve02)</td>
+                        <td>[internal]</td>
+                        <td>:9100</td>
+                        <td>systemd service, runs on host</td>
+                    </tr>
+                    <tr>
+                        <td>node_exporter (pve03)</td>
+                        <td>[internal]</td>
+                        <td>:9100</td>
+                        <td>systemd service, runs on host</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ==================== What Gets Monitored ==================== -->
+        <section class="section">
+            <h2>What Gets Monitored</h2>
+
+            <h3>OS-Level Metrics (node_exporter → Prometheus)</h3>
+            <p>node_exporter runs as a systemd service on each of the 3 Proxmox hosts and exposes a <code>/metrics</code> endpoint that Prometheus scrapes every 15 seconds. Coverage includes:</p>
+            <ul>
+                <li>CPU usage per node — busy, idle, iowait, system, and user modes</li>
+                <li>Memory usage and pressure</li>
+                <li>Disk space per filesystem</li>
+                <li>Network traffic per interface (tx/rx)</li>
+                <li>System load averages</li>
+                <li>Uptime</li>
+            </ul>
+
+            <h3>VM-Level Metrics (pve-exporter → Proxmox REST API)</h3>
+            <p>pve-exporter acts as a proxy between Prometheus and the Proxmox REST API, using a read-only API token scoped to PVEAuditor permissions (provisioned during the RBAC project). It surfaces per-VM data that node_exporter can't see:</p>
+            <ul>
+                <li>Per-VM CPU usage</li>
+                <li>Per-VM memory allocation and usage %</li>
+                <li>VM status (running/stopped)</li>
+                <li>Storage allocation per VM</li>
+                <li>Node-level CPU and memory history</li>
+            </ul>
+
+            <h3>Alerting (Grafana → Discord)</h3>
+            <p>Four alert rules are configured in Grafana and route to a dedicated Discord channel via webhook. All rules were live-tested before being marked production-ready:</p>
+
+            <table class="alert-table">
+                <thead>
+                    <tr>
+                        <th>Alert</th>
+                        <th>Condition</th>
+                        <th>Severity</th>
+                        <th>Pending Period</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Node Down</td>
+                        <td>node_exporter unreachable</td>
+                        <td><span class="badge-critical">Critical</span></td>
+                        <td>2 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>Instance Down</td>
+                        <td>any scrape target unreachable</td>
+                        <td><span class="badge-critical">Critical</span></td>
+                        <td>2 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>Disk Usage High</td>
+                        <td>any mountpoint &gt; 80%</td>
+                        <td><span class="badge-warning">Warning</span></td>
+                        <td>10 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>Memory Usage High</td>
+                        <td>any node &gt; 90% RAM</td>
+                        <td><span class="badge-warning">Warning</span></td>
+                        <td>10 minutes</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ==================== Key Concepts Learned ==================== -->
+        <section class="section">
+            <h2>Key Concepts Learned</h2>
+
+            <p>Setting this up meant actually having to understand how it works — not just following a guide and moving on. The concepts below came up during the build, broke something, or changed how I think about monitoring.</p>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Pull vs. Push Monitoring</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>Prometheus is <strong>pull-based</strong> — it reaches out on a schedule to scrape <code>/metrics</code> endpoints. Datadog is push-based — agents send data outward to Datadog's cloud.</p>
+                        <p>Pull is generally better for on-prem and internal infrastructure: if a scrape target goes silent, Prometheus immediately knows it's unreachable. In a push model, a dead agent just stops sending — and depending on configuration, that silence can be ambiguous. Pull also means the monitoring system controls the collection rate, not each individual agent.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Time-Series Databases</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>Prometheus stores data as <strong>timestamp + metric name + value + labels</strong>. The format is optimized for data collected repeatedly over time — in this case, every 15 seconds per scrape target. It stores deltas rather than full snapshots, making it far more efficient than a relational database for this use case.</p>
+                        <p>Retention is configured to 30 days. Metrics older than that are automatically dropped. For long-term storage at scale, Prometheus can remote-write to Thanos or Cortex — but that's out of scope for this deployment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">PromQL — The Query Language</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>PromQL is Prometheus's query language. It's what powers both the Grafana dashboards and the alerting rules. Key patterns used in this deployment:</p>
+                        <pre><code># Instant vector — current health of all nodes
+up{job="proxmox-nodes"}
+
+# Rate of change over 5-min window (required for counters)
+rate(node_cpu_seconds_total[5m])
+
+# Inline math — memory usage %
+100 - ((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100)</code></pre>
+                        <p>The critical concept: many metrics are <strong>counters</strong> — they only ever go up (like total CPU seconds). You must use <code>rate()</code> to get meaningful per-second values. Graphing a raw counter just produces a monotonically increasing line.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Parametric Scraping</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>node_exporter uses a one-endpoint-per-host pattern — each of the 3 Proxmox nodes runs its own exporter, and each is listed as a separate scrape target in <code>prometheus.yml</code>.</p>
+                        <p>pve-exporter works differently: a single exporter instance proxies requests to all three Proxmox nodes via the REST API. Prometheus passes the target node as a URL parameter when scraping. This is parametric scraping — one exporter, multiple targets, driven by query parameters rather than separate endpoints. Understanding this distinction was necessary to configure the scrape jobs correctly.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Alert Pending Periods</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>Grafana alerts have a <code>For:</code> duration — the condition must be true for that long before the alert fires. This prevents false alarms from a single missed scrape or a momentary spike.</p>
+                        <p>Critical alerts (node down, instance down) have a 2-minute pending period — fast enough to matter, long enough to filter out a single missed scrape. Warning alerts (disk, memory) use 10 minutes because a brief spike to 91% RAM doesn't warrant a notification.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Webhooks</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>Grafana sends alert notifications to Discord via webhook — a URL that accepts HTTP POST requests containing JSON. No user authentication required; the secret is embedded in the URL itself.</p>
+                        <p>The same pattern works with PagerDuty, Slack, and Microsoft Teams — Grafana formats the payload, the receiving service handles display. Swapping Discord for something else is just a URL change.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Metrics vs. Logs vs. Traces — The Three Pillars</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>Observability has three distinct data types, each answering a different question:</p>
+                        <ul>
+                            <li><strong>Metrics (Prometheus)</strong> — "Is something wrong?" Numeric, low volume, highly efficient to store and query. Best for detecting that a problem exists.</li>
+                            <li><strong>Logs (Loki)</strong> — "Why is it wrong?" Text events, high volume. Best for understanding the sequence of events that led to a problem. Loki is deployed but Promtail log shipping is Phase 2.</li>
+                            <li><strong>Traces (Jaeger/Tempo)</strong> — "Where in the request chain did it fail?" Distributed request paths across microservices. Out of scope for this deployment — relevant for application-layer observability.</li>
+                        </ul>
+                        <p>Most production incidents start with a metrics alert, then a log investigation. Traces become important when you're debugging distributed systems with multiple services calling each other.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Container Config vs. Running State</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><code>docker-compose.yml</code> is a definition, not the current reality. The running container reflects whatever was set <em>when it was last started</em>. Editing the file has no effect on a running container until it's recreated.</p>
+                        <p>Always verify the running state directly rather than assuming the file matches:</p>
+                        <div class="terminal">
+                            <pre>docker inspect grafana | grep ROOT_URL</pre>
+                        </div>
+                        <p>This came up when <code>GF_SERVER_ROOT_URL</code> was corrected in the compose file but the running container still had the old value. The container had never been restarted after the edit. Fixed with <code>docker compose up -d grafana</code>, then verified with <code>docker inspect</code>.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== What Broke ==================== -->
+        <section class="section">
+            <h2>What Broke (And How I Fixed It)</h2>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Issue 1 — heredoc Syntax Confusion</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>What Went Wrong:</h4>
+                        <p>The <code>cat &gt; file &lt;&lt; 'EOF'</code> heredoc syntax was unfamiliar. Wasn't clear what each operator was doing or whether the file was actually being written.</p>
+                        <h4>The Explanation:</h4>
+                        <pre><code>cat > file << 'EOF'
+...content...
+EOF</code></pre>
+                        <p><code>&gt;</code> redirects cat's output into the file. <code>&lt;&lt; 'EOF'</code> defines the input block — everything between the two <code>EOF</code> markers becomes cat's stdin. The result is identical to opening the file in a text editor. Both approaches produce the same file.</p>
+                        <h4>Lesson Learned:</h4>
+                        <p>Heredocs are standard shell syntax for writing multi-line content to a file without opening an editor. Common in scripts, common in runbooks, worth knowing cold.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Issue 2 — curl Pipe Error on node_exporter Test</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>What Appeared:</h4>
+                        <div class="terminal">
+                            <pre>curl: (23) Failure writing output to destination</pre>
+                        </div>
+                        <h4>The Problem (and Why It Wasn't One):</h4>
+                        <p>This error appeared when running <code>curl http://localhost:9100/metrics | head -20</code>. It looks alarming but it's not an error — <code>head</code> closes the pipe after 20 lines while curl is still actively sending the full metrics payload. When the read end of the pipe closes, curl sees a broken pipe and exits with code 23.</p>
+                        <p>node_exporter was healthy and returning data. The command worked correctly.</p>
+                        <h4>Lesson Learned:</h4>
+                        <p>Exit code 23 from curl is "Write error" — it means the destination stopped accepting data. In the context of piping to <code>head</code>, that's expected behavior. Distinguish between "curl couldn't connect" (codes 6, 7) and "curl was told to stop" (code 23).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Issue 3 — Alert Rule Returning "No data" on Preview</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>What Happened:</h4>
+                        <p>The Instance Down alert rule used <code>up == 0</code> as its PromQL query. During testing with all targets healthy, the alert preview showed "No data" — confusing because it made the rule look broken.</p>
+                        <h4>The Distinction:</h4>
+                        <p><code>up == 0</code> is a PromQL filter — it only returns time series where the value is exactly 0. When all instances are healthy (all <code>up</code> values are 1), the filter returns an empty result set. That's "No data" — not an error, just no matching series.</p>
+                        <p>The fix: use <code>up</code> as the query and let Grafana's alert <strong>condition</strong> handle the threshold (<code>IS BELOW 1</code>). The query returns all instances; the condition evaluates them. These are separate concerns.</p>
+                        <h4>Lesson Learned:</h4>
+                        <p>PromQL filtering in the query and alert threshold evaluation in the condition are two different layers. Mixing them causes exactly this problem. Use the query to select the right time series; use the condition to define what "alerting" means.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Issue 4 — Wrong URL in Discord Alert Notifications</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>What Happened:</h4>
+                        <p>Discord alert notifications contained the wrong Grafana URL — pointing to an old hostname instead of <code>grafana.seggsy.co</code>. The <code>GF_SERVER_ROOT_URL</code> environment variable in <code>docker-compose.yml</code> was already correct.</p>
+                        <h4>Root Cause:</h4>
+                        <p>The Grafana container was never restarted after the environment variable was updated. The running container still reflected the old value from its initial startup. Editing <code>docker-compose.yml</code> does nothing to a running container.</p>
+                        <h4>The Fix:</h4>
+                        <div class="terminal">
+                            <pre># Recreate container with updated env var
+docker compose up -d grafana
+
+# Verify the running container has the correct value
+docker inspect grafana | grep ROOT_URL</pre>
+                        </div>
+                        <h4>Lesson Learned:</h4>
+                        <p>Always verify environment variables against the running container, not the compose file. The compose file is the desired state; <code>docker inspect</code> shows the actual state. This pattern — desired config vs. running reality — applies everywhere in infrastructure.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== Results ==================== -->
+        <section class="section">
+            <h2>Results</h2>
+
+            <div class="success-box">
+                <ul style="margin-bottom: 0;">
+                    <li><strong>All 3 Proxmox nodes reporting OS-level metrics</strong> — CPU, memory, disk, network, load</li>
+                    <li><strong>Per-VM metrics via Proxmox REST API</strong> — breakdown by VM across the full cluster</li>
+                    <li><strong>Node Exporter Full dashboard (ID 1860)</strong> — cluster-wide OS health visualization</li>
+                    <li><strong>Proxmox via Prometheus dashboard (ID 10347)</strong> — per-VM resource breakdown</li>
+                    <li><strong>4 alerting rules configured and live-tested</strong> — all rules verified with real trigger conditions</li>
+                    <li><strong>Discord notifications working</strong> — correct grafana.seggsy.co links confirmed</li>
+                    <li><strong>Grafana protected behind HTTPS</strong> — https://grafana.seggsy.co via Nginx Proxy Manager</li>
+                    <li><strong>Full deployment documented</strong> in Obsidian vault</li>
+                </ul>
+            </div>
+
+            <h3>Verification</h3>
+            <p>Before calling this done, I verified each component directly:</p>
+
+            <div class="terminal">
+                <pre># Confirm all scrape targets are healthy in Prometheus
+curl -s http://localhost:9090/api/v1/targets | python3 -m json.tool | grep health
+
+# Verify node_exporter is exposing metrics on each host
+curl http://[pve-ip]:9100/metrics | head -20
+curl http://[pve02-ip]:9100/metrics | head -20
+curl http://[pve03-ip]:9100/metrics | head -20
+
+# Confirm pve-exporter is reaching the Proxmox API
+curl http://localhost:9221/metrics?target=[pve-ip] | head -20
+
+# Verify Grafana environment var matches production URL
+docker inspect grafana | grep ROOT_URL</pre>
+            </div>
+
+            <div class="warning-box">
+                <strong>Phase 2 Remaining:</strong> windows_exporter on DC01 and DC02 (Windows-specific metrics, AD auth events), Promtail log shipping from Proxmox nodes into Loki, and Authentik SSO on Grafana (same forward-auth pattern as other services).
+            </div>
+        </section>
+
+        <!-- ==================== Interview Story ==================== -->
+        <section class="section">
+            <h2>Interview Story (STAR Format)</h2>
+
+            <div class="star-format">
+                <div class="star-item">
+                    <div class="star-label">Situation</div>
+                    <p>"I was running a 3-node Proxmox cluster with about a dozen VMs and had zero visibility into what was actually happening at the infrastructure level. No metrics, no alerting, no way to know if a node was running hot or if a VM went down overnight. Flying blind."</p>
+                </div>
+
+                <div class="star-item">
+                    <div class="star-label">Task</div>
+                    <p>"I wanted to deploy a full observability stack — the same open-source toolchain SRE teams use as a self-hosted alternative to Datadog. OS-level metrics from every hypervisor, per-VM visibility via the Proxmox REST API, and alerting that fires before someone has to check a dashboard."</p>
+                </div>
+
+                <div class="star-item">
+                    <div class="star-label">Action</div>
+                    <p>"I stood up a dedicated monitoring VM on pve03 and deployed Prometheus, Grafana, and Loki as a Docker Compose stack. I installed node_exporter as a systemd service on all three Proxmox hosts for OS-level metrics, then configured pve-exporter to pull per-VM data through the Proxmox REST API using a read-only API token I'd already scoped during my RBAC project. I imported two community dashboards and built out four alert rules — node down, instance down, disk usage over 80%, and memory over 90% — with pending periods tuned to filter out transient blips. I tested every rule against real conditions before signing off, and put Grafana behind HTTPS through Nginx Proxy Manager."</p>
+                </div>
+
+                <div class="star-item">
+                    <div class="star-label">Result</div>
+                    <p>"The cluster went from completely unmonitored to fully observable in a single session. All three nodes are reporting metrics, per-VM breakdowns are live in Grafana, and four alert rules are actively watching for problems and routing to Discord. The same stack — Prometheus, Grafana, Loki — is what you'd deploy if your organization wanted observability without a Datadog bill."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== Skills Demonstrated ==================== -->
+        <section class="section">
+            <h2>Skills Demonstrated</h2>
+
+            <h3>Technical Skills</h3>
+            <div class="skills-grid">
+                <span class="skill-badge">Prometheus</span>
+                <span class="skill-badge">Grafana</span>
+                <span class="skill-badge">Loki</span>
+                <span class="skill-badge">PromQL</span>
+                <span class="skill-badge">node_exporter</span>
+                <span class="skill-badge">Docker Compose</span>
+                <span class="skill-badge">Linux System Administration</span>
+                <span class="skill-badge">Ubuntu 24.04</span>
+                <span class="skill-badge">Proxmox VE</span>
+                <span class="skill-badge">REST API Integration</span>
+                <span class="skill-badge">systemd</span>
+                <span class="skill-badge">Nginx Proxy Manager</span>
+                <span class="skill-badge">Webhook Integrations</span>
+                <span class="skill-badge">RBAC / Least Privilege</span>
+            </div>
+
+            <h3>Professional Skills</h3>
+            <div class="skills-grid">
+                <span class="skill-badge">Observability Architecture</span>
+                <span class="skill-badge">SRE Practices</span>
+                <span class="skill-badge">Alerting Design</span>
+                <span class="skill-badge">Alert Fatigue Mitigation</span>
+                <span class="skill-badge">Infrastructure Documentation</span>
+                <span class="skill-badge">Proactive Monitoring</span>
+                <span class="skill-badge">Container Config Management</span>
+                <span class="skill-badge">Troubleshooting</span>
+            </div>
+        </section>
+
+    </main>
+
+    <footer role="contentinfo">
+        <div class="footer-content">
+            <nav class="footer-nav" aria-label="Footer navigation">
+                <a href="/">Projects</a>
+                <a href="/resume">Resume</a>
+                <a href="/work-highlights">Work Examples</a>
+            </nav>
+            <p class="footer-copyright">Building enterprise-grade infrastructure, one project at a time.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Collapsible sections with keyboard accessibility
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const collapsible = header.parentElement;
+                collapsible.classList.toggle('active');
+            });
+
+            header.setAttribute('tabindex', '0');
+            header.setAttribute('role', 'button');
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    header.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

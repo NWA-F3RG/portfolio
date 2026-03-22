@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Nate's Portfolio - Systems Administration & Infrastructure. Homelab projects featuring SSO, backup infrastructure, SSH hardening, and enterprise-grade implementations.">
+    <meta name="description" content="Nate's Portfolio - Systems Administration & Infrastructure. Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack, and enterprise-grade implementations.">
     
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
@@ -25,7 +25,7 @@
     
     <!-- Open Graph -->
     <meta property="og:title" content="Nate - Systems Administration & Infrastructure">
-    <meta property="og:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, and enterprise-grade implementations.">
+    <meta property="og:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack, and enterprise-grade implementations.">
     <meta property="og:image" content="https://seggsy.co/og-image.png">
     <meta property="og:url" content="https://seggsy.co/">
     <meta property="og:type" content="website">
@@ -33,7 +33,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Nate - Systems Administration & Infrastructure">
-    <meta name="twitter:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, and enterprise-grade implementations.">
+    <meta name="twitter:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack, and enterprise-grade implementations.">
     <meta name="twitter:image" content="https://seggsy.co/og-image.png">
     
     <!-- Fonts -->
@@ -341,7 +341,7 @@
         /* Project Grids */
         .live-project-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: var(--space-lg);
             margin-bottom: var(--space-lg);
         }
@@ -429,6 +429,7 @@
             margin-bottom: var(--space-sm);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            padding-right: 4.5rem;
         }
         
         .project-title {
@@ -807,6 +808,10 @@
                         <div class="stat-value">100%</div>
                         <div class="stat-label">Backup Success</div>
                     </div>
+                    <div class="stat">
+                        <div class="stat-value">11 Hosts</div>
+                        <div class="stat-label">Monitored & Alerted</div>
+                    </div>
                 </div>
                 
                 <div class="hero-cta">
@@ -825,7 +830,7 @@
                 </p>
             </div>
             
-            <!-- Live Projects (3 cards) -->
+            <!-- Live Projects (4 cards, 2x2) -->
             <div class="live-project-grid">
                 <!-- Project 1: Authentik SSO -->
                 <a href="/authentik-sso" class="project-card">
@@ -881,7 +886,7 @@
                     </div>
                 </a>
                 
-                <!-- Project 3: SSH Hardening (NEW) -->
+                <!-- Project 3: SSH Hardening -->
                 <a href="/ssh-hardening" class="project-card">
                     <div class="project-status-badge status-live">Live</div>
                     <div class="project-tag">Security & Hardening</div>
@@ -889,7 +894,7 @@
                     <h3 class="project-title">SSH Hardening Implementation</h3>
                     
                     <p class="project-description">
-                        Implemented enterprise-grade SSH hardening across 6 systems with Ed25519 key-based authentication 
+                        SSH hardening across 6 systems with Ed25519 key-based authentication 
                         and fail2ban intrusion prevention. Zero downtime, SOC 2 compliant patterns.
                     </p>
                     
@@ -907,11 +912,41 @@
                         <span class="skill-badge">Linux</span>
                     </div>
                 </a>
+
+                <!-- Project 4: Monitoring Stack (promoted from WIP) -->
+                <a href="/monitoring-stack" class="project-card">
+                    <div class="project-status-badge status-live">Live</div>
+                    <div class="project-tag">Infrastructure & Observability</div>
+
+                    <h3 class="project-title">Monitoring & Observability Stack</h3>
+
+                    <p class="project-description">
+                        Deployed end-to-end observability across a 3-node Proxmox cluster using Prometheus, Grafana, and Loki. 
+                        OS-level metrics from all nodes, per-VM breakdowns via the Proxmox REST API, and a live-tested alerting 
+                        pipeline routing to Discord.
+                    </p>
+
+                    <p class="project-cta-link">Learn more about this project &rarr;</p>
+
+                    <div class="project-meta">
+                        <span>March 2026</span>
+                        <span>~6 hours</span>
+                    </div>
+
+                    <div class="project-skills">
+                        <span class="skill-badge">Prometheus</span>
+                        <span class="skill-badge">Grafana</span>
+                        <span class="skill-badge">Loki</span>
+                        <span class="skill-badge">PromQL</span>
+                        <span class="skill-badge">Docker Compose</span>
+                        <span class="skill-badge">Alerting</span>
+                    </div>
+                </a>
             </div>
             
             <!-- WIP Projects (4 cards) -->
             <div class="wip-project-grid">
-                <!-- WIP 1: MFA Implementation (NEW) -->
+                <!-- WIP 1: MFA Implementation -->
                 <div class="project-card wip-card-style">
                     <div class="project-status-badge status-wip">WIP</div>
                     <div class="project-tag">Identity & Access Management</div>
@@ -929,21 +964,24 @@
                     </div>
                 </div>
                 
-                <!-- WIP 2: Monitoring Stack -->
+                <!-- WIP 2: K3s Cluster (replacing Monitoring Stack) -->
                 <div class="project-card wip-card-style">
                     <div class="project-status-badge status-wip">WIP</div>
-                    <div class="project-tag">Observability</div>
-                    
-                    <h3 class="project-title">Monitoring Stack</h3>
-                    
+                    <div class="project-tag">Container Orchestration</div>
+
+                    <h3 class="project-title">K3s Cluster Deployment</h3>
+
                     <p class="project-description">
-                        Building comprehensive observability with Prometheus, Loki, and Grafana across the entire homelab.
+                        Deploying lightweight Kubernetes across the 3-node Proxmox cluster with persistent storage and load 
+                        balancing — what most orgs run in production, minus the AWS bill.
                     </p>
-                    
+
                     <div class="project-skills">
-                        <span class="skill-badge">Prometheus</span>
-                        <span class="skill-badge">Loki</span>
-                        <span class="skill-badge">Grafana</span>
+                        <span class="skill-badge">K3s</span>
+                        <span class="skill-badge">Kubernetes</span>
+                        <span class="skill-badge">Longhorn</span>
+                        <span class="skill-badge">Helm</span>
+                        <span class="skill-badge">Linux</span>
                     </div>
                 </div>
                 
@@ -955,7 +993,7 @@
                     <h3 class="project-title">RHCSA Preparation</h3>
                     
                     <p class="project-description">
-                        Developing production-grade Linux administration skills through hands-on labs and practice environments.
+                        Developing Linux administration skills you'd actually need on the job through hands-on labs and practice environments.
                     </p>
                     
                     <div class="project-skills">
@@ -990,8 +1028,7 @@
             <div class="skills-content">
                 <h2 class="section-title">Technical Skills</h2>
                 <p class="skills-intro">
-                    Core competencies developed through hands-on implementation and systematic troubleshooting 
-                    in both homelab and professional environments.
+                    Skills built by doing the work — in the homelab and on the job.
                 </p>
                 
                 <div class="skills-grid">
@@ -1034,6 +1071,17 @@
                             <li>Defense-in-Depth</li>
                         </ul>
                     </div>
+
+                    <div class="skill-category">
+                        <h3>Monitoring & Observability</h3>
+                        <ul>
+                            <li>Prometheus</li>
+                            <li>Grafana</li>
+                            <li>Loki</li>
+                            <li>PromQL</li>
+                            <li>Alerting</li>
+                        </ul>
+                    </div>
                     
                     <div class="skill-category">
                         <h3>Systems & Tools</h3>
@@ -1067,7 +1115,7 @@
                     Let's Chat
                 </a>
             </div>
-            <div class="contact-info">Austin, TX based &middot; Always happy to chat about new opportunities.</div>
+            <div class="contact-info">Austin, TX based &middot; Open to the right role in Austin.</div>
         </section>
     </main>
     

@@ -591,6 +591,7 @@
             margin-bottom: var(--space-sm);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            padding-right: 5.5rem;
         }
         
         .project-card h3 {
@@ -944,7 +945,7 @@
                         <li>Network Infrastructure</li>
                         <li>FortiGate Firewalls</li>
                         <li>Bash Scripting</li>
-                        <li>VMware / Hyper-V</li>
+                        <li>Prometheus / Grafana</li>
                         <li>Azure Cloud Services</li>
                     </ul>
                 </div>
@@ -1061,6 +1062,37 @@
                         <span class="skill-badge">Linux</span>
                     </div>
                 </a>
+
+                <!-- Live: SSH Hardening -->
+                <a href="/ssh-hardening" target="_blank" rel="noopener noreferrer" class="project-card project-card-live">
+                    <div class="project-status-badge status-live">Live</div>
+                    <div class="project-tag">Security & Hardening</div>
+                    <h3>SSH Hardening Implementation</h3>
+                    <p>Implemented enterprise-grade SSH hardening across 6 systems using Ed25519 key-based authentication and fail2ban intrusion prevention. 100% elimination of password-based attack surface with zero downtime.</p>
+                    <p class="project-cta-link">View detailed project breakdown &rarr;</p>
+                    <div class="project-skills">
+                        <span class="skill-badge">SSH</span>
+                        <span class="skill-badge">fail2ban</span>
+                        <span class="skill-badge">Ed25519</span>
+                        <span class="skill-badge">Linux</span>
+                    </div>
+                </a>
+
+                <!-- Live: Monitoring Stack -->
+                <a href="/monitoring-stack" target="_blank" rel="noopener noreferrer" class="project-card project-card-live">
+                    <div class="project-status-badge status-live">Live</div>
+                    <div class="project-tag">Infrastructure & Observability</div>
+                    <h3>Monitoring & Observability Stack</h3>
+                    <p>Deployed full-stack observability across a 3-node Proxmox cluster. OS-level metrics, per-VM breakdowns via the Proxmox REST API, and a live-tested alerting pipeline routing to Discord.</p>
+                    <p class="project-cta-link">View detailed project breakdown &rarr;</p>
+                    <div class="project-skills">
+                        <span class="skill-badge">Prometheus</span>
+                        <span class="skill-badge">Grafana</span>
+                        <span class="skill-badge">Loki</span>
+                        <span class="skill-badge">PromQL</span>
+                        <span class="skill-badge">Docker Compose</span>
+                    </div>
+                </a>
                 
                 <!-- WIP: RHCSA -->
                 <div class="project-card project-card-wip">
@@ -1126,3 +1158,5 @@
             });
         });
     </script>
+</body>
+</html>
