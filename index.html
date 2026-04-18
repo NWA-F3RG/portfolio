@@ -210,6 +210,8 @@
             color: var(--color-text-primary);
             font-size: 1.5rem;
             cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         
         /* ==================== Hero Section ==================== */
@@ -292,6 +294,8 @@
             text-decoration: none;
             border-radius: var(--radius-md);
             transition: all 0.2s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .btn-primary {
@@ -651,6 +655,63 @@
             color: var(--color-accent-primary);
         }
         
+        /* ==================== Homelab Callout ==================== */
+        .homelab-callout {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin: var(--space-xl) 0;
+            padding: var(--space-md) var(--space-lg);
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-left: 3px solid var(--color-accent-primary);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .homelab-callout:hover {
+            background: var(--color-bg-tertiary);
+            border-color: var(--color-border-hover);
+            border-left-color: var(--color-accent-primary);
+        }
+
+        .homelab-callout-label {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-accent-primary);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .homelab-callout-body {
+            flex: 1;
+        }
+
+        .homelab-callout-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .homelab-callout-desc {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .homelab-callout-arrow {
+            font-size: var(--font-size-xl);
+            color: var(--color-accent-primary);
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        .homelab-callout:hover .homelab-callout-arrow {
+            transform: translateX(4px);
+        }
+
         /* ==================== Responsive ==================== */
         @media (max-width: 1024px) {
             .live-project-grid {
@@ -662,6 +723,18 @@
             }
         }
         
+        @media (max-width: 600px) {
+            .homelab-callout {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-xs);
+            }
+
+            .homelab-callout-arrow {
+                display: none;
+            }
+        }
+
         @media (max-width: 768px) {
             .hero-stats {
                 flex-direction: column;
@@ -768,6 +841,7 @@
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="/work-highlights">Work Examples</a></li>
+                <li><a href="/homelab-highlights">Homelab</a></li>
                 <li><a href="/resume">Resume</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
@@ -943,7 +1017,16 @@
                     </div>
                 </a>
             </div>
-            
+
+            <a href="/homelab-highlights" class="homelab-callout" aria-label="Homelab Highlights">
+                <div class="homelab-callout-label">// homelab</div>
+                <div class="homelab-callout-body">
+                    <h3 class="homelab-callout-title">Homelab Highlights</h3>
+                    <p class="homelab-callout-desc">When these projects break, I document the fix — real troubleshooting logs from the lab.</p>
+                </div>
+                <span class="homelab-callout-arrow">→</span>
+            </a>
+
             <!-- WIP Projects (4 cards) -->
             <div class="wip-project-grid">
                 <!-- WIP 1: MFA Implementation -->

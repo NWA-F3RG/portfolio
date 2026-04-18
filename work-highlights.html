@@ -12,7 +12,8 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+
     <title>Work Experience Highlights - Nate</title>
     
     <!-- Favicon -->
@@ -20,6 +21,8 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
     <link rel="manifest" href="/site.webmanifest">
     
     <!-- Canonical URL -->
@@ -181,6 +184,11 @@
             font-weight: 600;
             color: var(--color-accent-primary);
             text-decoration: none;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .logo::before {
@@ -194,6 +202,11 @@
             font-size: 0.95rem;
             font-weight: 500;
             transition: color 0.2s;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .back-link:hover {
@@ -335,6 +348,45 @@
             border: 1px solid var(--color-border);
         }
         
+        /* ==================== Card Heading Row ==================== */
+        .card-heading-row {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .category-badge {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-top: 0.35rem;
+        }
+
+        .cat-pam        { background: rgba(180,  40,  40, 0.18); color: #f47c7c; border: 1px solid rgba(180, 40, 40, 0.35); }
+        .cat-iam        { background: rgba(138,  43, 226, 0.18); color: #b98ce8; border: 1px solid rgba(138, 43, 226, 0.35); }
+        .cat-mdm        { background: rgba( 78, 201, 176, 0.18); color: #4ec9b0; border: 1px solid rgba( 78, 201, 176, 0.35); }
+        .cat-cloud      { background: rgba( 86, 156, 214, 0.18); color: #569cd6; border: 1px solid rgba( 86, 156, 214, 0.35); }
+        .cat-automation { background: rgba(105, 185,  95, 0.18); color: #6abf69; border: 1px solid rgba(105, 185,  95, 0.35); }
+        .cat-network    { background: rgba(255, 107,  53, 0.18); color: #ff8c5a; border: 1px solid rgba(255, 107,  53, 0.35); }
+        .cat-security   { background: rgba(220,  50,  47, 0.18); color: #e06c6c; border: 1px solid rgba(220,  50,  47, 0.35); }
+
+        .card-heading-row h2 {
+            margin-bottom: var(--space-xs);
+        }
+
+        .card-env-line {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+
         /* ==================== Footer ==================== */
         footer {
             max-width: 900px;
@@ -381,6 +433,11 @@
                 gap: var(--space-md);
                 text-align: center;
             }
+
+            .card-heading-row {
+                flex-direction: column;
+                gap: var(--space-sm);
+            }
         }
     </style>
 </head>
@@ -414,8 +471,14 @@
         </div>
         
         <!-- Example 1: CyberArk + LAPS -->
-        <article class="work-example">
-            <h2>Privileged Access Management: CyberArk + LAPS Recovery</h2>
+        <article class="work-example" aria-labelledby="work-1-title">
+            <div class="card-heading-row">
+                <span class="category-badge cat-pam">PAM</span>
+                <div>
+                    <h2 id="work-1-title">Privileged Access Management: CyberArk + LAPS Recovery</h2>
+                    <div class="card-env-line">CyberArk PAM &nbsp;·&nbsp; LAPS &nbsp;·&nbsp; Entra ID &nbsp;·&nbsp; VPN</div>
+                </div>
+            </div>
             
             <div class="example-section">
                 <h3>The Challenge</h3>
@@ -464,8 +527,14 @@
         </article>
         
         <!-- Example 2: Active Directory Access Management -->
-        <article class="work-example">
-            <h2>Identity & Access: Active Directory Security Groups</h2>
+        <article class="work-example" aria-labelledby="work-2-title">
+            <div class="card-heading-row">
+                <span class="category-badge cat-iam">IDENTITY &amp; ACCESS</span>
+                <div>
+                    <h2 id="work-2-title">Identity & Access: Active Directory Security Groups</h2>
+                    <div class="card-env-line">Active Directory &nbsp;·&nbsp; ADUC &nbsp;·&nbsp; NTFS Permissions &nbsp;·&nbsp; Entra ID</div>
+                </div>
+            </div>
             
             <div class="example-section">
                 <h3>The Challenge</h3>
@@ -514,8 +583,14 @@
         </article>
         
         <!-- Example 3: Mobile Device Management -->
-        <article class="work-example">
-            <h2>Mobile Device Management: Secure Teams Access Configuration</h2>
+        <article class="work-example" aria-labelledby="work-3-title">
+            <div class="card-heading-row">
+                <span class="category-badge cat-mdm">MDM</span>
+                <div>
+                    <h2 id="work-3-title">Mobile Device Management: Secure Teams Access Configuration</h2>
+                    <div class="card-env-line">Entra ID &nbsp;·&nbsp; Microsoft Intune &nbsp;·&nbsp; SecureW2 &nbsp;·&nbsp; MFA</div>
+                </div>
+            </div>
             
             <div class="example-section">
                 <h3>The Challenge</h3>
@@ -567,8 +642,14 @@
         </article>
         
         <!-- Example 4: Windows 365 Cloud PC Provisioning -->
-        <article class="work-example">
-            <h2>Cloud Identity: Windows 365 Cloud PC Provisioning Failure</h2>
+        <article class="work-example" aria-labelledby="work-4-title">
+            <div class="card-heading-row">
+                <span class="category-badge cat-cloud">CLOUD IDENTITY</span>
+                <div>
+                    <h2 id="work-4-title">Cloud Identity: Windows 365 Cloud PC Provisioning Failure</h2>
+                    <div class="card-env-line">Windows 365 &nbsp;·&nbsp; Microsoft Intune &nbsp;·&nbsp; Entra ID</div>
+                </div>
+            </div>
             
             <div class="example-section">
                 <h3>The Challenge</h3>
@@ -629,8 +710,14 @@
         </article>
         
         <!-- Example 5: Windows 365 Cloud PC Authentication Failure (TokenBroker) -->
-        <article class="work-example">
-            <h2>Cloud Identity: Windows 365 Cloud PC Authentication Failure (HTTP 400 / TokenBroker Cache)</h2>
+        <article class="work-example" aria-labelledby="work-5-title">
+            <div class="card-heading-row">
+                <span class="category-badge cat-cloud">CLOUD IDENTITY</span>
+                <div>
+                    <h2 id="work-5-title">Cloud Identity: Windows 365 Cloud PC Authentication Failure (HTTP 400 / TokenBroker Cache)</h2>
+                    <div class="card-env-line">Windows 365 &nbsp;·&nbsp; Entra ID &nbsp;·&nbsp; WAM / TokenBroker</div>
+                </div>
+            </div>
             
             <div class="example-section">
                 <h3>The Challenge</h3>
@@ -694,8 +781,14 @@
         </article>
         
         <!-- Example 6: Apple Business Manager MDM Recovery & Documentation -->
-        <article class="work-example">
-            <h2>Enterprise MDM: Apple Business Manager Recovery & Process Documentation</h2>
+        <article class="work-example" aria-labelledby="work-6-title">
+            <div class="card-heading-row">
+                <span class="category-badge cat-mdm">MDM</span>
+                <div>
+                    <h2 id="work-6-title">Enterprise MDM: Apple Business Manager Recovery & Process Documentation</h2>
+                    <div class="card-env-line">Apple Business Manager &nbsp;·&nbsp; Addigy &nbsp;·&nbsp; ADE</div>
+                </div>
+            </div>
             
             <div class="example-section">
                 <h3>The Challenge</h3>
@@ -764,9 +857,15 @@
             </div>
         </article>
         
-        <!-- Example 6: PowerShell Printer Deployment Script -->
-        <article class="work-example">
-            <h2>Automation: PowerShell Printer Deployment Script</h2>
+        <!-- Example 7: PowerShell Printer Deployment Script -->
+        <article class="work-example" aria-labelledby="work-7-title">
+            <div class="card-heading-row">
+                <span class="category-badge cat-automation">AUTOMATION</span>
+                <div>
+                    <h2 id="work-7-title">Automation: PowerShell Printer Deployment Script</h2>
+                    <div class="card-env-line">PowerShell &nbsp;·&nbsp; Print Server Management</div>
+                </div>
+            </div>
             
             <div class="example-section">
                 <h3>The Challenge</h3>
@@ -823,9 +922,15 @@
             </div>
         </article>
         
-        <!-- Example 7: VPN Authentication Failure Resolution -->
-        <article class="work-example">
-            <h2>Network Identity: VPN Authentication Failure Resolution</h2>
+        <!-- Example 8: VPN Authentication Failure Resolution -->
+        <article class="work-example" aria-labelledby="work-8-title">
+            <div class="card-heading-row">
+                <span class="category-badge cat-network">NETWORK</span>
+                <div>
+                    <h2 id="work-8-title">Network Identity: VPN Authentication Failure Resolution</h2>
+                    <div class="card-env-line">VPN &nbsp;·&nbsp; LDAP &nbsp;·&nbsp; Active Directory</div>
+                </div>
+            </div>
             
             <div class="example-section">
                 <h3>The Challenge</h3>
@@ -886,9 +991,15 @@
             </div>
         </article>
         
-        <!-- Example 8: Huntress MITM Response -->
-        <article class="work-example">
-            <h2>Security Response: Man-in-the-Middle Attack Mitigation</h2>
+        <!-- Example 9: Huntress MITM Response -->
+        <article class="work-example" aria-labelledby="work-9-title">
+            <div class="card-heading-row">
+                <span class="category-badge cat-security">SECURITY</span>
+                <div>
+                    <h2 id="work-9-title">Security Response: Man-in-the-Middle Attack Mitigation</h2>
+                    <div class="card-env-line">Huntress &nbsp;·&nbsp; Incident Response &nbsp;·&nbsp; Threat Mitigation</div>
+                </div>
+            </div>
             
             <div class="example-section">
                 <h3>The Challenge</h3>
@@ -953,5 +1064,6 @@
             <div class="footer-links">
                 <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
                 <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
+                <a href="/homelab-highlights">Homelab Highlights</a>
                 <a href="/cdn-cgi/l/email-protection#254b4b5244405f406556404242565c0b464a" aria-label="Email">Email</a>
             </div>

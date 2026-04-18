@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Real-world homelab troubleshooting: diagnostic methodology, systems thinking, and Linux/infrastructure depth. Proxmox, networking, NIC issues, and service recovery.">
+    <meta name="keywords" content="homelab, Proxmox, Linux, networking, troubleshooting, systems administration, e1000e, NIC, cluster">
+    <meta name="author" content="Nate">
+
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+
+    <title>Homelab Highlights - Nate N.</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://seggsy.co/homelab-highlights">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Homelab Highlights - Nate N.">
+    <meta property="og:description" content="Real-world homelab troubleshooting demonstrating diagnostic methodology and infrastructure depth.">
+    <meta property="og:image" content="https://seggsy.co/og-image.png">
+    <meta property="og:url" content="https://seggsy.co/homelab-highlights">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Nate - Systems Administration Portfolio">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Homelab Highlights - Nate N.">
+    <meta name="twitter:description" content="Real-world homelab troubleshooting demonstrating diagnostic methodology and infrastructure depth.">
+    <meta name="twitter:image" content="https://seggsy.co/og-image.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==================== CSS Variables ==================== */
+        :root {
+            --color-bg-primary:    #1e1e1e;
+            --color-bg-secondary:  #252526;
+            --color-bg-tertiary:   #2d2d30;
+            --color-bg-code:       #1a1a1a;
+
+            --color-text-primary:  #d4d4d4;
+            --color-text-secondary:#909090;
+            --color-text-muted:    #6a6a6a;
+
+            --color-accent-primary:   #ff6b35;
+            --color-accent-secondary: #4ec9b0;
+            --color-accent-warning:   #ce9178;
+            --color-accent-red:       #ff6b6b;
+            --color-accent-green:     #6a9955;
+
+            --color-border:       #3e3e42;
+            --color-border-hover: #5a5a5f;
+
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+            --font-size-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+            --font-size-sm:   clamp(0.875rem, 0.8rem  + 0.375vw, 1rem);
+            --font-size-base: clamp(1rem,     0.9rem  + 0.5vw,   1.125rem);
+            --font-size-lg:   clamp(1.125rem, 1rem    + 0.625vw, 1.25rem);
+            --font-size-xl:   clamp(1.25rem,  1.1rem  + 0.75vw,  1.5rem);
+            --font-size-2xl:  clamp(1.5rem,   1.3rem  + 1vw,     2rem);
+            --font-size-3xl:  clamp(2rem,     1.5rem  + 2.5vw,   3rem);
+
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+            --space-2xl: 4rem;
+
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        /* ==================== Reset ==================== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        /* ==================== Skip Link ==================== */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--color-accent-primary);
+            color: var(--color-bg-primary);
+            padding: var(--space-sm);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            z-index: 100;
+        }
+        .skip-link:focus { top: var(--space-sm); left: var(--space-sm); }
+
+        *:focus-visible { outline: 2px solid var(--color-accent-primary); outline-offset: 2px; }
+        *:focus:not(:focus-visible) { outline: none; }
+
+        /* ==================== Header ==================== */
+        header {
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-md) 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            text-decoration: none;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .logo::before { content: '$ '; color: var(--color-accent-secondary); }
+
+        .back-link {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .back-link:hover { color: var(--color-text-primary); }
+        .back-link::before { content: '← '; color: var(--color-accent-primary); }
+
+        /* ==================== Main ==================== */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-2xl) var(--space-md);
+        }
+
+        /* ==================== Hero ==================== */
+        .hero { margin-bottom: var(--space-2xl); }
+
+        .hero-label {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: var(--font-size-sm);
+            color: var(--color-accent-secondary);
+            background: var(--color-bg-secondary);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .hero h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: var(--space-md);
+        }
+
+        .hero p {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+            margin-bottom: var(--space-md);
+        }
+
+        /* ==================== Context Note ==================== */
+        .context-note {
+            background: var(--color-bg-secondary);
+            border-left: 3px solid var(--color-accent-warning);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-xl);
+        }
+        .context-note p {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+        .context-note strong { color: var(--color-text-primary); }
+
+        /* ==================== Incident Cards ==================== */
+        .incident-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+
+        .card-heading-row {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .severity-indicator {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            padding: 0.25rem 0.6rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid;
+            white-space: nowrap;
+            margin-top: 0.4rem;
+            flex-shrink: 0;
+        }
+        .sev-high   { color: var(--color-accent-red);    border-color: var(--color-accent-red);    background: rgba(244,71,71,0.08); }
+        .sev-medium { color: var(--color-accent-warning); border-color: var(--color-accent-warning); background: rgba(206,145,120,0.08); }
+        .sev-low    { color: var(--color-accent-green);   border-color: var(--color-accent-green);  background: rgba(106,153,85,0.08); }
+
+        .incident-card h2 {
+            font-size: var(--font-size-2xl);
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 0.35rem;
+        }
+
+        .card-meta-line {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            margin-bottom: 0.35rem;
+        }
+
+        .card-env-line {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: var(--color-accent-secondary);
+            opacity: 0.75;
+        }
+
+        /* ==================== Sections ==================== */
+        .example-section { margin-bottom: var(--space-lg); }
+        .example-section:last-child { margin-bottom: 0; }
+
+        .example-section h3 {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .example-section p {
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+            margin-bottom: var(--space-sm);
+        }
+        .example-section p:last-child { margin-bottom: 0; }
+
+        .example-section ol,
+        .example-section ul {
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+            padding-left: var(--space-lg);
+        }
+        .example-section li { margin-bottom: var(--space-xs); }
+        .example-section li:last-child { margin-bottom: 0; }
+
+        /* ==================== Code Blocks ==================== */
+        .code-block {
+            background: var(--color-bg-code);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin: var(--space-sm) 0;
+            overflow-x: auto;
+        }
+        .code-block code {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            color: #9cdcfe;
+            line-height: 1.7;
+            white-space: pre;
+            display: block;
+        }
+        .code-block code .comment { color: var(--color-accent-green); font-style: italic; }
+        .code-block code .value   { color: #4ec9b0; }
+        .code-block code .flag    { color: #ce9178; }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.875em;
+            color: var(--color-accent-secondary);
+            background: var(--color-bg-tertiary);
+            padding: 0.1em 0.35em;
+            border-radius: var(--radius-sm);
+        }
+
+        /* ==================== Skills List ==================== */
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            list-style: none;
+            padding: 0;
+        }
+        .skill-badge {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            background: var(--color-bg-tertiary);
+            color: var(--color-accent-secondary);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+        }
+
+        /* ==================== Footer ==================== */
+        footer {
+            max-width: 900px;
+            margin: var(--space-2xl) auto 0;
+            padding: var(--space-xl) var(--space-md);
+            border-top: 1px solid var(--color-border);
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+        }
+        .footer-links { display: flex; gap: var(--space-lg); }
+        .footer-links a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .footer-links a:hover { color: var(--color-text-primary); }
+
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            main { padding: var(--space-lg) var(--space-md); }
+            .incident-card { padding: var(--space-lg); }
+            .card-heading-row { flex-direction: column; gap: var(--space-xs); }
+            .footer-content { flex-direction: column; gap: var(--space-md); text-align: center; }
+        }
+
+        /* ==================== Sub-480px ==================== */
+        @media (max-width: 480px) {
+            main { padding: var(--space-md) var(--space-sm); }
+            .incident-card { padding: var(--space-md); }
+            .hero h1 { font-size: 1.75rem; }
+            .card-env-line { word-break: break-word; }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <nav aria-label="Main navigation">
+            <a href="/" class="logo">nate</a>
+            <a href="/" class="back-link">Back to Portfolio</a>
+        </nav>
+    </header>
+
+    <main id="main-content" role="main">
+
+        <section class="hero">
+            <p class="hero-label">Homelab // Incident Log</p>
+            <h1>Homelab Highlights</h1>
+            <p>
+                Real issues that surfaced in production — diagnosed, resolved, and documented.
+                Not planned projects; these are the breaks that teach you more than any tutorial.
+            </p>
+        </section>
+
+        <div class="context-note">
+            <p><strong>Note:</strong> This lab runs a 3-node Proxmox cluster with Active Directory,
+            Authentik SSO, a full monitoring stack, and zone-based UniFi networking. IP addresses
+            and MAC addresses have been obfuscated.</p>
+        </div>
+
+        <!-- Incident 1 -->
+        <article class="incident-card" aria-labelledby="incident-1-title">
+
+            <div class="card-heading-row">
+                <span class="severity-indicator sev-high">HIGH</span>
+                <div>
+                    <h2 id="incident-1-title">Proxmox Cluster Node: e1000e NIC Hardware Unit Hang</h2>
+                    <div class="card-meta-line">2026-04-16 &nbsp;·&nbsp; pve03 &nbsp;·&nbsp; ~9h downtime &nbsp;·&nbsp; ~45min to resolve</div>
+                    <div class="card-env-line">Proxmox VE &nbsp;·&nbsp; Linux (Debian) &nbsp;·&nbsp; Intel e1000e &nbsp;·&nbsp; Corosync &nbsp;·&nbsp; UniFi</div>
+                </div>
+            </div>
+
+            <div class="example-section">
+                <h3>The Problem</h3>
+                <p>
+                    PVE03, the third node in my Proxmox cluster, dropped off the network with no prior warning
+                    after 7 days and 22 hours of clean uptime. A UniFi CEF syslog alert was the first sign
+                    something was wrong. The node was completely unreachable — ping returned "Destination Host
+                    Unreachable" and SSH failed. Running <code>pvecm status</code> from another node confirmed
+                    the cluster had dropped to 2 out of 3 expected votes, meaning PVE03 had left membership entirely.
+                </p>
+                <p>
+                    The cluster remained quorate (2/3 satisfies the threshold), so VMs on the other two nodes
+                    were unaffected — but any workloads on PVE03 were inaccessible.
+                </p>
+            </div>
+
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Parsed the UniFi CEF syslog entry to identify the affected node, switch port, and disconnect timestamp</li>
+                    <li>Cross-referenced the port activity log — found PVE03, CA01, and a third client all dropped within seconds of each other at 06:10 (switch reboot), then PVE03 reconnected at 06:11 and dropped again at 06:19. Two separate events requiring separate root causes.</li>
+                    <li>Ran <code>pvecm status</code> from a healthy node to confirm cluster membership and quorum state</li>
+                    <li>Confirmed PVE03 was fully unreachable via ping and SSH — physical access required</li>
+                    <li>Ran kernel logs bounded to the disconnect window: <code>journalctl -k --since "06:10:00" --until "06:30:00"</code></li>
+                    <li>Found repeating <code>e1000e Hardware Unit Hang</code> messages on <code>eno1</code> every 2 seconds starting at exactly 06:10:00</li>
+                    <li>Identified the TX descriptor ring as stuck — <code>TDH</code> and <code>next_to_clean</code> both frozen at the same offset, <code>next_to_watch.status</code> never set to done by hardware</li>
+                    <li>Diagnosed as a known Intel e1000e TSO offload race condition — not a hardware failure</li>
+                    <li>Applied the fix, persisted it, and verified the cluster rejoined automatically</li>
+                </ol>
+            </div>
+
+            <div class="example-section">
+                <h3>What the Logs Showed</h3>
+                <div class="code-block"><code>Apr 16 06:10:00 pve03 kernel: e1000e 0000:00:1f.6 eno1: <span class="value">Detected Hardware Unit Hang</span>
+  TDH              <span class="flag">&lt;f6&gt;</span>   <span class="comment"># TX head pointer — stuck</span>
+  next_to_clean    <span class="flag">&lt;f6&gt;</span>   <span class="comment"># driver pointer — also stuck</span>
+  next_to_watch.status  <span class="value">&lt;0&gt;</span>  <span class="comment"># hardware never marked descriptor done</span>
+<span class="comment"># Identical values repeated every 2 seconds — driver stuck in retry loop</span></code></div>
+                <p>
+                    The switch port showed Active at GbE with no errors — the failure was entirely in
+                    driver/firmware space and invisible without checking kernel logs.
+                </p>
+            </div>
+
+            <div class="example-section">
+                <h3>Root Cause</h3>
+                <p>
+                    Intel's e1000e driver has a known race condition in its TCP Segmentation Offload (TSO) path.
+                    TSO delegates the work of splitting large TCP segments to the NIC hardware. Under certain
+                    traffic patterns, the NIC stalls mid-queue and never signals completion, causing the driver
+                    to hang indefinitely. If the subsequent reset fails, the link drops.
+                </p>
+            </div>
+
+            <div class="example-section">
+                <h3>Fix</h3>
+                <p>
+                    Disabled TSO, GSO, and GRO to move segmentation back into the kernel — slightly higher
+                    CPU cost, but eliminates the NIC stall. Applied immediately, then made persistent via a
+                    <code>post-up</code> directive in <code>/etc/network/interfaces</code>.
+                </p>
+                <div class="code-block"><code><span class="comment"># Applied immediately</span>
+ethtool -K eno1 <span class="flag">tso off gso off gro off</span>
+
+<span class="comment"># Made persistent — added to vmbr0 stanza</span>
+<span class="value">post-up</span> ethtool -K eno1 tso off gso off gro off
+
+<span class="comment"># Verified post-up fires correctly after bridge bounce</span>
+ifdown vmbr0 && ifup vmbr0</code></div>
+            </div>
+
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    PVE03 recovered its NIC link and rejoined the cluster automatically. <code>pvecm status</code>
+                    returned to 3/3 expected votes within seconds. Total node downtime was approximately 9 hours;
+                    resolution time was about 45 minutes once the correct log was checked.
+                </p>
+                <p>
+                    Key takeaway: a clean-looking switch port and "Destination Host Unreachable" don't rule out
+                    a driver-level failure. When a NIC drops without a physical cause, <code>journalctl -k</code>
+                    is always the next stop.
+                </p>
+            </div>
+
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">Linux Kernel Logs</li>
+                    <li class="skill-badge">NIC Driver Debugging</li>
+                    <li class="skill-badge">ethtool</li>
+                    <li class="skill-badge">Proxmox Cluster / Corosync</li>
+                    <li class="skill-badge">Network Interfaces</li>
+                    <li class="skill-badge">CEF Syslog Parsing</li>
+                    <li class="skill-badge">Root Cause Analysis</li>
+                    <li class="skill-badge">UniFi</li>
+                </ul>
+            </div>
+
+        </article>
+
+        <section class="hero" aria-label="Summary" style="margin-top: var(--space-2xl); text-align: center;">
+            <p>
+                These incidents represent unplanned, production-grade troubleshooting across networking,
+                Linux systems, and cluster infrastructure. Each one required reading real logs, forming
+                a hypothesis, and validating the fix — not following a guide.
+            </p>
+        </section>
+
+    </main>
+
+    <footer role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-text">© 2026 Nate N. Built with intention, documented with care.</div>
+            <div class="footer-links">
+                <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub (opens in new tab)">GitHub</a>
+                <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn (opens in new tab)">LinkedIn</a>
+                <a href="/work-highlights">Work Highlights</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
