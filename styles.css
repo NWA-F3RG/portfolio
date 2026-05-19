@@ -17,8 +17,9 @@
     --color-border:        #2d3038;
     --color-border-hover:  #3d4149;
 
-    --font-mono: 'IBM Plex Mono', monospace;
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'Courier Prime', 'Courier New', monospace;
+    --font-sans: 'Crimson Pro', Georgia, serif;
+    --font-display: 'Fraunces', Georgia, serif;
 
     --font-size-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
     --font-size-sm:   clamp(0.875rem, 0.8rem  + 0.375vw, 1rem);
@@ -66,6 +67,9 @@ body {
     line-height: 1.6;
     font-size: 16px;
 }
+
+h1, h2, h3, h4 { font-family: var(--font-display); }
+h1 .highlight { font-style: italic; font-weight: 300; }
 
 /* ==================== Skip Link ==================== */
 .skip-link {
@@ -339,6 +343,7 @@ pre code {
 .collapsible-header:hover { background: var(--color-bg-tertiary); }
 
 .collapsible-title {
+    font-family: var(--font-display);
     font-weight: 600;
     color: var(--color-text-primary);
     font-size: 1rem;
@@ -433,10 +438,12 @@ pre code {
 .story-section p {
     color: var(--color-text-secondary);
     line-height: 1.75;
-    font-size: 0.975rem;
+    font-size: 1.05rem;
     margin-bottom: var(--space-sm);
 }
 .story-section p:last-child { margin-bottom: 0; }
+
+.job li { font-size: 1.05rem; }
 
 /* ==================== Project Page Footer ==================== */
 footer.project-footer {

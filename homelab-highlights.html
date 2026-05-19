@@ -45,7 +45,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,200;1,9..144,300&family=Crimson+Pro:ital,wght@0,400;0,500;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
     <style>
         /* ==================== CSS Variables ==================== */
@@ -69,8 +69,9 @@
             --color-border:       #2d3038;
             --color-border-hover: #3d4149;
 
-            --font-mono: 'IBM Plex Mono', monospace;
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'Courier Prime', 'Courier New', monospace;
+            --font-sans: 'Crimson Pro', Georgia, serif;
+            --font-display: 'Fraunces', Georgia, serif;
 
             --font-size-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
             --font-size-sm:   clamp(0.875rem, 0.8rem  + 0.375vw, 1rem);
@@ -113,6 +114,8 @@
             line-height: 1.6;
             font-size: 16px;
         }
+
+        h1, h2, h3, h4 { font-family: var(--font-display); }
 
         /* ==================== Skip Link ==================== */
         .skip-link {
