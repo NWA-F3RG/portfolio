@@ -4,288 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Nate's Portfolio - Systems Administration & Infrastructure. Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack, and enterprise-grade implementations.">
-    
+
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
     <meta name="referrer" content="strict-origin-when-cross-origin">
-    
+
     <title>Nate - Systems Administration & Infrastructure</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="manifest" href="/site.webmanifest">
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href="https://seggsy.co/">
-    
+
     <!-- Open Graph -->
     <meta property="og:title" content="Nate - Systems Administration & Infrastructure">
     <meta property="og:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack, and enterprise-grade implementations.">
     <meta property="og:image" content="https://seggsy.co/og-image.png">
     <meta property="og:url" content="https://seggsy.co/">
     <meta property="og:type" content="website">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Nate - Systems Administration & Infrastructure">
     <meta name="twitter:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack, and enterprise-grade implementations.">
     <meta name="twitter:image" content="https://seggsy.co/og-image.png">
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Shared styles -->
+    <link rel="stylesheet" href="/styles.css">
+
     <style>
-        /* ==================== CSS Variables ==================== */
-        :root {
-            /* Background Colors */
-            --color-bg-primary: #1e1e1e;
-            --color-bg-secondary: #252526;
-            --color-bg-tertiary: #2d2d30;
-            --color-bg-code: #1e1e1e;
-            
-            /* Text Colors */
-            --color-text-primary: #d4d4d4;
-            --color-text-secondary: #909090;
-            --color-text-muted: #6a6a6a;
-            
-            /* Accent Colors */
-            --color-accent-primary: #ff6b35;
-            --color-accent-secondary: #4ec9b0;
-            --color-accent-warning: #ce9178;
-            
-            /* Border Colors */
-            --color-border: #3e3e42;
-            --color-border-hover: #5a5a5f;
-            
-            /* Typography */
-            --font-mono: 'JetBrains Mono', monospace;
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            
-            /* Fluid Typography */
-            --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-            --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
-            --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
-            --font-size-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
-            --font-size-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
-            --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-            --font-size-3xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
-            
-            /* Spacing */
-            --space-xs: 0.5rem;
-            --space-sm: 1rem;
-            --space-md: 1.5rem;
-            --space-lg: 2rem;
-            --space-xl: 3rem;
-            --space-2xl: 4rem;
-            
-            /* Border Radius */
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-        }
-        
-        /* ==================== Reset & Base ==================== */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-            html {
-                scroll-behavior: auto;
-            }
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-        
-        body {
-            font-family: var(--font-sans);
-            background: var(--color-bg-primary);
-            color: var(--color-text-primary);
-            line-height: 1.6;
-            font-size: 16px;
-        }
-        
-        /* ==================== Skip Link ==================== */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: var(--color-accent-primary);
-            color: var(--color-bg-primary);
-            padding: var(--space-sm);
-            text-decoration: none;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            z-index: 100;
-        }
-        
-        .skip-link:focus {
-            top: var(--space-sm);
-            left: var(--space-sm);
-        }
-        
-        /* ==================== Focus States ==================== */
-        *:focus-visible {
-            outline: 2px solid var(--color-accent-primary);
-            outline-offset: 2px;
-        }
-        
-        *:focus:not(:focus-visible) {
-            outline: none;
-        }
-        
-        /* ==================== Header ==================== */
-        header {
-            background: var(--color-bg-secondary);
-            border-bottom: 1px solid var(--color-border);
-            padding: var(--space-md) 0;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-        
-        nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--space-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-family: var(--font-mono);
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--color-accent-primary);
-            text-decoration: none;
-        }
-        
-        .logo::before {
-            content: '$ ';
-            color: var(--color-accent-secondary);
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: var(--space-lg);
-        }
-        
-        .nav-links a {
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        
-        .nav-links a:hover {
-            color: var(--color-accent-primary);
-        }
-        
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--color-text-primary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* ==================== Hero Section ==================== */
+        /* ==================== Hero ==================== */
         .hero {
             max-width: 1200px;
             margin: 0 auto;
-            padding: var(--space-2xl) var(--space-md);
+            padding: var(--space-2xl) var(--space-sm);
             min-height: calc(100vh - 100px);
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
-        
-        .hero-content {
-            max-width: 800px;
-        }
-        
+
+        .hero-content { max-width: 800px; }
+
         .hero-label {
             font-family: var(--font-mono);
             font-size: var(--font-size-sm);
-            color: var(--color-accent-secondary);
+            color: var(--color-text-secondary);
             margin-bottom: var(--space-md);
             text-transform: uppercase;
             letter-spacing: 0.1em;
         }
-        
+
         .hero-title {
             font-size: var(--font-size-3xl);
             font-weight: 700;
             line-height: 1.2;
             margin-bottom: var(--space-lg);
         }
-        
-        .highlight {
-            color: var(--color-accent-primary);
-        }
-        
+
+        .highlight { color: var(--color-accent); }
+
         .hero-description {
             font-size: var(--font-size-lg);
-            color: var(--color-text-secondary);
-            line-height: 1.7;
+            color: var(--color-text-primary);
+            line-height: 1.8;
             margin-bottom: var(--space-xl);
             max-width: 700px;
         }
-        
-        .hero-stats {
-            display: flex;
-            gap: var(--space-xl);
-            margin-bottom: var(--space-xl);
-            flex-wrap: wrap;
-        }
-        
-        .stat {
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-family: var(--font-mono);
-            font-size: var(--font-size-xl);
-            font-weight: 700;
-            color: var(--color-accent-primary);
-        }
-        
-        .stat-label {
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
-        }
-        
+
         .hero-cta {
             display: flex;
             gap: var(--space-md);
             flex-wrap: wrap;
         }
-        
+
         .btn {
             display: inline-block;
             padding: 0.875rem 1.75rem;
@@ -297,65 +101,72 @@
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         .btn-primary {
-            background: var(--color-accent-primary);
+            background: var(--color-accent);
             color: var(--color-bg-primary);
         }
-        
+
         .btn-primary:hover {
-            background: #ff8555;
+            background: #b8f059;
             transform: translateY(-2px);
         }
-        
+
         .btn-secondary {
             background: transparent;
             color: var(--color-text-primary);
             border: 2px solid var(--color-border);
         }
-        
+
         .btn-secondary:hover {
-            border-color: var(--color-accent-primary);
-            color: var(--color-accent-primary);
+            border-color: var(--color-accent);
+            color: var(--color-accent);
         }
-        
+
         /* ==================== Projects Section ==================== */
         .projects {
             max-width: 1200px;
             margin: 0 auto;
-            padding: var(--space-2xl) var(--space-md);
+            padding: var(--space-2xl) var(--space-sm);
         }
-        
-        .section-header {
-            margin-bottom: var(--space-xl);
-        }
-        
+
+        .section-header { margin-bottom: var(--space-xl); }
+
         .section-title {
             font-size: var(--font-size-2xl);
             font-weight: 700;
             margin-bottom: var(--space-sm);
+            border-bottom: none;
+            padding-bottom: 0;
         }
-        
+
         .section-subtitle {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--color-text-secondary);
             max-width: 600px;
         }
-        
-        /* Project Grids */
+
+        /* Grid Layouts */
         .live-project-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
             gap: var(--space-lg);
             margin-bottom: var(--space-lg);
         }
-        
+
+        .secondary-project-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+
         .wip-project-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: var(--space-lg);
         }
-        
+
+        /* Project Cards */
         .project-card {
             background: var(--color-bg-secondary);
             border: 1px solid var(--color-border);
@@ -369,17 +180,45 @@
             min-height: 100%;
             position: relative;
         }
-        
+
         .project-card:hover {
-            border-color: var(--color-accent-primary);
-            transform: translateY(-6px);
+            border-color: var(--color-accent);
+            transform: translateY(-4px);
         }
-        
+
+        /* Featured card — full width, row layout */
+        .project-card--featured {
+            flex-direction: row;
+            gap: var(--space-xl);
+            align-items: flex-start;
+            border-left: 3px solid var(--color-accent);
+        }
+
+        .project-card--featured .card-body { flex: 1; }
+
+        .project-card--featured .card-meta {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            min-width: 180px;
+        }
+
+        .project-card--featured .project-title { font-size: 1.75rem; }
+
+        .project-card--featured .project-description {
+            font-size: 1rem;
+            line-height: 1.75;
+            color: var(--color-text-primary);
+        }
+
+        .project-card--featured:hover {
+            box-shadow: 0 8px 32px rgba(163, 230, 53, 0.1);
+        }
+
         /* Status Badges */
         .project-status-badge {
-            position: absolute;
-            top: var(--space-md);
-            right: var(--space-md);
+            display: inline-block;
             font-family: var(--font-mono);
             font-size: var(--font-size-xs);
             font-weight: 700;
@@ -387,102 +226,108 @@
             letter-spacing: 0.1em;
             padding: 0.35rem 0.75rem;
             border-radius: var(--radius-sm);
-            z-index: 2;
         }
-        
+
+        .project-card:not(.project-card--featured) .project-status-badge {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+        }
+
         .status-live {
-            background: rgba(255, 107, 53, 0.15);
-            color: var(--color-accent-primary);
-            border: 1px solid var(--color-accent-primary);
+            background: rgba(163, 230, 53, 0.12);
+            color: var(--color-accent);
+            border: 1px solid rgba(163, 230, 53, 0.4);
         }
-        
+
         .status-wip {
-            background: rgba(78, 201, 176, 0.15);
-            color: var(--color-accent-secondary);
-            border: 1px solid var(--color-accent-secondary);
+            background: rgba(136, 142, 153, 0.1);
+            color: var(--color-text-secondary);
+            border: 1px solid rgba(136, 142, 153, 0.3);
         }
-        
-        /* Live projects get orange left border and glow on hover */
-        .project-card:has(.status-live) {
-            border-left: 3px solid var(--color-accent-primary);
+
+        /* Live cards: left accent border */
+        .project-card:has(.status-live):not(.project-card--featured) {
+            border-left: 3px solid var(--color-accent);
         }
-        
-        .project-card:has(.status-live):hover {
-            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.15);
+
+        .project-card:has(.status-live):not(.project-card--featured):hover {
+            box-shadow: 0 8px 24px rgba(163, 230, 53, 0.1);
         }
-        
-        /* WIP cards styling */
+
+        /* WIP cards */
         .wip-card-style {
-            border-left: 3px solid var(--color-accent-secondary);
             cursor: default;
-            opacity: 0.9;
+            opacity: 0.85;
         }
-        
+
         .wip-card-style:hover {
             transform: none;
             border-color: var(--color-border);
-            border-left-color: var(--color-accent-secondary);
             box-shadow: none;
             opacity: 1;
         }
-        
-        .project-tag {
+
+        .project-tag-card {
             font-family: var(--font-mono);
-            font-size: 0.8rem;
-            color: var(--color-accent-secondary);
+            font-size: 0.78rem;
+            color: var(--color-text-secondary);
             margin-bottom: var(--space-sm);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.05em;
             padding-right: 4.5rem;
         }
-        
+
+        .project-card--featured .project-tag-card { padding-right: 0; }
+
         .project-title {
             font-size: 1.5rem;
             font-weight: 600;
+            margin-top: 0;
             margin-bottom: var(--space-sm);
             color: var(--color-text-primary);
         }
-        
+
         .project-description {
             font-size: 0.95rem;
-            line-height: 1.6;
+            line-height: 1.65;
             color: var(--color-text-secondary);
             margin-bottom: var(--space-md);
             flex-grow: 1;
         }
-        
+
         .project-cta-link {
             font-size: 0.9rem;
-            color: var(--color-accent-primary);
+            color: var(--color-accent);
             margin-bottom: var(--space-md);
             font-weight: 600;
             transition: color 0.2s;
         }
-        
-        .project-card:hover .project-cta-link {
-            color: var(--color-accent-secondary);
-        }
-        
-        .wip-card-style .project-cta-link {
-            display: none;
-        }
-        
-        .project-meta {
+
+        .wip-card-style .project-cta-link { display: none; }
+
+        .project-meta-row {
             display: flex;
             gap: var(--space-md);
             font-family: var(--font-mono);
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--color-text-muted);
             margin-bottom: var(--space-md);
         }
-        
+
+        .card-meta .project-meta-row {
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 0;
+        }
+
         .project-skills {
             display: flex;
             flex-wrap: wrap;
             gap: var(--space-xs);
             margin-top: auto;
         }
-        
+
         .skill-badge {
             font-family: var(--font-mono);
             font-size: 0.75rem;
@@ -491,73 +336,73 @@
             color: var(--color-text-secondary);
             border-radius: var(--radius-sm);
         }
-        
+
         /* ==================== Skills Section ==================== */
         .skills {
             background: var(--color-bg-secondary);
-            padding: var(--space-2xl) var(--space-md);
+            padding: var(--space-2xl) var(--space-sm);
         }
-        
+
         .skills-content {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
+
         .skills-intro {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--color-text-secondary);
             margin-bottom: var(--space-xl);
             max-width: 700px;
         }
-        
+
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: var(--space-lg);
         }
-        
+
         .skill-category {
             background: var(--color-bg-primary);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-md);
             padding: var(--space-lg);
         }
-        
+
         .skill-category h3 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--color-accent-secondary);
+            color: var(--color-accent);
+            margin-top: 0;
             margin-bottom: var(--space-md);
+            border-bottom: none;
+            padding-bottom: 0;
         }
-        
-        .skill-category ul {
-            list-style: none;
-        }
-        
+
+        .skill-category ul { list-style: none; margin: 0; }
+
         .skill-category li {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             color: var(--color-text-secondary);
             padding: 0.5rem 0;
             border-bottom: 1px solid var(--color-border);
+            margin-bottom: 0;
         }
-        
-        .skill-category li:last-child {
-            border-bottom: none;
-        }
-        
+
+        .skill-category li:last-child { border-bottom: none; }
+
         /* ==================== Contact Section ==================== */
         .contact {
             max-width: 900px;
             margin: 0 auto;
-            padding: var(--space-2xl) var(--space-md);
+            padding: var(--space-2xl) var(--space-sm);
             text-align: center;
         }
-        
+
         .contact-quote-wrapper {
             max-width: 900px;
             margin: 0 auto var(--space-xl);
         }
-        
+
         .contact-quote {
             font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
             font-style: italic;
@@ -565,22 +410,22 @@
             margin-bottom: var(--space-sm);
             color: var(--color-text-primary);
         }
-        
+
         .contact-attribution {
             font-family: var(--font-mono);
             font-weight: 600;
             font-size: 0.85rem;
             letter-spacing: 0.5px;
-            color: var(--color-accent-primary);
+            color: var(--color-accent);
             margin-bottom: var(--space-md);
         }
-        
+
         .contact-tagline {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--color-text-secondary);
             line-height: 1.6;
         }
-        
+
         .contact-grid {
             display: flex;
             gap: var(--space-md);
@@ -588,7 +433,7 @@
             flex-wrap: wrap;
             margin-bottom: var(--space-lg);
         }
-        
+
         .contact-btn {
             display: inline-flex;
             align-items: center;
@@ -599,30 +444,32 @@
             text-decoration: none;
             border-radius: var(--radius-md);
             transition: all 0.2s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
-        
-        .contact-btn--green {
-            background: var(--color-accent-secondary);
+
+        .contact-btn--primary {
+            background: var(--color-accent);
             color: var(--color-bg-primary);
         }
-        
-        .contact-btn--green:hover {
-            background: #5ddbc4;
+
+        .contact-btn--primary:hover {
+            background: #b8f059;
             transform: translateY(-2px);
         }
-        
+
         .contact-info {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--color-text-muted);
         }
-        
-        /* ==================== Footer ==================== */
+
+        /* ==================== Footer (Homepage) ==================== */
         footer {
             background: var(--color-bg-secondary);
             border-top: 1px solid var(--color-border);
-            padding: var(--space-lg) var(--space-md);
+            padding: var(--space-lg) var(--space-sm);
         }
-        
+
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -632,29 +479,27 @@
             flex-wrap: wrap;
             gap: var(--space-md);
         }
-        
+
         .footer-text {
             font-family: var(--font-mono);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--color-text-muted);
         }
-        
+
         .footer-links {
             display: flex;
             gap: var(--space-lg);
         }
-        
+
         .footer-links a {
             color: var(--color-text-secondary);
             text-decoration: none;
             font-size: 0.9rem;
             transition: color 0.2s;
         }
-        
-        .footer-links a:hover {
-            color: var(--color-accent-primary);
-        }
-        
+
+        .footer-links a:hover { color: var(--color-accent); }
+
         /* ==================== Homelab Callout ==================== */
         .homelab-callout {
             display: flex;
@@ -664,7 +509,7 @@
             padding: var(--space-md) var(--space-lg);
             background: var(--color-bg-secondary);
             border: 1px solid var(--color-border);
-            border-left: 3px solid var(--color-accent-primary);
+            border-left: 3px solid var(--color-accent);
             border-radius: var(--radius-md);
             text-decoration: none;
             color: inherit;
@@ -674,92 +519,93 @@
         .homelab-callout:hover {
             background: var(--color-bg-tertiary);
             border-color: var(--color-border-hover);
-            border-left-color: var(--color-accent-primary);
+            border-left-color: var(--color-accent);
         }
 
         .homelab-callout-label {
             font-family: var(--font-mono);
             font-size: var(--font-size-xs);
-            color: var(--color-accent-primary);
+            color: var(--color-accent);
             white-space: nowrap;
             flex-shrink: 0;
         }
 
-        .homelab-callout-body {
-            flex: 1;
-        }
+        .homelab-callout-body { flex: 1; }
 
         .homelab-callout-title {
             font-size: var(--font-size-lg);
             font-weight: 600;
             color: var(--color-text-primary);
+            margin-top: 0;
             margin-bottom: 0.25rem;
         }
 
         .homelab-callout-desc {
             font-size: var(--font-size-sm);
             color: var(--color-text-secondary);
+            margin-bottom: 0;
         }
 
         .homelab-callout-arrow {
             font-size: var(--font-size-xl);
-            color: var(--color-accent-primary);
+            color: var(--color-accent);
             flex-shrink: 0;
             transition: transform 0.2s ease;
         }
 
-        .homelab-callout:hover .homelab-callout-arrow {
-            transform: translateX(4px);
+        .homelab-callout:hover .homelab-callout-arrow { transform: translateX(4px); }
+
+        /* ==================== Mobile Nav ==================== */
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: var(--space-lg);
+            margin: 0;
+        }
+
+        .nav-links a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--color-accent); }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* ==================== Responsive ==================== */
         @media (max-width: 1024px) {
-            .live-project-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .wip-project-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 600px) {
-            .homelab-callout {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: var(--space-xs);
-            }
-
-            .homelab-callout-arrow {
-                display: none;
-            }
+            .secondary-project-grid { grid-template-columns: repeat(2, 1fr); }
+            .wip-project-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) {
-            .hero-stats {
+            .project-card--featured {
                 flex-direction: column;
-                gap: var(--space-md);
             }
-            
-            .live-project-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .wip-project-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-            
+            .project-card--featured .card-meta { min-width: auto; }
+            .secondary-project-grid { grid-template-columns: 1fr; }
+            .wip-project-grid { grid-template-columns: 1fr; }
+            .skills-grid { grid-template-columns: 1fr; }
+
             .project-status-badge {
                 top: var(--space-sm);
                 right: var(--space-sm);
                 font-size: 0.7rem;
                 padding: 0.25rem 0.5rem;
             }
-            
+
             .nav-links {
                 display: none;
                 position: fixed;
@@ -774,69 +620,53 @@
                 gap: var(--space-xl);
                 z-index: 999;
             }
-            
-            .nav-links.active {
-                display: flex;
-            }
-            
+
+            .nav-links.active { display: flex; }
+
             .nav-links li {
                 opacity: 0;
                 animation: fadeInUp 0.3s forwards;
             }
-            
+
             .nav-links.active li:nth-child(1) { animation-delay: 0.1s; }
             .nav-links.active li:nth-child(2) { animation-delay: 0.2s; }
             .nav-links.active li:nth-child(3) { animation-delay: 0.3s; }
             .nav-links.active li:nth-child(4) { animation-delay: 0.4s; }
             .nav-links.active li:nth-child(5) { animation-delay: 0.5s; }
-            
+            .nav-links.active li:nth-child(6) { animation-delay: 0.6s; }
+
             @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+                from { opacity: 0; transform: translateY(20px); }
+                to   { opacity: 1; transform: translateY(0); }
             }
-            
-            .nav-links a {
-                font-size: 1.5rem;
-            }
-            
-            .menu-toggle {
-                display: block;
-                z-index: 1000;
-            }
-            
-            .hero-cta {
+
+            .nav-links a { font-size: 1.5rem; }
+            .menu-toggle { display: block; z-index: 1000; }
+            .hero-cta { flex-direction: column; }
+            .btn { text-align: center; }
+            .footer-content { flex-direction: column; text-align: center; }
+
+            .homelab-callout {
                 flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-xs);
             }
-            
-            .btn {
-                text-align: center;
-            }
-            
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
+
+            .homelab-callout-arrow { display: none; }
         }
     </style>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
-    
-    <!-- Header -->
+
     <header>
         <nav aria-label="Main navigation">
             <a href="/" class="logo">nate</a>
-            
+
             <button type="button" class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
                 &#9776;
             </button>
-            
+
             <ul class="nav-links">
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#skills">Skills</a></li>
@@ -847,173 +677,131 @@
             </ul>
         </nav>
     </header>
-    
-    <!-- Main Content -->
+
     <main id="main-content" role="main">
-        <!-- Hero Section -->
+        <!-- Hero -->
         <section class="hero">
             <div class="hero-content">
                 <div class="hero-label">Systems Administration & Infrastructure</div>
-                
+
                 <h1 class="hero-title">
                     <span class="highlight">Building</span> infrastructure.<br>
                     <span class="highlight">Documenting</span> everything.<br>
                     <span class="highlight">Learning</span> constantly.
                 </h1>
-                
+
                 <p class="hero-description">
-                    I'm obsessed with understanding how things actually work. My homelab isn't 
-                    just a collection of services, it's where I break things, fix them, and 
-                    document every step so I can do it better next time. I build SSO authentication, 
-                    automated backups, and clustering because it's the best way I've found to 
+                    I'm obsessed with understanding how things actually work. My homelab isn't
+                    just a collection of services — it's where I break things, fix them, and
+                    document every step so I can do it better next time. I build SSO authentication,
+                    automated backups, and clustering because it's the best way I've found to
                     actually understand infrastructure.
                 </p>
-                
-                <div class="hero-stats">
-                    <div class="stat">
-                        <div class="stat-value">8 Apps</div>
-                        <div class="stat-label">Protected by SSO</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">6 Systems</div>
-                        <div class="stat-label">SSH Hardened</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">100%</div>
-                        <div class="stat-label">Backup Success</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">11 Hosts</div>
-                        <div class="stat-label">Monitored & Alerted</div>
-                    </div>
-                </div>
-                
+
                 <div class="hero-cta">
                     <a href="#projects" class="btn btn-primary">View Projects</a>
                     <a href="/resume" class="btn btn-secondary">Full Resume</a>
                 </div>
             </div>
         </section>
-        
-        <!-- Projects Section -->
+
+        <!-- Projects -->
         <section id="projects" class="projects">
             <div class="section-header">
                 <h2 class="section-title">What I'm Working On</h2>
-                <p class="section-subtitle">
-                    Production systems and active skill development
-                </p>
+                <p class="section-subtitle">Production systems and active skill development</p>
             </div>
-            
-            <!-- Live Projects (4 cards, 2x2) -->
-            <div class="live-project-grid">
-                <!-- Project 1: Authentik SSO -->
-                <a href="/authentik-sso" class="project-card">
-                    <div class="project-status-badge status-live">Live</div>
-                    <div class="project-tag">Identity & Access Management</div>
-                    
-                    <h3 class="project-title">Enterprise SSO Implementation</h3>
-                    
-                    <p class="project-description">
-                        Deployed forward authentication at the reverse proxy layer using Authentik + Active Directory. 
-                        Built a reusable pattern that protects ANY web application, eliminating per-app credential management.
-                    </p>
-                    
-                    <p class="project-cta-link">Learn more about this project &rarr;</p>
-                    
-                    <div class="project-meta">
-                        <span>February 2026</span>
-                        <span>~15 hours</span>
-                    </div>
-                    
-                    <div class="project-skills">
-                        <span class="skill-badge">Active Directory</span>
-                        <span class="skill-badge">LDAP</span>
-                        <span class="skill-badge">Authentik</span>
-                        <span class="skill-badge">nginx</span>
-                    </div>
-                </a>
-                
-                <!-- Project 2: PBS Storage -->
-                <a href="/pbs-storage" class="project-card">
-                    <div class="project-status-badge status-live">Live</div>
-                    <div class="project-tag">Infrastructure & Reliability</div>
-                    
-                    <h3 class="project-title">Backup Infrastructure Migration</h3>
-                    
-                    <p class="project-description">
-                        Migrated from unreliable USB backups to Proxmox Backup Server with chunk-level deduplication. 
-                        Achieved 100% backup success rate and 85% storage reduction.
-                    </p>
-                    
-                    <p class="project-cta-link">Learn more about this project &rarr;</p>
-                    
-                    <div class="project-meta">
-                        <span>February 2026</span>
-                        <span>~8 hours</span>
-                    </div>
-                    
-                    <div class="project-skills">
-                        <span class="skill-badge">Proxmox</span>
-                        <span class="skill-badge">PBS</span>
-                        <span class="skill-badge">Storage</span>
-                        <span class="skill-badge">Linux</span>
-                    </div>
-                </a>
-                
-                <!-- Project 3: SSH Hardening -->
-                <a href="/ssh-hardening" class="project-card">
-                    <div class="project-status-badge status-live">Live</div>
-                    <div class="project-tag">Security & Hardening</div>
-                    
-                    <h3 class="project-title">SSH Hardening Implementation</h3>
-                    
-                    <p class="project-description">
-                        SSH hardening across 6 systems with Ed25519 key-based authentication 
-                        and fail2ban intrusion prevention. Zero downtime, SOC 2 compliant patterns.
-                    </p>
-                    
-                    <p class="project-cta-link">Learn more about this project &rarr;</p>
-                    
-                    <div class="project-meta">
-                        <span>February 2026</span>
-                        <span>~2 hours</span>
-                    </div>
-                    
-                    <div class="project-skills">
-                        <span class="skill-badge">SSH</span>
-                        <span class="skill-badge">fail2ban</span>
-                        <span class="skill-badge">Ed25519</span>
-                        <span class="skill-badge">Linux</span>
-                    </div>
-                </a>
 
-                <!-- Project 4: Monitoring Stack (promoted from WIP) -->
+            <!-- Featured: Authentik SSO -->
+            <div class="live-project-grid">
+                <a href="/authentik-sso" class="project-card project-card--featured">
+                    <div class="card-body">
+                        <div class="project-tag-card">Identity & Access Management</div>
+                        <h3 class="project-title">Enterprise SSO Implementation</h3>
+                        <p class="project-description">
+                            Deployed forward authentication at the reverse proxy layer using Authentik + Active Directory.
+                            Works for any HTTP application without touching the app itself.
+                            The interesting part wasn't the installation; it was understanding how LDAP bind queries work at the
+                            packet level and why StartTLS matters in a mixed-trust network.
+                        </p>
+                        <p class="project-cta-link">Learn more about this project &rarr;</p>
+                    </div>
+                    <div class="card-meta">
+                        <span class="project-status-badge status-live">Live</span>
+                        <div class="project-meta-row">
+                            <span>February 2026</span>
+                            <span>~15 hours</span>
+                        </div>
+                        <div class="project-skills">
+                            <span class="skill-badge">Active Directory</span>
+                            <span class="skill-badge">LDAP</span>
+                            <span class="skill-badge">Authentik</span>
+                            <span class="skill-badge">nginx</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Secondary Live Projects -->
+            <div class="secondary-project-grid">
                 <a href="/monitoring-stack" class="project-card">
                     <div class="project-status-badge status-live">Live</div>
-                    <div class="project-tag">Infrastructure & Observability</div>
-
-                    <h3 class="project-title">Monitoring & Observability Stack</h3>
-
+                    <div class="project-tag-card">Observability</div>
+                    <h3 class="project-title">Monitoring Stack</h3>
                     <p class="project-description">
-                        Deployed end-to-end observability across a 3-node Proxmox cluster using Prometheus, Grafana, and Loki. 
-                        OS-level metrics from all nodes, per-VM breakdowns via the Proxmox REST API, and a live-tested alerting 
-                        pipeline routing to Discord.
+                        End-to-end observability across a 3-node Proxmox cluster. Prometheus, Grafana, Loki,
+                        and a live-tested alerting pipeline routing to Discord.
                     </p>
-
-                    <p class="project-cta-link">Learn more about this project &rarr;</p>
-
-                    <div class="project-meta">
+                    <p class="project-cta-link">Learn more &rarr;</p>
+                    <div class="project-meta-row">
                         <span>March 2026</span>
-                        <span>~6 hours</span>
+                        <span>~6 hrs</span>
                     </div>
-
                     <div class="project-skills">
                         <span class="skill-badge">Prometheus</span>
                         <span class="skill-badge">Grafana</span>
                         <span class="skill-badge">Loki</span>
-                        <span class="skill-badge">PromQL</span>
-                        <span class="skill-badge">Docker Compose</span>
-                        <span class="skill-badge">Alerting</span>
+                    </div>
+                </a>
+
+                <a href="/pbs-storage" class="project-card">
+                    <div class="project-status-badge status-live">Live</div>
+                    <div class="project-tag-card">Infrastructure</div>
+                    <h3 class="project-title">Backup Infrastructure</h3>
+                    <p class="project-description">
+                        Migrated from unreliable USB backups to Proxmox Backup Server. Jobs were failing 40% of nights
+                        due to USB power management. Now four weeks of daily backups fit on a 1TB drive, and nothing's
+                        failed since.
+                    </p>
+                    <p class="project-cta-link">Learn more &rarr;</p>
+                    <div class="project-meta-row">
+                        <span>February 2026</span>
+                        <span>~8 hrs</span>
+                    </div>
+                    <div class="project-skills">
+                        <span class="skill-badge">Proxmox</span>
+                        <span class="skill-badge">PBS</span>
+                        <span class="skill-badge">Storage</span>
+                    </div>
+                </a>
+
+                <a href="/ssh-hardening" class="project-card">
+                    <div class="project-status-badge status-live">Live</div>
+                    <div class="project-tag-card">Security</div>
+                    <h3 class="project-title">SSH Hardening</h3>
+                    <p class="project-description">
+                        Ed25519 key-based auth and fail2ban across 6 systems. Rolled out without a single lockout
+                        by testing in a parallel session before closing the original — a pattern you only forget once.
+                    </p>
+                    <p class="project-cta-link">Learn more &rarr;</p>
+                    <div class="project-meta-row">
+                        <span>February 2026</span>
+                        <span>~2 hrs</span>
+                    </div>
+                    <div class="project-skills">
+                        <span class="skill-badge">SSH</span>
+                        <span class="skill-badge">fail2ban</span>
+                        <span class="skill-badge">Ed25519</span>
                     </div>
                 </a>
             </div>
@@ -1027,93 +815,60 @@
                 <span class="homelab-callout-arrow">→</span>
             </a>
 
-            <!-- WIP Projects (4 cards) -->
+            <!-- WIP Projects -->
             <div class="wip-project-grid">
-                <!-- WIP 1: MFA Implementation -->
                 <div class="project-card wip-card-style">
                     <div class="project-status-badge status-wip">WIP</div>
-                    <div class="project-tag">Identity & Access Management</div>
-                    
+                    <div class="project-tag-card">Identity & Access Management</div>
                     <h3 class="project-title">MFA Implementation</h3>
-                    
                     <p class="project-description">
                         Adding TOTP/WebAuthn second factor to Authentik SSO for enhanced security across all protected applications.
                     </p>
-                    
                     <div class="project-skills">
                         <span class="skill-badge">Authentik</span>
                         <span class="skill-badge">TOTP</span>
                         <span class="skill-badge">WebAuthn</span>
                     </div>
                 </div>
-                
-                <!-- WIP 2: K3s Cluster (replacing Monitoring Stack) -->
+
                 <div class="project-card wip-card-style">
                     <div class="project-status-badge status-wip">WIP</div>
-                    <div class="project-tag">Container Orchestration</div>
-
+                    <div class="project-tag-card">Container Orchestration</div>
                     <h3 class="project-title">K3s Cluster Deployment</h3>
-
                     <p class="project-description">
-                        Deploying lightweight Kubernetes across the 3-node Proxmox cluster with persistent storage and load 
-                        balancing — what most orgs run in production, minus the AWS bill.
+                        Lightweight Kubernetes across the 3-node Proxmox cluster with persistent storage and load balancing —
+                        what most orgs run in production, minus the AWS bill.
                     </p>
-
                     <div class="project-skills">
                         <span class="skill-badge">K3s</span>
                         <span class="skill-badge">Kubernetes</span>
                         <span class="skill-badge">Longhorn</span>
-                        <span class="skill-badge">Helm</span>
-                        <span class="skill-badge">Linux</span>
                     </div>
                 </div>
-                
-                <!-- WIP 3: RHCSA -->
+
                 <div class="project-card wip-card-style">
                     <div class="project-status-badge status-wip">WIP</div>
-                    <div class="project-tag">Certification</div>
-                    
+                    <div class="project-tag-card">Certification</div>
                     <h3 class="project-title">RHCSA Preparation</h3>
-                    
                     <p class="project-description">
-                        Developing Linux administration skills you'd actually need on the job through hands-on labs and practice environments.
+                        Hands-on Linux administration labs — the kind of practice that closes the gap between
+                        "I've used Linux" and actually knowing it.
                     </p>
-                    
                     <div class="project-skills">
                         <span class="skill-badge">Linux</span>
                         <span class="skill-badge">Red Hat</span>
                         <span class="skill-badge">System Admin</span>
                     </div>
                 </div>
-                
-                <!-- WIP 4: AD CS -->
-                <div class="project-card wip-card-style">
-                    <div class="project-status-badge status-wip">WIP</div>
-                    <div class="project-tag">Identity & PKI</div>
-                    
-                    <h3 class="project-title">AD CS Implementation</h3>
-                    
-                    <p class="project-description">
-                        Deploying Certificate Services for Proxmox RBAC and Active Directory using enterprise PKI.
-                    </p>
-                    
-                    <div class="project-skills">
-                        <span class="skill-badge">Active Directory</span>
-                        <span class="skill-badge">PKI</span>
-                        <span class="skill-badge">Certificates</span>
-                    </div>
-                </div>
             </div>
         </section>
-        
-        <!-- Skills Section -->
+
+        <!-- Skills -->
         <section id="skills" class="skills">
             <div class="skills-content">
                 <h2 class="section-title">Technical Skills</h2>
-                <p class="skills-intro">
-                    Skills built by doing the work — in the homelab and on the job.
-                </p>
-                
+                <p class="skills-intro">Skills built by doing the work — in the homelab and on the job.</p>
+
                 <div class="skills-grid">
                     <div class="skill-category">
                         <h3>Identity & Access</h3>
@@ -1124,7 +879,7 @@
                             <li>Certificate Management</li>
                         </ul>
                     </div>
-                    
+
                     <div class="skill-category">
                         <h3>Virtualization</h3>
                         <ul>
@@ -1134,7 +889,7 @@
                             <li>Storage (NFS, LVM)</li>
                         </ul>
                     </div>
-                    
+
                     <div class="skill-category">
                         <h3>Networking</h3>
                         <ul>
@@ -1144,7 +899,7 @@
                             <li>DNS Management</li>
                         </ul>
                     </div>
-                    
+
                     <div class="skill-category">
                         <h3>Security</h3>
                         <ul>
@@ -1156,16 +911,15 @@
                     </div>
 
                     <div class="skill-category">
-                        <h3>Monitoring & Observability</h3>
+                        <h3>Observability</h3>
                         <ul>
                             <li>Prometheus</li>
                             <li>Grafana</li>
                             <li>Loki</li>
-                            <li>PromQL</li>
-                            <li>Alerting</li>
+                            <li>PromQL & Alerting</li>
                         </ul>
                     </div>
-                    
+
                     <div class="skill-category">
                         <h3>Systems & Tools</h3>
                         <ul>
@@ -1178,8 +932,8 @@
                 </div>
             </div>
         </section>
-        
-        <!-- Contact Section -->
+
+        <!-- Contact -->
         <section id="contact" class="contact">
             <div class="contact-quote-wrapper">
                 <blockquote class="contact-quote">
@@ -1192,48 +946,44 @@
                     I owe a lot to that moment. Still learning, still building.
                 </p>
             </div>
-            
+
             <div class="contact-grid">
-                <a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener noreferrer" class="contact-btn contact-btn--green">
+                <a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener noreferrer" class="contact-btn contact-btn--primary">
                     Let's Chat
                 </a>
             </div>
-            <div class="contact-info">Austin, TX based &middot; Open to the right role in Austin.</div>
+            <div class="contact-info">Austin, TX &middot; Open to the right role in Austin.</div>
         </section>
     </main>
-    
-    <!-- Footer -->
+
     <footer role="contentinfo">
         <div class="footer-content">
-            <div class="footer-text">
-                &copy; 2026 Nate. Built with intention, documented with care.
-            </div>
+            <div class="footer-text">&copy; 2026 Nate &mdash; Austin, TX</div>
             <div class="footer-links">
                 <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
                 <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
             </div>
         </div>
     </footer>
-    
-    <!-- Mobile Menu Toggle Script -->
+
     <script>
         const menuToggle = document.querySelector('.menu-toggle');
         const navLinks = document.querySelector('.nav-links');
-        
+
         menuToggle.addEventListener('click', function(e) {
             e.stopPropagation();
             const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
             menuToggle.setAttribute('aria-expanded', !isExpanded);
             navLinks.classList.toggle('active');
         });
-        
+
         document.addEventListener('click', function(e) {
             if (!e.target.closest('nav')) {
                 navLinks.classList.remove('active');
                 menuToggle.setAttribute('aria-expanded', 'false');
             }
         });
-        
+
         navLinks.querySelectorAll('a').forEach(function(link) {
             link.addEventListener('click', function() {
                 navLinks.classList.remove('active');

@@ -45,30 +45,31 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         /* ==================== CSS Variables ==================== */
         :root {
-            --color-bg-primary:    #1e1e1e;
-            --color-bg-secondary:  #252526;
-            --color-bg-tertiary:   #2d2d30;
-            --color-bg-code:       #1a1a1a;
+            --color-bg-primary:    #16171a;
+            --color-bg-secondary:  #1e2023;
+            --color-bg-tertiary:   #26282d;
+            --color-bg-code:       #111214;
 
-            --color-text-primary:  #d4d4d4;
-            --color-text-secondary:#909090;
-            --color-text-muted:    #6a6a6a;
+            --color-text-primary:  #e8e8e8;
+            --color-text-secondary:#888e99;
+            --color-text-muted:    #545962;
 
-            --color-accent-primary:   #ff6b35;
-            --color-accent-secondary: #4ec9b0;
-            --color-accent-warning:   #ce9178;
-            --color-accent-red:       #ff6b6b;
-            --color-accent-green:     #6a9955;
+            --color-accent:           #a3e635;
+            --color-accent-primary:   #a3e635;
+            --color-accent-secondary: #a3e635;
+            --color-accent-warning:   #fb923c;
+            --color-accent-red:       #f87171;
+            --color-accent-green:     #a3e635;
 
-            --color-border:       #3e3e42;
-            --color-border-hover: #5a5a5f;
+            --color-border:       #2d3038;
+            --color-border-hover: #3d4149;
 
-            --font-mono: 'JetBrains Mono', monospace;
+            --font-mono: 'IBM Plex Mono', monospace;
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
             --font-size-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
@@ -154,7 +155,7 @@
             font-family: var(--font-mono);
             font-size: 1.25rem;
             font-weight: 600;
-            color: var(--color-accent-primary);
+            color: var(--color-accent);
             text-decoration: none;
             min-height: 44px;
             display: inline-flex;
@@ -162,7 +163,13 @@
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
         }
-        .logo::before { content: '$ '; color: var(--color-accent-secondary); }
+        .logo::after {
+            content: '_';
+            animation: cursor-blink 1.1s step-end infinite;
+            color: var(--color-accent);
+            margin-left: 1px;
+        }
+        @keyframes cursor-blink { 50% { opacity: 0; } }
 
         .back-link {
             color: var(--color-text-secondary);
@@ -402,7 +409,7 @@
     <header>
         <nav aria-label="Main navigation">
             <a href="/" class="logo">nate</a>
-            <a href="/" class="back-link">Back to Portfolio</a>
+            <a href="/" class="back-link">Back</a>
         </nav>
     </header>
 
@@ -547,7 +554,7 @@ ifdown vmbr0 && ifup vmbr0</code></div>
 
     <footer role="contentinfo">
         <div class="footer-content">
-            <div class="footer-text">© 2026 Nate N. Built with intention, documented with care.</div>
+            <div class="footer-text">&copy; 2026 Nate &mdash; Austin, TX</div>
             <div class="footer-links">
                 <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub (opens in new tab)">GitHub</a>
                 <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn (opens in new tab)">LinkedIn</a>

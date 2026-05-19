@@ -39,432 +39,34 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/styles.css">
 
     <style>
-        /* ==================== CSS Variables ==================== */
-        :root {
-            --color-bg-primary: #1e1e1e;
-            --color-bg-secondary: #252526;
-            --color-bg-tertiary: #2d2d30;
-            --color-bg-code: #1e1e1e;
-
-            --color-text-primary: #d4d4d4;
-            --color-text-secondary: #909090;
-            --color-text-muted: #6a6a6a;
-
-            --color-accent-primary: #ff6b35;
-            --color-accent-secondary: #4ec9b0;
-            --color-accent-warning: #ce9178;
-            --color-accent-danger: #f87171;
-            --color-accent-success: #4ec9b0;
-
-            --color-border: #3e3e42;
-            --color-border-hover: #5a5a5f;
-
-            --color-syntax-keyword: #569cd6;
-            --color-syntax-string: #ce9178;
-            --color-syntax-function: #dcdcaa;
-            --color-syntax-comment: #6a9955;
-
-            --font-mono: 'JetBrains Mono', monospace;
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
-
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-        }
-
-        /* ==================== Reset & Base ==================== */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html { scroll-behavior: smooth; }
-
-        @media (prefers-reduced-motion: reduce) {
-            html { scroll-behavior: auto; }
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-
-        body {
-            font-family: var(--font-sans);
-            background: var(--color-bg-primary);
-            color: var(--color-text-primary);
-            line-height: 1.6;
-            font-size: 16px;
-        }
-
-        /* ==================== Skip Link ==================== */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: var(--color-accent-primary);
-            color: var(--color-bg-primary);
-            padding: var(--space-sm);
-            text-decoration: none;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            z-index: 100;
-        }
-        .skip-link:focus { top: var(--space-sm); left: var(--space-sm); }
-
-        /* ==================== Focus States ==================== */
-        *:focus-visible { outline: 2px solid var(--color-accent-primary); outline-offset: 2px; }
-        *:focus:not(:focus-visible) { outline: none; }
-
-        /* ==================== Header ==================== */
-        header {
-            background: var(--color-bg-secondary);
-            border-bottom: 1px solid var(--color-border);
-            padding: var(--space-md) 0;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--space-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: var(--font-mono);
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--color-accent-primary);
-            text-decoration: none;
-        }
-        .logo::before { content: '$ '; color: var(--color-accent-secondary); }
-
-        .back-link {
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .back-link:hover { color: var(--color-accent-primary); }
-        .back-link::before { content: '←'; font-size: 1.2rem; }
-
-        /* ==================== Main Content ==================== */
-        main {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: var(--space-xl) var(--space-md);
-        }
-
-        /* ==================== Project Header ==================== */
-        .project-header {
-            margin-bottom: var(--space-xl);
-            padding-bottom: var(--space-xl);
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .project-tag {
-            display: inline-block;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: var(--color-accent-secondary);
-            background: rgba(78, 201, 176, 0.1);
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-sm);
-            margin-bottom: var(--space-md);
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--color-text-primary);
-            margin-bottom: var(--space-md);
-            line-height: 1.2;
-        }
-
-        .project-meta {
-            display: flex;
-            gap: var(--space-lg);
-            font-size: 0.9rem;
-            color: var(--color-text-secondary);
-            margin-bottom: var(--space-md);
-            flex-wrap: wrap;
-        }
-
-        .meta-item { display: flex; align-items: center; gap: 0.5rem; }
-        .meta-item strong { color: var(--color-text-primary); }
-
-        .tldr {
-            background: var(--color-bg-secondary);
-            border-left: 4px solid var(--color-accent-primary);
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-xl);
-        }
-
-        .tldr-title {
-            font-weight: 600;
-            color: var(--color-accent-primary);
-            margin-bottom: var(--space-sm);
-            font-size: 1.1rem;
-        }
-
-        .key-achievement {
-            background: var(--color-bg-tertiary);
-            padding: var(--space-md);
-            border-radius: var(--radius-sm);
-            margin-top: var(--space-sm);
-        }
-        .key-achievement strong { color: var(--color-accent-primary); }
-
-        /* ==================== Content Sections ==================== */
-        .section { margin-bottom: var(--space-2xl); }
-
-        h2 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: var(--color-text-primary);
-            margin-bottom: var(--space-md);
-            padding-bottom: var(--space-sm);
-            border-bottom: 2px solid var(--color-border);
-        }
-
-        h3 {
-            font-size: 1.35rem;
-            font-weight: 600;
-            color: var(--color-text-primary);
-            margin-top: var(--space-lg);
-            margin-bottom: var(--space-md);
-        }
-
-        h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--color-accent-secondary);
-            margin-top: var(--space-md);
-            margin-bottom: var(--space-sm);
-        }
-
-        p { margin-bottom: var(--space-md); color: var(--color-text-primary); }
-
-        ul, ol { margin-left: var(--space-lg); margin-bottom: var(--space-md); }
-        li { margin-bottom: var(--space-sm); color: var(--color-text-primary); }
-
-        /* ==================== Code Blocks ==================== */
-        pre {
-            background: var(--color-bg-code);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-            overflow-x: auto;
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        code {
-            font-family: var(--font-mono);
-            font-size: 0.9em;
-            color: var(--color-accent-warning);
-        }
-
-        pre code { color: var(--color-text-primary); }
-
-        .terminal {
-            position: relative;
-            background: #0c0c0c;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-md);
-        }
-
-        .terminal::before {
-            content: '';
-            display: block;
-            height: 30px;
-            background: var(--color-bg-secondary);
-            border-bottom: 1px solid var(--color-border);
-            border-radius: var(--radius-md) var(--radius-md) 0 0;
-        }
-
-        .terminal pre {
-            border: none;
-            border-radius: 0 0 var(--radius-md) var(--radius-md);
-            background: #0c0c0c;
-            color: #00ff00;
-        }
-
-        /* ==================== Architecture Diagram ==================== */
-        .architecture {
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-
-        .architecture pre {
-            background: transparent;
-            border: none;
-            color: var(--color-accent-secondary);
-            font-size: 0.85rem;
-        }
-
-        /* ==================== Collapsible Sections ==================== */
-        .collapsible {
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-md);
-            overflow: hidden;
-        }
-
-        .collapsible-header {
-            padding: var(--space-md);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            user-select: none;
-            transition: background 0.2s;
-        }
-
-        .collapsible-header:hover { background: var(--color-bg-tertiary); }
-
-        .collapsible-title {
-            font-weight: 600;
-            color: var(--color-accent-primary);
-            font-size: 1.1rem;
-        }
-
-        .collapsible-icon {
-            font-size: 1.2rem;
-            color: var(--color-text-secondary);
-            transition: transform 0.3s;
-        }
-
-        .collapsible.active .collapsible-icon { transform: rotate(180deg); }
-
-        .collapsible-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-
-        .collapsible.active .collapsible-content {
-            max-height: 5000px;
-            transition: max-height 0.5s ease-in;
-        }
-
-        .collapsible-inner { padding: 0 var(--space-md) var(--space-md) var(--space-md); }
-
-        /* ==================== Comparison Boxes ==================== */
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-
-        @media (max-width: 600px) {
-            .comparison-grid { grid-template-columns: 1fr; }
-        }
-
-        .before-box, .after-box {
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
-        }
-
-        .before-box {
-            background: rgba(248, 113, 113, 0.1);
-            border: 1px solid var(--color-accent-danger);
-        }
-        .before-box h4 { color: var(--color-accent-danger); }
-
-        .after-box {
-            background: rgba(78, 201, 176, 0.1);
-            border: 1px solid var(--color-accent-success);
-        }
-        .after-box h4 { color: var(--color-accent-success); }
-
-        /* ==================== Success Box ==================== */
-        .success-box {
-            background: rgba(78, 201, 176, 0.1);
-            border: 1px solid var(--color-accent-success);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-        .success-box strong { color: var(--color-accent-success); }
-
-        /* ==================== Warning Box ==================== */
-        .warning-box {
-            background: rgba(206, 145, 120, 0.1);
-            border: 1px solid var(--color-accent-warning);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-        .warning-box strong { color: var(--color-accent-warning); }
-
-        /* ==================== Info Box ==================== */
-        .info-box {
-            background: rgba(86, 156, 214, 0.1);
-            border: 1px solid #569cd6;
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-        .info-box strong { color: #569cd6; }
-
-        /* ==================== Alert Table ==================== */
+        /* Page-specific: alert table and severity badges */
         .alert-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: var(--space-md);
+            margin-bottom: var(--space-sm);
             font-size: 0.9rem;
         }
-
         .alert-table th {
             background: var(--color-bg-tertiary);
-            color: var(--color-accent-secondary);
+            color: var(--color-accent);
             font-family: var(--font-mono);
             font-weight: 600;
-            padding: var(--space-sm) var(--space-md);
+            padding: var(--space-xs) var(--space-sm);
             text-align: left;
             border-bottom: 2px solid var(--color-border);
         }
-
         .alert-table td {
-            padding: var(--space-sm) var(--space-md);
+            padding: var(--space-xs) var(--space-sm);
             border-bottom: 1px solid var(--color-border);
             color: var(--color-text-primary);
         }
-
         .alert-table tr:last-child td { border-bottom: none; }
         .alert-table tr:hover td { background: var(--color-bg-secondary); }
-
         .badge-critical {
             display: inline-block;
             font-family: var(--font-mono);
@@ -476,7 +78,6 @@
             color: var(--color-accent-danger);
             border: 1px solid var(--color-accent-danger);
         }
-
         .badge-warning {
             display: inline-block;
             font-family: var(--font-mono);
@@ -484,103 +85,13 @@
             font-weight: 600;
             padding: 0.15rem 0.5rem;
             border-radius: var(--radius-sm);
-            background: rgba(206, 145, 120, 0.2);
+            background: rgba(251, 146, 60, 0.2);
             color: var(--color-accent-warning);
             border: 1px solid var(--color-accent-warning);
         }
-
-        /* ==================== STAR Format ==================== */
-        .star-format {
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            padding: var(--space-lg);
-        }
-
-        .star-item { margin-bottom: var(--space-lg); }
-        .star-item:last-child { margin-bottom: 0; }
-
-        .star-label {
-            display: inline-block;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--color-bg-primary);
-            background: var(--color-accent-primary);
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-sm);
-            margin-bottom: var(--space-sm);
-        }
-
-        .star-item p {
-            margin-bottom: 0;
-            font-style: italic;
-            color: var(--color-text-secondary);
-        }
-
-        /* ==================== Skills Grid ==================== */
-        .skills-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-sm);
-            margin-top: var(--space-md);
-        }
-
-        .skill-badge {
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            background: var(--color-bg-tertiary);
-            color: var(--color-accent-secondary);
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--color-border);
-        }
-
-        /* ==================== Footer ==================== */
-        footer {
-            background: var(--color-bg-secondary);
-            border-top: 1px solid var(--color-border);
-            padding: var(--space-xl) var(--space-md);
-            margin-top: var(--space-2xl);
-        }
-
-        .footer-content {
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .footer-nav {
-            display: flex;
-            justify-content: center;
-            gap: var(--space-lg);
-            margin-bottom: var(--space-md);
-            flex-wrap: wrap;
-        }
-
-        .footer-nav a {
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-        .footer-nav a:hover { color: var(--color-accent-primary); }
-
-        .footer-copyright {
-            color: var(--color-text-secondary);
-            font-size: 0.85rem;
-        }
-
-        /* ==================== Responsive ==================== */
         @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            h2 { font-size: 1.5rem; }
-            h3 { font-size: 1.2rem; }
-            .project-meta { flex-direction: column; gap: var(--space-sm); }
-            pre { font-size: 0.8rem; }
-            .footer-nav { flex-direction: column; gap: var(--space-sm); }
             .alert-table { font-size: 0.8rem; }
-            .alert-table th, .alert-table td { padding: var(--space-sm) var(--space-sm); }
+            .alert-table th, .alert-table td { padding: var(--space-xs); }
         }
     </style>
 </head>
@@ -590,13 +101,13 @@
     <header>
         <nav aria-label="Main navigation">
             <a href="/" class="logo">nate</a>
-            <a href="/" class="back-link">Back to Projects</a>
+            <a href="/" class="back-link">Back</a>
         </nav>
     </header>
 
-    <main id="main-content" role="main">
+    <main id="main-content" class="project-main" role="main">
 
-        <!-- ==================== Project Header ==================== -->
+        <!-- Project Header -->
         <div class="project-header">
             <span class="project-tag">Observability &amp; SRE</span>
             <h1>Monitoring &amp; Observability Stack</h1>
@@ -605,7 +116,6 @@
                 <span class="meta-item"><strong>Duration:</strong> ~1 session</span>
                 <span class="meta-item"><strong>Completed:</strong> March 2026</span>
                 <span class="meta-item"><strong>Status:</strong> Production</span>
-                <span class="meta-item"><strong>Priority:</strong> Highest — strongest interview differentiator after RBAC/PKI</span>
             </div>
 
             <div class="tldr">
@@ -618,7 +128,7 @@
             </div>
         </div>
 
-        <!-- ==================== The Problem ==================== -->
+        <!-- The Problem -->
         <section class="section">
             <h2>The Problem</h2>
 
@@ -654,7 +164,7 @@
             </div>
         </section>
 
-        <!-- ==================== Architecture ==================== -->
+        <!-- Architecture -->
         <section class="section">
             <h2>Architecture</h2>
 
@@ -739,7 +249,7 @@ monitoring-vm (pve03)
             </table>
         </section>
 
-        <!-- ==================== What Gets Monitored ==================== -->
+        <!-- What Gets Monitored -->
         <section class="section">
             <h2>What Gets Monitored</h2>
 
@@ -805,7 +315,7 @@ monitoring-vm (pve03)
             </table>
         </section>
 
-        <!-- ==================== Key Concepts Learned ==================== -->
+        <!-- Key Concepts Learned -->
         <section class="section">
             <h2>Key Concepts Learned</h2>
 
@@ -933,7 +443,7 @@ rate(node_cpu_seconds_total[5m])
             </div>
         </section>
 
-        <!-- ==================== What Broke ==================== -->
+        <!-- What Broke -->
         <section class="section">
             <h2>What Broke (And How I Fixed It)</h2>
 
@@ -1021,7 +531,7 @@ docker inspect grafana | grep ROOT_URL</pre>
             </div>
         </section>
 
-        <!-- ==================== Results ==================== -->
+        <!-- Results -->
         <section class="section">
             <h2>Results</h2>
 
@@ -1062,83 +572,29 @@ docker inspect grafana | grep ROOT_URL</pre>
             </div>
         </section>
 
-        <!-- ==================== Interview Story ==================== -->
+        <!-- The Short Version -->
         <section class="section">
-            <h2>Interview Story (STAR Format)</h2>
+            <h2>The Short Version</h2>
 
-            <div class="star-format">
-                <div class="star-item">
-                    <div class="star-label">Situation</div>
-                    <p>"I was running a 3-node Proxmox cluster with about a dozen VMs and had zero visibility into what was actually happening at the infrastructure level. No metrics, no alerting, no way to know if a node was running hot or if a VM went down overnight. Flying blind."</p>
-                </div>
-
-                <div class="star-item">
-                    <div class="star-label">Task</div>
-                    <p>"I wanted to deploy a full observability stack — the same open-source toolchain SRE teams use as a self-hosted alternative to Datadog. OS-level metrics from every hypervisor, per-VM visibility via the Proxmox REST API, and alerting that fires before someone has to check a dashboard."</p>
-                </div>
-
-                <div class="star-item">
-                    <div class="star-label">Action</div>
-                    <p>"I stood up a dedicated monitoring VM on pve03 and deployed Prometheus, Grafana, and Loki as a Docker Compose stack. I installed node_exporter as a systemd service on all three Proxmox hosts for OS-level metrics, then configured pve-exporter to pull per-VM data through the Proxmox REST API using a read-only API token I'd already scoped during my RBAC project. I imported two community dashboards and built out four alert rules — node down, instance down, disk usage over 80%, and memory over 90% — with pending periods tuned to filter out transient blips. I tested every rule against real conditions before signing off, and put Grafana behind HTTPS through Nginx Proxy Manager."</p>
-                </div>
-
-                <div class="star-item">
-                    <div class="star-label">Result</div>
-                    <p>"The cluster went from completely unmonitored to fully observable in a single session. All three nodes are reporting metrics, per-VM breakdowns are live in Grafana, and four alert rules are actively watching for problems and routing to Discord. The same stack — Prometheus, Grafana, Loki — is what you'd deploy if your organization wanted observability without a Datadog bill."</p>
-                </div>
+            <div class="story-section">
+                <p>I had a 3-node Proxmox cluster running a dozen VMs with zero visibility — no answer to whether a node was running hot, which VM was consuming memory, or whether anything had gone down overnight. The goal was to deploy the same open-source observability stack SRE teams use instead of paying for Datadog. I stood up a dedicated monitoring VM on pve03 and deployed Prometheus, Grafana, and Loki as a Docker Compose stack. node_exporter runs as a systemd service on all three Proxmox hosts for OS-level metrics; pve-exporter proxies requests to the Proxmox REST API using a read-only PVEAuditor token I'd already scoped for the RBAC project, exposing per-VM CPU, memory, and status data that node_exporter can't see. Four alert rules with tuned pending periods route to Discord.</p>
+                <p>A few things broke in non-obvious ways. The Instance Down alert rule used <code>up == 0</code> in the PromQL query — which returns an empty result set when all nodes are healthy, showing "No data" rather than "OK." The fix is to query <code>up</code> and let Grafana's alert condition evaluate the threshold (<code>IS BELOW 1</code>); filtering in the query and threshold evaluation in the condition are separate layers. The Discord notifications also showed the wrong Grafana URL after I corrected <code>GF_SERVER_ROOT_URL</code> in the compose file — the running container still had the old value because <code>docker-compose.yml</code> doesn't apply to containers that haven't been recreated. The pattern is: the file is desired state, <code>docker inspect</code> shows actual state. Always verify the two match.</p>
             </div>
         </section>
-
-        <!-- ==================== Skills Demonstrated ==================== -->
-        <section class="section">
-            <h2>Skills Demonstrated</h2>
-
-            <h3>Technical Skills</h3>
-            <div class="skills-grid">
-                <span class="skill-badge">Prometheus</span>
-                <span class="skill-badge">Grafana</span>
-                <span class="skill-badge">Loki</span>
-                <span class="skill-badge">PromQL</span>
-                <span class="skill-badge">node_exporter</span>
-                <span class="skill-badge">Docker Compose</span>
-                <span class="skill-badge">Linux System Administration</span>
-                <span class="skill-badge">Ubuntu 24.04</span>
-                <span class="skill-badge">Proxmox VE</span>
-                <span class="skill-badge">REST API Integration</span>
-                <span class="skill-badge">systemd</span>
-                <span class="skill-badge">Nginx Proxy Manager</span>
-                <span class="skill-badge">Webhook Integrations</span>
-                <span class="skill-badge">RBAC / Least Privilege</span>
-            </div>
-
-            <h3>Professional Skills</h3>
-            <div class="skills-grid">
-                <span class="skill-badge">Observability Architecture</span>
-                <span class="skill-badge">SRE Practices</span>
-                <span class="skill-badge">Alerting Design</span>
-                <span class="skill-badge">Alert Fatigue Mitigation</span>
-                <span class="skill-badge">Infrastructure Documentation</span>
-                <span class="skill-badge">Proactive Monitoring</span>
-                <span class="skill-badge">Container Config Management</span>
-                <span class="skill-badge">Troubleshooting</span>
-            </div>
-        </section>
-
     </main>
 
-    <footer role="contentinfo">
+    <footer class="project-footer" role="contentinfo">
         <div class="footer-content">
-            <nav class="footer-nav" aria-label="Footer navigation">
+            <div class="footer-copy">&copy; 2026 Nate &mdash; Austin, TX</div>
+            <nav class="footer-links" aria-label="Footer navigation">
                 <a href="/">Projects</a>
                 <a href="/resume">Resume</a>
                 <a href="/work-highlights">Work Examples</a>
             </nav>
-            <p class="footer-copyright">Building enterprise-grade infrastructure, one project at a time.</p>
         </div>
     </footer>
 
     <script>
-        // Collapsible sections with keyboard accessibility
         document.querySelectorAll('.collapsible-header').forEach(header => {
             header.addEventListener('click', () => {
                 const collapsible = header.parentElement;
@@ -1157,3 +613,4 @@ docker inspect grafana | grep ROOT_URL</pre>
     </script>
 </body>
 </html>
+ 

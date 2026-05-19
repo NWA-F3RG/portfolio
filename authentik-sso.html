@@ -4,646 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Enterprise SSO Implementation - Authentik + Active Directory forward authentication deployment protecting multiple applications with centralized identity management.">
-    
+
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    
+
     <title>Enterprise SSO Implementation - Nate's Portfolio</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="manifest" href="/site.webmanifest">
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href="https://seggsy.co/authentik-sso">
-    
+
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="Enterprise SSO Implementation - Nate's Portfolio">
     <meta property="og:description" content="Forward authentication deployment using Authentik + Active Directory. Protecting 8+ applications with centralized identity management and zero per-app credentials.">
     <meta property="og:image" content="https://seggsy.co/og-image.png">
     <meta property="og:url" content="https://seggsy.co/authentik-sso">
     <meta property="og:type" content="article">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Enterprise SSO Implementation - Nate's Portfolio">
     <meta name="twitter:description" content="Forward authentication deployment using Authentik + Active Directory. Protecting 8+ applications with centralized identity management.">
     <meta name="twitter:image" content="https://seggsy.co/og-image.png">
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* ==================== CSS Variables ==================== */
-        :root {
-            /* Background Colors - matches your existing pages */
-            --color-bg-primary: #1e1e1e;
-            --color-bg-secondary: #252526;
-            --color-bg-tertiary: #2d2d30;
-            --color-bg-code: #1e1e1e;
-            
-            /* Text Colors */
-            --color-text-primary: #d4d4d4;
-            --color-text-secondary: #909090;
-            --color-text-muted: #6a6a6a;
-            
-            /* Accent Colors - matches your existing pages */
-            --color-accent-primary: #ff6b35;
-            --color-accent-secondary: #4ec9b0;
-            --color-accent-warning: #ce9178;
-            --color-accent-danger: #f87171;
-            --color-accent-success: #4ec9b0;
-            
-            /* Border Colors */
-            --color-border: #3e3e42;
-            --color-border-hover: #5a5a5f;
-            
-            /* Syntax Highlighting */
-            --color-syntax-keyword: #569cd6;
-            --color-syntax-string: #ce9178;
-            --color-syntax-function: #dcdcaa;
-            --color-syntax-comment: #6a9955;
-            
-            /* Typography */
-            --font-mono: 'JetBrains Mono', monospace;
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            
-            /* Spacing */
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
-            
-            /* Border Radius */
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-        }
-        
-        /* ==================== Reset & Base ==================== */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        /* Respect user's motion preferences */
-        @media (prefers-reduced-motion: reduce) {
-            html {
-                scroll-behavior: auto;
-            }
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-        
-        body {
-            font-family: var(--font-sans);
-            background: var(--color-bg-primary);
-            color: var(--color-text-primary);
-            line-height: 1.6;
-            font-size: 16px;
-        }
-        
-        /* ==================== Skip Link (Accessibility) ==================== */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: var(--color-accent-primary);
-            color: var(--color-bg-primary);
-            padding: var(--space-sm);
-            text-decoration: none;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            z-index: 100;
-        }
-        
-        .skip-link:focus {
-            top: var(--space-sm);
-            left: var(--space-sm);
-        }
-        
-        /* ==================== Focus States (Accessibility) ==================== */
-        *:focus-visible {
-            outline: 2px solid var(--color-accent-primary);
-            outline-offset: 2px;
-        }
-        
-        *:focus:not(:focus-visible) {
-            outline: none;
-        }
-        
-        /* ==================== Header ==================== */
-        header {
-            background: var(--color-bg-secondary);
-            border-bottom: 1px solid var(--color-border);
-            padding: var(--space-md) 0;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-        
-        nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--space-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-family: var(--font-mono);
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--color-accent-primary);
-            text-decoration: none;
-        }
-        
-        .logo::before {
-            content: '$ ';
-            color: var(--color-accent-secondary);
-        }
-        
-        .back-link {
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .back-link:hover {
-            color: var(--color-accent-primary);
-        }
-        
-        .back-link::before {
-            content: '←';
-            font-size: 1.2rem;
-        }
-        
-        /* ==================== Main Content ==================== */
-        main {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: var(--space-xl) var(--space-md);
-        }
-        
-        /* ==================== Project Header ==================== */
-        .project-header {
-            margin-bottom: var(--space-xl);
-            padding-bottom: var(--space-xl);
-            border-bottom: 1px solid var(--color-border);
-        }
-        
-        .project-tag {
-            display: inline-block;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: var(--color-accent-secondary);
-            background: rgba(78, 201, 176, 0.1);
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-sm);
-            margin-bottom: var(--space-md);
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--color-text-primary);
-            margin-bottom: var(--space-md);
-            line-height: 1.2;
-        }
-        
-        .project-meta {
-            display: flex;
-            gap: var(--space-lg);
-            font-size: 0.9rem;
-            color: var(--color-text-secondary);
-            margin-bottom: var(--space-md);
-            flex-wrap: wrap;
-        }
-        
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .meta-item strong {
-            color: var(--color-text-primary);
-        }
-        
-        .tldr {
-            background: var(--color-bg-secondary);
-            border-left: 4px solid var(--color-accent-primary);
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-xl);
-        }
-        
-        .tldr-title {
-            font-weight: 600;
-            color: var(--color-accent-primary);
-            margin-bottom: var(--space-sm);
-            font-size: 1.1rem;
-        }
-        
-        .key-achievement {
-            background: var(--color-bg-tertiary);
-            padding: var(--space-md);
-            border-radius: var(--radius-sm);
-            margin-top: var(--space-sm);
-        }
-        
-        .key-achievement strong {
-            color: var(--color-accent-primary);
-        }
-        
-        /* ==================== Content Sections ==================== */
-        .section {
-            margin-bottom: var(--space-2xl);
-        }
-        
-        h2 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: var(--color-text-primary);
-            margin-bottom: var(--space-md);
-            padding-bottom: var(--space-sm);
-            border-bottom: 2px solid var(--color-border);
-        }
-        
-        h3 {
-            font-size: 1.35rem;
-            font-weight: 600;
-            color: var(--color-text-primary);
-            margin-top: var(--space-lg);
-            margin-bottom: var(--space-md);
-        }
-        
-        h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--color-accent-secondary);
-            margin-top: var(--space-md);
-            margin-bottom: var(--space-sm);
-        }
-        
-        p {
-            margin-bottom: var(--space-md);
-            color: var(--color-text-primary);
-        }
-        
-        ul, ol {
-            margin-left: var(--space-lg);
-            margin-bottom: var(--space-md);
-        }
-        
-        li {
-            margin-bottom: var(--space-sm);
-            color: var(--color-text-primary);
-        }
-        
-        /* ==================== Code Blocks ==================== */
-        pre {
-            background: var(--color-bg-code);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-            overflow-x: auto;
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        
-        code {
-            font-family: var(--font-mono);
-            font-size: 0.9em;
-            color: var(--color-accent-warning);
-        }
-        
-        pre code {
-            color: var(--color-text-primary);
-        }
-        
-        .terminal {
-            position: relative;
-            background: #0c0c0c;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-md);
-        }
-        
-        .terminal::before {
-            content: '';
-            display: block;
-            height: 30px;
-            background: var(--color-bg-secondary);
-            border-bottom: 1px solid var(--color-border);
-            border-radius: var(--radius-md) var(--radius-md) 0 0;
-        }
-        
-        .terminal pre {
-            border: none;
-            border-radius: 0 0 var(--radius-md) var(--radius-md);
-            background: #0c0c0c;
-            color: #00ff00;
-        }
-        
-        /* ==================== Architecture Diagram ==================== */
-        .architecture {
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-        
-        .architecture pre {
-            background: transparent;
-            border: none;
-            color: var(--color-accent-secondary);
-            font-size: 0.85rem;
-        }
-        
-        /* ==================== Collapsible Sections ==================== */
-        .collapsible {
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-md);
-            overflow: hidden;
-        }
-        
-        .collapsible-header {
-            padding: var(--space-md);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            user-select: none;
-            transition: background 0.2s;
-        }
-        
-        .collapsible-header:hover {
-            background: var(--color-bg-tertiary);
-        }
-        
-        .collapsible-title {
-            font-weight: 600;
-            color: var(--color-accent-primary);
-            font-size: 1.1rem;
-        }
-        
-        .collapsible-icon {
-            font-size: 1.2rem;
-            color: var(--color-text-secondary);
-            transition: transform 0.3s;
-        }
-        
-        .collapsible.active .collapsible-icon {
-            transform: rotate(180deg);
-        }
-        
-        .collapsible-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        
-        .collapsible.active .collapsible-content {
-            max-height: 5000px;
-            transition: max-height 0.5s ease-in;
-        }
-        
-        .collapsible-inner {
-            padding: 0 var(--space-md) var(--space-md) var(--space-md);
-        }
-        
-        /* ==================== Info Boxes ==================== */
-        .info-box {
-            background: rgba(78, 201, 176, 0.1);
-            border: 1px solid var(--color-accent-secondary);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-        
-        .info-box strong {
-            color: var(--color-accent-secondary);
-        }
-        
-        .success-box {
-            background: rgba(78, 201, 176, 0.1);
-            border: 1px solid var(--color-accent-success);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-        
-        .success-box strong {
-            color: var(--color-accent-success);
-        }
-        
-        .warning-box {
-            background: rgba(206, 145, 120, 0.1);
-            border: 1px solid var(--color-accent-warning);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-        
-        .warning-box strong {
-            color: var(--color-accent-warning);
-        }
-        
-        /* ==================== STAR Format ==================== */
-        .star-format {
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            padding: var(--space-lg);
-        }
-        
-        .star-item {
-            margin-bottom: var(--space-lg);
-        }
-        
-        .star-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .star-label {
-            display: inline-block;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--color-bg-primary);
-            background: var(--color-accent-primary);
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-sm);
-            margin-bottom: var(--space-sm);
-        }
-        
-        .star-item p {
-            margin-bottom: 0;
-            font-style: italic;
-            color: var(--color-text-secondary);
-        }
-        
-        .star-item ul {
-            margin-top: var(--space-sm);
-            color: var(--color-text-secondary);
-            font-style: italic;
-        }
-        
-        /* ==================== Skills Grid ==================== */
-        .skills-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-sm);
-            margin-top: var(--space-md);
-        }
-        
-        .skill-badge {
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            background: var(--color-bg-tertiary);
-            color: var(--color-accent-secondary);
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--color-border);
-        }
-        
-        /* ==================== Footer ==================== */
-        footer {
-            background: var(--color-bg-secondary);
-            border-top: 1px solid var(--color-border);
-            padding: var(--space-xl) var(--space-md);
-            margin-top: var(--space-2xl);
-        }
-        
-        .footer-content {
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        
-        .footer-nav {
-            display: flex;
-            justify-content: center;
-            gap: var(--space-lg);
-            margin-bottom: var(--space-md);
-            flex-wrap: wrap;
-        }
-        
-        .footer-nav a {
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-        
-        .footer-nav a:hover {
-            color: var(--color-accent-primary);
-        }
-        
-        .footer-copyright {
-            color: var(--color-text-secondary);
-            font-size: 0.85rem;
-        }
-        
-        /* ==================== Responsive ==================== */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            h2 {
-                font-size: 1.5rem;
-            }
-            
-            h3 {
-                font-size: 1.2rem;
-            }
-            
-            .project-meta {
-                flex-direction: column;
-                gap: var(--space-sm);
-            }
-            
-            pre {
-                font-size: 0.8rem;
-            }
-            
-            .footer-nav {
-                flex-direction: column;
-                gap: var(--space-sm);
-            }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
-    
+
     <header>
         <nav aria-label="Main navigation">
             <a href="/" class="logo">nate</a>
-            <a href="/" class="back-link">Back to Projects</a>
+            <a href="/" class="back-link">Back</a>
         </nav>
     </header>
-    
-    <main id="main-content" role="main">
+
+    <main id="main-content" class="project-main" role="main">
         <!-- Project Header -->
         <div class="project-header">
             <span class="project-tag">Identity & Access Management</span>
             <h1>Enterprise SSO Implementation</h1>
-            
+
             <div class="project-meta">
                 <span class="meta-item"><strong>Duration:</strong> ~15 hours</span>
                 <span class="meta-item"><strong>Date:</strong> February 2026</span>
                 <span class="meta-item"><strong>Status:</strong> Production</span>
             </div>
-            
+
             <div class="tldr">
                 <div class="tldr-title">TL;DR</div>
-                <p>Set up a single sign-on system so I only need one password to access all my homelab applications. Instead of managing 8 different passwords, I log in once and everything just works. The system checks Active Directory (like what companies use for employee logins), then lets me through to whichever app I'm trying to use.</p>
-                
+                <p>Set up single sign-on across my homelab — one login for everything from the documentation wiki to the code editor. Authentik validates credentials against Active Directory, then issues a session cookie the reverse proxy checks on every request. Log in once; everything just works after that.</p>
+
                 <div class="key-achievement">
-                    <strong>Key Achievement:</strong> 8+ applications protected with centralized SSO. Zero password sprawl. 5-minute onboarding for new apps.
+                    <strong>Key Achievement:</strong> 8+ applications behind one login. Adding a new app takes about 5 minutes — a proxy provider, an application entry, and a few nginx lines.
                 </div>
             </div>
         </div>
-        
+
         <!-- The Problem -->
         <section class="section">
             <h2>The Problem</h2>
-            
+
             <h3>What I Started With</h3>
             <ul>
                 <li>8+ applications running in my homelab (documentation wiki, dashboard, code editor, etc.)</li>
@@ -651,7 +86,7 @@
                 <li>I was either reusing passwords (bad security) or forgetting which password went with which app</li>
                 <li>No way to see who accessed what, or block access globally if needed</li>
             </ul>
-            
+
             <h3>Why This Sucks</h3>
             <ul>
                 <li><strong>Security risk:</strong> Weak passwords get reused, or you write them down</li>
@@ -659,36 +94,15 @@
                 <li><strong>No control:</strong> Can't revoke someone's access to everything at once</li>
                 <li><strong>Annoying:</strong> Logging in 8 times to check 8 things</li>
             </ul>
-            
-            <div class="info-box">
-                <strong>Real-World Example:</strong> This is the same problem companies have with SaaS apps. Without SSO, employees have 20+ different passwords for Salesforce, Jira, Slack, etc. That's why enterprise IT implements SSO - and that's what I learned to do here.
-            </div>
+
         </section>
-        
+
         <!-- The Solution -->
         <section class="section">
             <h2>The Solution</h2>
-            
-            <h3>How It Works (The Simple Version)</h3>
-            <p>Think of it like a security checkpoint at an airport:</p>
-            
-            <div class="architecture">
-                <pre>
-You → Security Gate → Plane
 
-If you have a boarding pass (session cookie):
-  Security waves you through to your gate
+            <h3>How It Works</h3>
 
-If you don't have a boarding pass:
-  Security redirects you to check-in
-  → You show your ID (Active Directory login)
-  → Get boarding pass (session cookie)
-  → Now you can access all gates (apps)
-                </pre>
-            </div>
-            
-            <h3>What Actually Happens Behind the Scenes</h3>
-            
             <h4>First Time Visiting an App:</h4>
             <ol>
                 <li>You type in the URL: <code>https://docs.homelab.local</code></li>
@@ -698,59 +112,59 @@ If you don't have a boarding pass:
                 <li>Login works → You get a session cookie → Redirected back to the app</li>
                 <li>Now the security guard sees your cookie and lets you through</li>
             </ol>
-            
+
             <h4>Every Time After That:</h4>
             <ul>
                 <li>Your browser automatically sends the session cookie with each request</li>
                 <li>Security guard checks cookie → Valid → Lets you through</li>
                 <li>You don't see any of this - the app just loads instantly</li>
             </ul>
-            
+
             <h3>The Tech Stack</h3>
             <ul>
-                <li><strong>Active Directory:</strong> 2 servers storing users/passwords (like a company directory)</li>
-                <li><strong>Authentik:</strong> The login page and session manager</li>
-                <li><strong>Nginx Proxy Manager:</strong> The security gate that checks cookies before letting you through</li>
-                <li><strong>Docker:</strong> All these pieces run in containers on my server</li>
+                <li><strong>Active Directory:</strong> 2 domain controllers storing users and credentials</li>
+                <li><strong>Authentik:</strong> Identity provider — handles the login page, validates credentials against AD, and issues session tokens</li>
+                <li><strong>Nginx Proxy Manager:</strong> Reverse proxy — every request passes through it before reaching the app</li>
+                <li><strong>Docker:</strong> All components run containerized on the same server</li>
             </ul>
         </section>
-        
+
         <!-- Technical Implementation -->
         <section class="section">
             <h2>What I Actually Built</h2>
-            
+
             <h3>The Main Pieces</h3>
-            
+
             <h4>Active Directory (The User Database)</h4>
             <ul>
-                <li>Set up 2 domain controllers for redundancy (if one goes down, the other keeps working)</li>
-                <li>This is where all usernames and passwords live</li>
-                <li>Same tech that companies use for Windows logins</li>
+                <li>Set up 2 domain controllers — if one fails, the other keeps auth working</li>
+                <li>All usernames and credentials live here</li>
+                <li>Authentik talks to it over LDAP to verify logins</li>
             </ul>
-            
+
             <h4>Authentik (The Login System)</h4>
             <ul>
-                <li>The pretty login page you see when you need to sign in</li>
-                <li>Talks to Active Directory to check if your password is correct</li>
-                <li>Creates and manages session cookies</li>
+                <li>Handles the login page and authentication flows</li>
+                <li>Validates credentials against Active Directory over LDAP</li>
+                <li>Issues and manages session cookies after successful login</li>
             </ul>
-            
+
             <h4>Nginx Proxy Manager (The Security Gate)</h4>
             <ul>
                 <li>Sits in front of all applications</li>
                 <li>Checks every request: "Do you have a valid session?"</li>
                 <li>If yes → Let you through. If no → Send you to login.</li>
             </ul>
-            
+
             <h4>Docker (How It All Runs)</h4>
             <ul>
-                <li>Each component runs in its own container (isolated environment)</li>
-                <li>Containers talk to each other over an internal network</li>
-                <li>Easy to update or restart individual pieces without breaking everything</li>
+                <li>Each component runs in its own container on the same host</li>
+                <li>Containers communicate over an internal Docker network</li>
+                <li>Can restart or update Authentik without touching the apps behind it</li>
             </ul>
-            
+
             <h3>Key Technical Decisions</h3>
-            
+
             <div class="collapsible">
                 <div class="collapsible-header">
                     <div class="collapsible-title">Why Forward Auth vs Native OIDC/SAML</div>
@@ -759,16 +173,16 @@ If you don't have a boarding pass:
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
                         <ul>
-                            <li>Forward auth works with <strong>any</strong> HTTP(S) application (no app-level changes needed)</li>
-                            <li>Application never sees credentials (security)</li>
-                            <li>Centralized at network edge (defense in depth)</li>
-                            <li>Single pattern scales to unlimited apps</li>
-                            <li>Trade-off: Double authentication if app has native auth (acceptable in homelab)</li>
+                            <li>Forward auth works with <strong>any</strong> HTTP(S) application — no changes to the app itself</li>
+                            <li>Application never sees credentials</li>
+                            <li>Auth enforced at the network edge before requests reach the app</li>
+                            <li>Same pattern applies to any app you add later</li>
+                            <li>Trade-off: Double authentication if the app has its own native auth (acceptable here)</li>
                         </ul>
                     </div>
                 </div>
             </div>
-            
+
             <div class="collapsible">
                 <div class="collapsible-header">
                     <div class="collapsible-title">Why Separate Authentik Outpost</div>
@@ -785,11 +199,11 @@ If you don't have a boarding pass:
                 </div>
             </div>
         </section>
-        
+
         <!-- The Challenges -->
         <section class="section">
             <h2>The Challenges</h2>
-            
+
             <div class="collapsible">
                 <div class="collapsible-header">
                     <div class="collapsible-title">Challenge 1: Wrong Username Format for LDAP</div>
@@ -801,23 +215,23 @@ If you don't have a boarding pass:
                         <div class="terminal">
                             <pre>Error: LDAP bind failed - Invalid credentials</pre>
                         </div>
-                        
+
                         <h4>The Problem:</h4>
                         <ul>
                             <li>I was using email format: <code>admin@domain.local</code></li>
                             <li>LDAP doesn't understand email format - it needs a specific path</li>
                             <li>Required format: <code>CN=Admin,OU=Users,DC=domain,DC=local</code></li>
                         </ul>
-                        
+
                         <h4>The Fix:</h4>
                         <p>Used the full Distinguished Name (DN) path instead of email/UPN format.</p>
-                        
+
                         <h4>Lesson Learned:</h4>
                         <p>LDAP has its own addressing format. Email-style usernames won't work for bind operations.</p>
                     </div>
                 </div>
             </div>
-            
+
             <div class="collapsible">
                 <div class="collapsible-header">
                     <div class="collapsible-title">Challenge 2: nginx auth_request Returns Wrong Status</div>
@@ -829,23 +243,23 @@ If you don't have a boarding pass:
                         <div class="terminal">
                             <pre>401 Unauthorized (even after successful login)</pre>
                         </div>
-                        
+
                         <h4>The Problem:</h4>
                         <ul>
                             <li>nginx's <code>auth_request</code> only accepts 2xx as "allow"</li>
                             <li>Authentik was returning 401 for "not logged in" (correct)</li>
                             <li>But nginx wasn't properly handling the redirect flow</li>
                         </ul>
-                        
+
                         <h4>The Fix:</h4>
                         <p>Configured proper <code>error_page 401 = @authentik</code> handling and set up the redirect location block correctly.</p>
-                        
+
                         <h4>Lesson Learned:</h4>
                         <p>HTTP status codes have specific meanings in auth flows. Need to understand how nginx interprets subrequest responses.</p>
                     </div>
                 </div>
             </div>
-            
+
             <div class="collapsible">
                 <div class="collapsible-header">
                     <div class="collapsible-title">Challenge 3: Session Cookies Not Persisting</div>
@@ -857,48 +271,48 @@ If you don't have a boarding pass:
                         <div class="terminal">
                             <pre>Login works, but redirected back to login immediately</pre>
                         </div>
-                        
+
                         <h4>The Problem:</h4>
                         <ul>
                             <li>Cookies have domain restrictions</li>
                             <li>Cookie set for <code>auth.domain.local</code> wasn't being sent to <code>app.domain.local</code></li>
                             <li>Browser security feature, not a bug</li>
                         </ul>
-                        
+
                         <h4>The Fix:</h4>
                         <p>Configured Authentik to set cookies for the parent domain <code>.domain.local</code> so they're sent to all subdomains.</p>
-                        
+
                         <h4>Lesson Learned:</h4>
                         <p>When login involves redirects between subdomains, you have to understand cookie policies. This took reading browser documentation and testing different settings.</p>
                     </div>
                 </div>
             </div>
         </section>
-        
+
         <!-- Results -->
         <section class="section">
             <h2>Results</h2>
-            
+
             <div class="success-box">
                 <ul style="margin-bottom: 0;">
-                    <li><strong>8+ applications</strong> protected with centralized SSO</li>
-                    <li><strong>Zero password sprawl</strong> - users authenticate once with AD credentials</li>
-                    <li><strong>5-minute onboarding</strong> for new applications (reusable pattern)</li>
-                    <li><strong>100% authentication success</strong> rate since deployment</li>
-                    <li>All authentication events logged centrally in Authentik</li>
+                    <li><strong>8+ applications</strong> behind one login</li>
+                    <li>One set of AD credentials for everything — no per-app passwords</li>
+                    <li><strong>~5 minutes</strong> to add a new application to SSO</li>
+                    <li>No authentication failures since going live</li>
+                    <li>Every login attempt logged in Authentik</li>
                 </ul>
             </div>
-            
+
             <h3>Reusable Pattern</h3>
             <p>Adding SSO to a new application takes ~5 minutes:</p>
-            
+
             <ol>
                 <li><strong>In Authentik:</strong> Create Proxy Provider + Application (3 clicks)</li>
                 <li><strong>In Authentik:</strong> Assign application to outpost (1 click)</li>
                 <li><strong>In NPM:</strong> Add <code>auth_request</code> location blocks to proxy host (paste config)</li>
                 <li><strong>Test:</strong> Access app → redirect to login → authenticate → access granted</li>
             </ol>
-            
+
             <div class="success-box">
                 <p>This pattern has been applied to:</p>
                 <ul style="margin-bottom: 0;">
@@ -908,120 +322,39 @@ If you don't have a boarding pass:
                     <li>Monitoring (Uptime Kuma)</li>
                     <li>Backup tool (Duplicati)</li>
                 </ul>
-                <p style="margin-top: var(--space-sm); margin-bottom: 0;"><strong>And can protect ANY future HTTP(S) application without modification.</strong></p>
+                <p style="margin-top: var(--space-sm); margin-bottom: 0;"><strong>And works for any future HTTP(S) application without touching the app itself.</strong></p>
             </div>
         </section>
-        
-        <!-- Interview Story -->
+
+        <!-- The Short Version -->
         <section class="section">
-            <h2>Interview Story (STAR Format)</h2>
-            
-            <div class="star-format">
-                <div class="star-item">
-                    <div class="star-label">Situation</div>
-                    <p>"I was managing a homelab with 8 self-hosted applications, each with independent user management. This created password fatigue, security risks from reused credentials, and no centralized access control or audit trail."</p>
-                </div>
-                
-                <div class="star-item">
-                    <div class="star-label">Task</div>
-                    <p>"Implement enterprise-grade Single Sign-On that would work across all applications - including those without native SSO support - while maintaining security and providing a foundation for future access policies."</p>
-                </div>
-                
-                <div class="star-item">
-                    <div class="star-label">Action</div>
-                    <p>"I implemented forward authentication using Authentik as the identity provider, backed by Active Directory as the user directory. The architecture places authentication at the reverse proxy layer, so every HTTP request is validated before reaching the application. This required:</p>
-                    <ul>
-                        <li>Setting up a 2-DC Active Directory environment with LDAP</li>
-                        <li>Deploying Authentik with a distributed architecture (main server + outpost)</li>
-                        <li>Configuring nginx to intercept requests and validate sessions via subrequests</li>
-                        <li>Troubleshooting LDAP bind failures (DN vs UPN format issue)</li>
-                        <li>Debugging nginx auth_request status code handling</li>
-                        <li>Resolving session cookie propagation through proxy layers</li>
-                    </ul>
-                    <p>The key technical challenges were understanding LDAP protocol requirements, nginx's auth_request model, and HTTP cookie flow through multi-layer proxies."</p>
-                </div>
-                
-                <div class="star-item">
-                    <div class="star-label">Result</div>
-                    <p>"Successfully implemented SSO protecting 8 applications with a reusable pattern that takes ~5 minutes to apply to new apps. Eliminated password sprawl, centralized authentication logging, and built a foundation for future enhancements like MFA and group-based access policies. The implementation mirrors enterprise patterns used by companies like Cloudflare Access or Okta + reverse proxy combinations."</p>
-                </div>
+            <h2>The Short Version</h2>
+
+            <div class="story-section">
+                <p>I was running 8 self-hosted applications with independent user management — password fatigue, reused credentials, no centralized audit trail. The goal was to implement SSO that would work across everything, including apps without native SSO support. I deployed Authentik as the identity provider backed by a 2-DC Active Directory environment, then placed authentication at the reverse proxy layer so every HTTP request gets validated before it reaches the application. That's the same architecture Cloudflare Access uses — auth enforced at the edge, apps never see credentials directly.</p>
+                <p>The hard parts were protocol-level: LDAP bind operations require Distinguished Name format (<code>CN=Admin,OU=Users,DC=domain,DC=local</code>), not the UPN email format I first tried. nginx's <code>auth_request</code> only treats 2xx responses as "allow," which required correctly wiring the <code>error_page 401 = @authentik</code> redirect flow. And session cookies set on <code>auth.domain.local</code> don't propagate to <code>app.domain.local</code> without explicitly scoping them to the parent domain. Once those three pieces clicked, the rest was just configuration — and the pattern now takes about 5 minutes to apply to any new application.</p>
             </div>
-        </section>
-        
-        <!-- Skills Demonstrated -->
-        <section class="section">
-            <h2>Skills Demonstrated</h2>
-            
-            <h3>Enterprise Identity Architecture</h3>
-            <div class="skills-grid">
-                <span class="skill-badge">LDAP Protocol</span>
-                <span class="skill-badge">Active Directory</span>
-                <span class="skill-badge">Modern IdP Patterns</span>
-                <span class="skill-badge">Forward Auth</span>
-                <span class="skill-badge">OAuth2/OIDC Concepts</span>
-                <span class="skill-badge">Distributed Systems</span>
-            </div>
-            
-            <h3>Reverse Proxy Engineering</h3>
-            <div class="skills-grid">
-                <span class="skill-badge">nginx auth_request</span>
-                <span class="skill-badge">HTTP Status Handling</span>
-                <span class="skill-badge">Header Manipulation</span>
-                <span class="skill-badge">TLS/SSL</span>
-                <span class="skill-badge">Cookie Management</span>
-            </div>
-            
-            <h3>Systematic Troubleshooting</h3>
-            <div class="skills-grid">
-                <span class="skill-badge">Log Analysis</span>
-                <span class="skill-badge">Protocol Debugging</span>
-                <span class="skill-badge">Root Cause Analysis</span>
-                <span class="skill-badge">Documentation</span>
-            </div>
-        </section>
-        
-        <!-- What's Next -->
-        <section class="section">
-            <h2>What's Next</h2>
-            
-            <h3>Immediate Improvements</h3>
-            <ul>
-                <li><strong>MFA:</strong> Enable TOTP or WebAuthn for second factor</li>
-                <li><strong>LDAPS:</strong> Migrate from StartTLS to dedicated LDAPS port 636</li>
-                <li><strong>Monitoring:</strong> Centralize auth logs in Loki/Grafana</li>
-                <li><strong>Group Policies:</strong> Implement fine-grained access control per app</li>
-            </ul>
-            
-            <h3>Future Exploration</h3>
-            <ul>
-                <li><strong>User Self-Service:</strong> Password reset portal via Authentik</li>
-                <li><strong>Device Trust:</strong> Integrate device posture checks</li>
-                <li><strong>OAuth2 Device Flow:</strong> CLI tool authentication</li>
-                <li><strong>SAML Integration:</strong> Explore SAML for apps that don't support OIDC</li>
-            </ul>
         </section>
     </main>
-    
-    <footer role="contentinfo">
+
+    <footer class="project-footer" role="contentinfo">
         <div class="footer-content">
-            <nav class="footer-nav" aria-label="Footer navigation">
+            <div class="footer-copy">&copy; 2026 Nate &mdash; Austin, TX</div>
+            <nav class="footer-links" aria-label="Footer navigation">
                 <a href="/">Projects</a>
                 <a href="/resume">Resume</a>
                 <a href="/work-highlights">Work Examples</a>
             </nav>
-            <p class="footer-copyright">Building enterprise-grade infrastructure, one project at a time.</p>
         </div>
     </footer>
-    
+
     <script>
-        // Collapsible sections with keyboard accessibility
         document.querySelectorAll('.collapsible-header').forEach(header => {
             header.addEventListener('click', () => {
                 const collapsible = header.parentElement;
                 collapsible.classList.toggle('active');
             });
-            
-            // Keyboard accessibility
+
             header.setAttribute('tabindex', '0');
             header.setAttribute('role', 'button');
             header.addEventListener('keydown', (e) => {
