@@ -249,7 +249,7 @@ h1 {
 .section { margin-bottom: var(--space-2xl); }
 
 h2 {
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
     font-weight: 600;
     color: var(--green);
     margin-bottom: var(--space-sm);
@@ -258,7 +258,7 @@ h2 {
 }
 
 h3 {
-    font-size: 1rem;
+    font-size: clamp(0.9rem, 0.85rem + 0.25vw, 1.05rem);
     font-weight: 600;
     color: var(--cyan);
     margin-top: var(--space-lg);
@@ -266,7 +266,7 @@ h3 {
 }
 
 h4 {
-    font-size: 0.9rem;
+    font-size: clamp(0.85rem, 0.8rem + 0.2vw, 0.95rem);
     font-weight: 600;
     color: var(--orange);
     margin-top: var(--space-sm);
@@ -526,6 +526,14 @@ footer.project-footer .footer-content {
 }
 
 /* ==================== Responsive (Project Pages) ==================== */
+
+/* Tablet mid-range — iPad Air (820px), iPad mini landscape, Galaxy Tab */
+@media (max-width: 900px) {
+    main.project-main { padding: var(--space-lg) var(--space-sm); }
+    .comparison-grid  { gap: var(--space-xs); }
+    pre { font-size: 0.82rem; }
+}
+
 @media (max-width: 768px) {
     h1 { font-size: 1.5rem; }
     h2 { font-size: 1rem; }
@@ -539,4 +547,10 @@ footer.project-footer .footer-content {
 
     footer.project-footer .footer-content { flex-direction: column; text-align: center; }
     .footer-links { flex-wrap: wrap; justify-content: center; }
+}
+
+/* Landscape mobile — rotated phones with short viewport height */
+@media (orientation: landscape) and (max-height: 500px) {
+    header { padding: 4px 0; position: relative; }
+    main.project-main { padding: var(--space-sm) var(--space-xs); }
 }

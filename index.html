@@ -95,6 +95,7 @@
     padding: 24px 32px 24px 32px;
     background: var(--bg-deep);
     min-height: 100vh;
+    min-height: 100dvh;
     font-size: 13.5px;
     line-height: 1.45;
   }
@@ -415,8 +416,9 @@
     html, body { overflow-x: hidden; }
     .boot { padding: 16px 14px 16px 14px; font-size: 12px; }
     .app  { padding: 16px 14px 150px 14px; font-size: 12px; }
-    /* Boot lines: pre-wrap so long lines wrap instead of overflow */
+    /* Boot lines and output: pre-wrap so long lines wrap instead of overflow */
     .boot-line { white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; }
+    .output { overflow-wrap: break-word; word-break: break-word; }
     .neofetch { flex-direction: column; gap: 10px; }
     .neofetch-art { font-size: 9px; line-height: 1.15; }
     .neofetch-info { font-size: 12px; }
@@ -457,6 +459,43 @@
 
   *:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
   *:focus:not(:focus-visible) { outline: none; }
+
+  /* Large desktop — prevent ultrawide horizontal stretch */
+  @media (min-width: 1400px) {
+    .boot, .app {
+      padding-left: min(160px, 12vw);
+      padding-right: min(160px, 12vw);
+    }
+  }
+
+  /* Large desktop — bump font size for 27"+ monitors */
+  @media (min-width: 1440px) {
+    html, body { font-size: 15px; }
+    .boot { font-size: 14.5px; }
+    .app  { font-size: 15px; }
+  }
+
+  /* Landscape mobile — rotated phones (~360-430px tall) */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .boot  { padding: 10px 16px; font-size: 11px; }
+    .app   { padding: 10px 16px 110px 16px; font-size: 11px; }
+    .palette { padding: 4px 10px; gap: 3px; }
+    .palette-label { display: none; }
+    .chip  { padding: 3px 8px; font-size: 10px; }
+    .chip-desc { display: none; }
+    .chip.icon { margin-left: 0; }
+    .prompt-line { bottom: 36px; font-size: 12px; }
+    .neofetch { flex-direction: row; gap: 12px; }
+    .neofetch-art { display: none; }
+  }
+
+  /* Very small phones — iPhone SE (375px), Galaxy A01 (360px) */
+  @media (max-width: 380px) {
+    .boot { padding: 10px 10px; font-size: 10.5px; }
+    .app  { padding: 10px 10px 160px 10px; font-size: 10.5px; }
+    .chip { padding: 2px 6px; font-size: 10px; }
+    .neofetch-info { font-size: 11px; }
+  }
 </style>
 </head>
 <body>
