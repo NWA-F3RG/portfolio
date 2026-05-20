@@ -441,7 +441,7 @@
       type="text"
       class="prompt-input"
       id="prompt-input"
-      placeholder="type a command, or click one below ↓"
+      placeholder="type ? for a list of commands, or click one below ↓"
       autocomplete="off"
       spellcheck="false"
     />
@@ -746,18 +746,25 @@ function startBoot() {
 
 function completeBoot() {
   try { localStorage.setItem(BOOT_KEY, '1'); } catch(e) {}
+  // Keep #boot visible — users can scroll up to see the animation history.
+  // Only hide the skip button.
+  document.getElementById('skip-boot').style.display = 'none';
+
   var appOut = document.getElementById('app-output');
   appOut.innerHTML =
     '<div class="boot-line">' + renderPromptLine('neofetch') + '</div>' +
     neofetchHtml() +
     '<div class="boot-line">' + renderPromptLine('ls projects/') + '</div>' +
     renderProjectList();
-  document.getElementById('boot').style.display = 'none';
-  document.getElementById('skip-boot').style.display = 'none';
-  window.scrollTo(0, 0);
+
   document.getElementById('app').classList.add('visible');
   document.getElementById('palette').style.display = 'flex';
-  document.getElementById('prompt-input').focus();
+
+  // Scroll so the app (neofetch line) is at the top — boot history is above the fold
+  requestAnimationFrame(function() {
+    document.getElementById('app').scrollIntoView({ behavior: 'instant', block: 'start' });
+    document.getElementById('prompt-input').focus();
+  });
 }
 
 function skipBoot() {
@@ -997,6 +1004,7 @@ var COMMANDS = {
     bootTimeouts.forEach(function(t) { clearTimeout(t); }); bootTimeouts = [];
     document.getElementById('boot-output').innerHTML = '';
     document.getElementById('boot').style.display = 'block';
+    window.scrollTo(0, 0);
     startBoot();
   },
 
