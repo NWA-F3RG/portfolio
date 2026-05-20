@@ -68,6 +68,7 @@
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    scroll-padding-bottom: 70px;
   }
 
   /* Scanlines — restrained ~3% */
@@ -180,6 +181,8 @@
     flex: 1;
     caret-color: transparent;
     padding: 0;
+    position: relative;
+    z-index: 1;
   }
 
   .prompt-input::placeholder { color: var(--fg-dim); font-style: italic; }
@@ -196,7 +199,22 @@
     position: relative;
   }
 
-  .cursor.input-cursor { margin-left: 2px; }
+  /* Wrapper lets the cursor be positioned exactly at the text insertion point */
+  .prompt-cursor-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+  }
+
+  .cursor.input-cursor {
+    position: absolute;
+    bottom: 0;
+    left: 0;        /* JS updates this to match typed text width */
+    margin-left: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
 
   @keyframes blink { 50% { opacity: 0; } }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -310,6 +328,7 @@
   .chip:active { transform: scale(0.97); }
   .chip .key  { color: var(--orange); font-weight: 600; }
   .chip.icon  { margin-left: auto; }
+  .chip-desc  { color: var(--fg-dim); font-size: 11px; }
 
   /* =================================================================
      GUI SECTIONS
@@ -404,6 +423,8 @@
     .chip.icon { margin-left: 0; }
     .prompt-line { font-size: 13px; }
     .output { font-size: 12px; }
+    /* Prevent iOS Safari auto-zoom (triggers on any input < 16px) */
+    .prompt-input, .ssh-field { font-size: 16px; }
   }
 
   /* Very small screens — 420px */
@@ -412,6 +433,16 @@
     .ts { display: none; }        /* hide [timestamp] prefixes — too wide */
     .neofetch-art { display: none; } /* ASCII art not readable at this size */
     .chip { padding: 3px 7px; font-size: 10.5px; }
+    .chip-desc { display: none; }
+  }
+
+  /* ssh form fields — shared base styles extracted from inline JS strings */
+  .ssh-field {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--fg);
+    font-family: var(--font);
+    outline: none;
   }
 
   @media (prefers-reduced-motion: reduce) { .cursor, .app.visible { animation: none; } }
@@ -437,31 +468,33 @@
 
   <div class="prompt-line" id="active-prompt">
     <span class="p-user">nate</span><span class="p-at">@</span><span class="p-host">seggsy</span><span class="p-colon">:</span><span class="p-path" id="cwd">~</span><span class="p-branch">(main)</span><span class="p-sigil">$</span>
-    <input
-      type="text"
-      class="prompt-input"
-      id="prompt-input"
-      placeholder="type ? for a list of commands, or click one below ↓"
-      autocomplete="off"
-      spellcheck="false"
-    />
-    <span class="cursor input-cursor" id="input-cursor"></span>
+    <span class="prompt-cursor-wrap">
+      <input
+        type="text"
+        class="prompt-input"
+        id="prompt-input"
+        placeholder="type ? for a list of commands, or click one below ↓"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <span class="cursor input-cursor" id="input-cursor"></span>
+    </span>
   </div>
 </div>
 
 <!-- Command palette -->
 <div class="palette" id="palette" style="display:none;">
   <span class="palette-label">// click or type</span>
-  <button class="chip" data-cmd="me"><span class="key">me</span> bio</button>
-  <button class="chip" data-cmd="ls"><span class="key">ls</span> projects</button>
+  <button class="chip" data-cmd="me"><span class="key">me</span><span class="chip-desc"> — bio</span></button>
+  <button class="chip" data-cmd="ls"><span class="key">ls</span><span class="chip-desc"> — projects</span></button>
   <button class="chip" data-cmd="cat resume"><span class="key">cat resume</span></button>
   <button class="chip" data-cmd="tree"><span class="key">tree</span></button>
-  <button class="chip" data-cmd="dig"><span class="key">dig</span> contact</button>
-  <button class="chip" data-cmd="ssh"><span class="key">ssh</span> send msg</button>
-  <button class="chip" data-cmd="gui"><span class="key">gui</span> readable</button>
+  <button class="chip" data-cmd="dig"><span class="key">dig</span><span class="chip-desc"> — contact</span></button>
+  <button class="chip" data-cmd="ssh"><span class="key">ssh</span><span class="chip-desc"> — msg</span></button>
+  <button class="chip" data-cmd="gui"><span class="key">gui</span><span class="chip-desc"> — readable</span></button>
   <button class="chip" data-cmd="reboot"><span class="key">reboot</span></button>
   <button class="chip" data-cmd="clear"><span class="key">clr</span></button>
-  <button class="chip" data-cmd="?"><span class="key">?</span> help</button>
+  <button class="chip" data-cmd="?"><span class="key">?</span><span class="chip-desc"> — help</span></button>
   <button class="mute-btn icon" id="mute-btn" title="Toggle sound">🔊</button>
 </div>
 
@@ -706,7 +739,13 @@ function startBoot() {
         return;
       }
       if (line.neofetch) {
-        emitBootLine(neofetchHtml());
+        var nfOut = document.getElementById('boot-output');
+        var nfDiv = document.createElement('div');
+        nfDiv.className = 'boot-line';
+        nfDiv.id = 'boot-neofetch-anchor';
+        nfDiv.innerHTML = neofetchHtml();
+        nfOut.appendChild(nfDiv);
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
         return;
       }
       if (line.projectList) {
@@ -746,24 +785,19 @@ function startBoot() {
 
 function completeBoot() {
   try { localStorage.setItem(BOOT_KEY, '1'); } catch(e) {}
-  // Keep #boot visible — users can scroll up to see the animation history.
-  // Only hide the skip button.
   document.getElementById('skip-boot').style.display = 'none';
 
-  var appOut = document.getElementById('app-output');
-  appOut.innerHTML =
-    '<div class="boot-line">' + renderPromptLine('neofetch') + '</div>' +
-    neofetchHtml() +
-    '<div class="boot-line">' + renderPromptLine('ls projects/') + '</div>' +
-    renderProjectList();
-
+  // The boot animation already rendered neofetch + ls — no duplication needed.
+  // Show the prompt below the boot history and scroll so neofetch is at the top.
   document.getElementById('app').classList.add('visible');
   document.getElementById('palette').style.display = 'flex';
 
-  // Scroll so the app (neofetch line) is at the top — boot history is above the fold
   requestAnimationFrame(function() {
-    document.getElementById('app').scrollIntoView({ behavior: 'instant', block: 'start' });
-    document.getElementById('prompt-input').focus();
+    requestAnimationFrame(function() {
+      var anchor = document.getElementById('boot-neofetch-anchor');
+      if (anchor) anchor.scrollIntoView({ behavior: 'instant', block: 'start' });
+      document.getElementById('prompt-input').focus();
+    });
   });
 }
 
@@ -795,7 +829,9 @@ function printOutput(html) {
   div.innerHTML = html;
   document.getElementById('app-output').appendChild(div);
   requestAnimationFrame(function() {
-    document.getElementById('active-prompt').scrollIntoView({ behavior: 'instant', block: 'end' });
+    requestAnimationFrame(function() {
+      document.getElementById('active-prompt').scrollIntoView({ behavior: 'instant', block: 'nearest' });
+    });
   });
 }
 
@@ -912,6 +948,14 @@ var COMMANDS = {
     ['authentik', 'totp', 'webauthn'],
     'wip', 'activating (in progress)')); },
 
+  // Chip-label aliases — users may type what they read on the palette
+  'me bio':       function() { COMMANDS['me'](); },
+  'ls projects':  function() { COMMANDS['ls'](); },
+  'dig contact':  function() { COMMANDS['dig'](); },
+  'ssh send msg': function() { COMMANDS['ssh'](); },
+  'gui readable': function() { COMMANDS['gui'](); },
+  '? help':       function() { COMMANDS['?'](); },
+
   // Short-name and common-variation aliases
   'cat authentik':    function() { COMMANDS['cat authentik-sso'](); },
   'cat sso':          function() { COMMANDS['cat authentik-sso'](); },
@@ -966,8 +1010,8 @@ var COMMANDS = {
     '<span class="sub">Are you sure you want to continue connecting? <span class="ok">yes</span></span>\n\n' +
     '<span class="ok">Connection established.</span> Drop a message:\n' +
     '<div style="margin-top:12px;padding:12px;border:1px solid var(--border);background:var(--bg-soft);">' +
-    '<div style="margin-bottom:8px;"><span class="sub">From:</span> <input type="text" placeholder="your.email@company.com" style="background:transparent;border:1px solid var(--border);color:var(--fg);font-family:var(--font);padding:4px 8px;width:260px;outline:none;font-size:13px;" /></div>' +
-    '<textarea placeholder="hey nate — " style="background:transparent;border:1px solid var(--border);color:var(--fg);font-family:var(--font);padding:8px;width:100%;outline:none;font-size:13px;min-height:70px;resize:vertical;"></textarea>' +
+    '<div style="margin-bottom:8px;"><span class="sub">From:</span> <input type="text" class="ssh-field" placeholder="your.email@company.com" style="padding:4px 8px;width:260px;" /></div>' +
+    '<textarea class="ssh-field" placeholder="hey nate — " style="padding:8px;width:100%;min-height:70px;resize:vertical;"></textarea>' +
     '<div style="margin-top:8px;"><a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener" style="display:inline-block;background:var(--green);color:var(--bg-deep);padding:5px 14px;font-family:var(--font);font-size:12px;font-weight:600;text-decoration:none;border-radius:3px;">schedule a call →</a></div>' +
     '</div>' +
     '</div>'); },
@@ -1082,23 +1126,53 @@ function exec(rawInput) {
 // =================================================================
 var promptInput = document.getElementById('prompt-input');
 
+// Block cursor tracking — measures typed text width to position the cursor span
+var _cursorMeasurer = null;
+function updateInputCursor() {
+  var cursor = document.getElementById('input-cursor');
+  if (!cursor) return;
+  var input = document.getElementById('prompt-input');
+  if (!_cursorMeasurer) {
+    _cursorMeasurer = document.createElement('span');
+    _cursorMeasurer.style.cssText =
+      'position:fixed;top:-9999px;left:-9999px;visibility:hidden;white-space:pre;';
+    document.body.appendChild(_cursorMeasurer);
+  }
+  var cs = window.getComputedStyle(input);
+  _cursorMeasurer.style.fontFamily  = cs.fontFamily;
+  _cursorMeasurer.style.fontSize    = cs.fontSize;
+  _cursorMeasurer.style.fontWeight  = cs.fontWeight;
+  _cursorMeasurer.style.letterSpacing = cs.letterSpacing;
+  var pos = typeof input.selectionStart === 'number' ? input.selectionStart : input.value.length;
+  _cursorMeasurer.textContent = input.value.slice(0, pos);
+  cursor.style.left = _cursorMeasurer.offsetWidth + 'px';
+}
+
 promptInput.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
     var val = this.value;
     this.value = '';
     ensureAudio();
     exec(val);
+    requestAnimationFrame(updateInputCursor);
   } else if (e.key === 'ArrowUp') {
     e.preventDefault();
     if (historyIdx < history.length - 1) { historyIdx++; this.value = history[historyIdx]; }
+    requestAnimationFrame(updateInputCursor);
   } else if (e.key === 'ArrowDown') {
     e.preventDefault();
     if (historyIdx > 0) { historyIdx--; this.value = history[historyIdx]; }
     else { historyIdx = -1; this.value = ''; }
+    requestAnimationFrame(updateInputCursor);
   } else {
     keyClack();
+    requestAnimationFrame(updateInputCursor);
   }
 });
+
+promptInput.addEventListener('input',  updateInputCursor);
+promptInput.addEventListener('click',  updateInputCursor);
+promptInput.addEventListener('focus',  updateInputCursor);
 
 document.querySelectorAll('.chip[data-cmd]').forEach(function(btn) {
   btn.addEventListener('click', function() {
