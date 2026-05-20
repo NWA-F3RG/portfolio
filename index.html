@@ -643,13 +643,13 @@ function renderPromptLine(cmd) {
 
 function renderProjectList() {
   return '<div class="output">' +
-    '<div class="sc-row"><span class="dot g">●</span><span class="name">authentik-sso.service</span><span class="state a">active (running)</span><span class="when">2mo ago</span></div>' +
-    '<div class="sc-row"><span class="dot g">●</span><span class="name">pbs-backup.service</span><span class="state a">active (running)</span><span class="when">3mo ago</span></div>' +
-    '<div class="sc-row"><span class="dot g">●</span><span class="name">monitoring-stack.service</span><span class="state a">active (running)</span><span class="when">2mo ago</span></div>' +
-    '<div class="sc-row"><span class="dot g">●</span><span class="name">ssh-hardening.service</span><span class="state a">active (running)</span><span class="when">3mo ago</span></div>' +
-    '<div class="sc-row"><span class="dot y">◐</span><span class="name">k3s-cluster.service</span><span class="state w">activating (in progress)</span><span class="when">—</span></div>' +
-    '<div class="sc-row"><span class="dot y">◐</span><span class="name">rhcsa-prep.service</span><span class="state w">activating (studying)</span><span class="when">—</span></div>' +
-    '<div style="margin-top:8px;font-size:11.5px;" class="dim">6 loaded units. Pass <span class="hl">cat &lt;project&gt;</span> for details.</div>' +
+    '<div class="sc-row" data-cmd="cat authentik-sso"><span class="dot g">●</span><span class="name">authentik-sso.service</span><span class="state a">active (running)</span><span class="when">2mo ago</span></div>' +
+    '<div class="sc-row" data-cmd="cat pbs-storage"><span class="dot g">●</span><span class="name">pbs-storage.service</span><span class="state a">active (running)</span><span class="when">3mo ago</span></div>' +
+    '<div class="sc-row" data-cmd="cat monitoring-stack"><span class="dot g">●</span><span class="name">monitoring-stack.service</span><span class="state a">active (running)</span><span class="when">2mo ago</span></div>' +
+    '<div class="sc-row" data-cmd="cat ssh-hardening"><span class="dot g">●</span><span class="name">ssh-hardening.service</span><span class="state a">active (running)</span><span class="when">3mo ago</span></div>' +
+    '<div class="sc-row" data-cmd="cat k3s-cluster"><span class="dot y">◐</span><span class="name">k3s-cluster.service</span><span class="state w">activating (in progress)</span><span class="when">—</span></div>' +
+    '<div class="sc-row" data-cmd="cat rhcsa-prep"><span class="dot y">◐</span><span class="name">rhcsa-prep.service</span><span class="state w">activating (studying)</span><span class="when">—</span></div>' +
+    '<div style="margin-top:8px;font-size:11.5px;" class="dim">6 loaded units. Click a row or type <span class="hl">cat &lt;project-name&gt;</span> for details.</div>' +
     '</div>';
 }
 
@@ -905,6 +905,28 @@ var COMMANDS = {
     ['authentik', 'totp', 'webauthn'],
     'wip', 'activating (in progress)')); },
 
+  // Short-name and common-variation aliases
+  'cat authentik':    function() { COMMANDS['cat authentik-sso'](); },
+  'cat sso':          function() { COMMANDS['cat authentik-sso'](); },
+  'cat pbs':          function() { COMMANDS['cat pbs-storage'](); },
+  'cat backup':       function() { COMMANDS['cat pbs-storage'](); },
+  'cat pbs-backup':   function() { COMMANDS['cat pbs-storage'](); },
+  'cat storage':      function() { COMMANDS['cat pbs-storage'](); },
+  'cat monitoring':   function() { COMMANDS['cat monitoring-stack'](); },
+  'cat grafana':      function() { COMMANDS['cat monitoring-stack'](); },
+  'cat prometheus':   function() { COMMANDS['cat monitoring-stack'](); },
+  'cat ssh':          function() { COMMANDS['cat ssh-hardening'](); },
+  'cat hardening':    function() { COMMANDS['cat ssh-hardening'](); },
+  'cat homelab':      function() { COMMANDS['cat homelab-highlights'](); },
+  'cat incidents':    function() { COMMANDS['cat homelab-highlights'](); },
+  'cat work':         function() { COMMANDS['cat work-highlights'](); },
+  'cat k3s':          function() { COMMANDS['cat k3s-cluster'](); },
+  'cat kubernetes':   function() { COMMANDS['cat k3s-cluster'](); },
+  'cat rhcsa':        function() { COMMANDS['cat rhcsa-prep'](); },
+  'll':  function() { COMMANDS['ls'](); },
+  'la':  function() { COMMANDS['ls'](); },
+  'dir': function() { COMMANDS['ls'](); },
+
   'tree': function() { printOutput('<div class="output tree">' +
     '<span class="dir">~/</span>\n' +
     '<span class="branch">├──</span> <span class="dir">projects/</span>\n' +
@@ -1029,12 +1051,19 @@ function exec(rawInput) {
   document.getElementById('app-output').appendChild(echo);
 
   var key = input.toLowerCase();
+  // Strip .service suffix — 'cat authentik-sso.service' → 'cat authentik-sso'
+  if (key.startsWith('cat ')) key = key.replace(/\.service$/, '');
+  // Treat open/less/view/show as cat for project slugs
+  var openMatch = key.match(/^(?:open|less|view|show)\s+(.+)$/);
+  if (openMatch) key = 'cat ' + openMatch[1];
+
   if (COMMANDS[key]) {
     COMMANDS[key]();
   } else if (key.startsWith('sudo ')) {
     COMMANDS['sudo']();
   } else if (key.startsWith('cat ')) {
-    printOutput('<div class="output"><span class="fail">cat: ' + key.replace(/</g,'&lt;') + ': No such file or directory</span>\n<span class="sub">Run <span class="accent">ls</span> to see available projects.</span></div>');
+    var tried = key.slice(4).trim();
+    printOutput('<div class="output"><span class="fail">cat: ' + tried.replace(/</g,'&lt;') + ': No such file or directory</span>\n<span class="sub">Run <span class="accent">ls</span> to see available projects, or click a row in the list.</span></div>');
   } else {
     printOutput('<div class="output"><span class="fail">zsh: command not found: ' + key.replace(/</g,'&lt;') + '</span>\n<span class="sub">Type <span class="accent">?</span> for available commands.</span></div>');
   }
@@ -1074,6 +1103,16 @@ document.querySelectorAll('.chip[data-cmd]').forEach(function(btn) {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape' && document.getElementById('boot').style.display !== 'none') {
     skipBoot();
+  }
+});
+
+// sc-row click — run the associated cat command
+document.getElementById('app-output').addEventListener('click', function(e) {
+  var row = e.target.closest('.sc-row[data-cmd]');
+  if (row) {
+    ensureAudio();
+    exec(row.dataset.cmd);
+    promptInput.focus();
   }
 });
 
