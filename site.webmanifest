@@ -4,8 +4,8 @@
   "description": "Enterprise-grade homelab projects demonstrating identity management, backup infrastructure, and reliability engineering",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1e1e1e",
-  "theme_color": "#ff6b35",
+  "background_color": "#1a1a1c",
+  "theme_color": "#a6e22e",
   "orientation": "portrait-primary",
   "icons": [
     {

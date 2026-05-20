@@ -1,25 +1,39 @@
-/* ==================== CSS Variables ==================== */
+/* ==================== Palette ==================== */
 :root {
-    --color-bg-primary:    #16171a;
-    --color-bg-secondary:  #1e2023;
-    --color-bg-tertiary:   #26282d;
-    --color-bg-code:       #111214;
+    --bg:        #1a1a1c;
+    --bg-soft:   #232325;
+    --bg-elev:   #2a2a2d;
+    --bg-code:   #0f0f10;
+    --fg:        #e6e6dc;
+    --fg-dim:    #75715e;
+    --green:     #a6e22e;
+    --orange:    #fd971f;
+    --cyan:      #66d9ef;
+    --pink:      #f92672;
+    --yellow:    #e6db74;
+    --purple:    #ae81ff;
+    --border:    #3e3d32;
+    --border-hi: #75715e;
 
-    --color-text-primary:  #e8e8e8;
-    --color-text-secondary:#888e99;
-    --color-text-muted:    #545962;
+    /* Semantic aliases kept for backward compat */
+    --color-bg-primary:    var(--bg);
+    --color-bg-secondary:  var(--bg-soft);
+    --color-bg-tertiary:   var(--bg-elev);
+    --color-bg-code:       var(--bg-code);
+    --color-text-primary:  var(--fg);
+    --color-text-secondary:var(--fg-dim);
+    --color-text-muted:    var(--fg-dim);
+    --color-accent:        var(--green);
+    --color-accent-warning:var(--orange);
+    --color-accent-danger: var(--pink);
+    --color-accent-success:var(--green);
+    --color-border:        var(--border);
+    --color-border-hover:  var(--border-hi);
 
-    --color-accent:        #a3e635;
-    --color-accent-warning: #fb923c;
-    --color-accent-danger:  #f87171;
-    --color-accent-success: #a3e635;
-
-    --color-border:        #2d3038;
-    --color-border-hover:  #3d4149;
-
-    --font-mono: 'Courier Prime', 'Courier New', monospace;
-    --font-sans: 'Crimson Pro', Georgia, serif;
-    --font-display: 'Fraunces', Georgia, serif;
+    --font:     'IBM Plex Mono', 'Courier New', monospace;
+    --font-mono: var(--font);
+    --font-sans: var(--font);
+    --font-display: var(--font);
 
     --font-size-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
     --font-size-sm:   clamp(0.875rem, 0.8rem  + 0.375vw, 1rem);
@@ -36,12 +50,12 @@
     --space-xl:  3rem;
     --space-2xl: 4rem;
 
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
+    --radius-sm: 3px;
+    --radius-md: 4px;
+    --radius-lg: 6px;
 }
 
-/* ==================== Reset & Base ==================== */
+/* ==================== Reset ==================== */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -60,24 +74,29 @@ html { scroll-behavior: smooth; }
     }
 }
 
+/* ==================== Base ==================== */
 body {
-    font-family: var(--font-sans);
-    background: var(--color-bg-primary);
-    color: var(--color-text-primary);
-    line-height: 1.6;
-    font-size: 16px;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.65;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4 { font-family: var(--font-display); }
-h1 .highlight { font-style: italic; font-weight: 300; }
+/* All headings: IBM Plex Mono, no serif */
+h1, h2, h3, h4 {
+    font-family: var(--font);
+    font-weight: 600;
+}
 
 /* ==================== Skip Link ==================== */
 .skip-link {
     position: absolute;
     top: -40px;
     left: 0;
-    background: var(--color-accent);
-    color: var(--color-bg-primary);
+    background: var(--green);
+    color: var(--bg);
     padding: var(--space-xs);
     text-decoration: none;
     border-radius: var(--radius-sm);
@@ -87,13 +106,13 @@ h1 .highlight { font-style: italic; font-weight: 300; }
 .skip-link:focus { top: var(--space-xs); left: var(--space-xs); }
 
 /* ==================== Focus States ==================== */
-*:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+*:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 *:focus:not(:focus-visible) { outline: none; }
 
 /* ==================== Header & Nav ==================== */
 header {
-    background: var(--color-bg-secondary);
-    border-bottom: 1px solid var(--color-border);
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--border);
     padding: var(--space-sm) 0;
     position: sticky;
     top: 0;
@@ -101,7 +120,7 @@ header {
 }
 
 nav {
-    max-width: 1200px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 0 var(--space-sm);
     display: flex;
@@ -109,34 +128,34 @@ nav {
     align-items: center;
 }
 
+/* Terminal-prompt logo: nate@seggsy:~/projects */
 .logo {
-    font-family: var(--font-mono);
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-accent);
+    font-family: var(--font);
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--fg-dim);
     text-decoration: none;
     min-height: 44px;
     display: inline-flex;
     align-items: center;
+    gap: 0;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
 }
 
-.logo::after {
-    content: '_';
-    animation: cursor-blink 1.1s step-end infinite;
-    color: var(--color-accent);
-    margin-left: 1px;
-}
+.logo .logo-user   { color: var(--green); font-weight: 600; }
+.logo .logo-at     { color: var(--fg-dim); }
+.logo .logo-host   { color: var(--cyan); font-weight: 600; }
+.logo .logo-path   { color: var(--orange); }
+.logo .logo-dollar { color: var(--pink); font-weight: 600; margin-left: 4px; }
 
-@keyframes cursor-blink { 50% { opacity: 0; } }
-
+/* Back-to-terminal link */
 .back-link {
-    color: var(--color-text-secondary);
+    color: var(--fg-dim);
     text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: color 0.2s;
+    font-size: 0.85rem;
+    font-weight: 400;
+    transition: color 0.15s;
     min-height: 44px;
     display: inline-flex;
     align-items: center;
@@ -144,11 +163,11 @@ nav {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
 }
-.back-link:hover { color: var(--color-text-primary); }
+.back-link:hover { color: var(--fg); }
 .back-link::before {
     content: '←';
-    color: var(--color-accent);
-    font-size: 1.1rem;
+    color: var(--green);
+    font-size: 1rem;
     line-height: 1;
 }
 
@@ -163,172 +182,177 @@ main.project-main {
 .project-header {
     margin-bottom: var(--space-xl);
     padding-bottom: var(--space-xl);
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--border);
 }
 
+/* Category tag: // identity & access management */
 .project-tag {
     display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    color: var(--color-accent);
-    background: rgba(163, 230, 53, 0.1);
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 0.78rem;
+    color: var(--fg-dim);
     margin-bottom: var(--space-sm);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    letter-spacing: 0.02em;
 }
+.project-tag::before { content: '// '; color: var(--orange); }
 
 h1 {
-    font-size: 2.25rem;
-    font-weight: 700;
-    color: var(--color-text-primary);
+    font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+    font-weight: 600;
+    color: var(--fg);
     margin-bottom: var(--space-sm);
-    line-height: 1.2;
+    line-height: 1.25;
 }
 
 .project-meta {
     display: flex;
     gap: var(--space-lg);
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    color: var(--fg-dim);
     margin-bottom: var(--space-sm);
     flex-wrap: wrap;
 }
 
 .meta-item { display: flex; align-items: center; gap: 0.5rem; }
-.meta-item strong { color: var(--color-text-primary); }
+.meta-item strong { color: var(--cyan); }
 
+/* TL;DR box */
 .tldr {
-    background: var(--color-bg-secondary);
-    border-left: 3px solid var(--color-accent);
+    background: var(--bg-soft);
+    border-left: 2px solid var(--green);
     padding: var(--space-sm) var(--space-md);
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
     margin-bottom: var(--space-xl);
 }
 
 .tldr-title {
-    font-family: var(--font-mono);
+    font-family: var(--font);
     font-weight: 600;
-    font-size: 0.8rem;
-    color: var(--color-accent);
+    font-size: 0.75rem;
+    color: var(--green);
     margin-bottom: var(--space-xs);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
 }
 
+/* key-achievement — kept in markup, styled down */
 .key-achievement {
-    background: var(--color-bg-tertiary);
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
     padding: var(--space-sm);
-    border-radius: var(--radius-sm);
     margin-top: var(--space-xs);
-    font-size: 0.95rem;
-    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    color: var(--fg-dim);
 }
-.key-achievement strong { color: var(--color-accent); }
+.key-achievement strong { color: var(--green); }
 
 /* ==================== Content Sections ==================== */
 .section { margin-bottom: var(--space-2xl); }
 
 h2 {
-    font-size: 1.6rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: var(--color-text-primary);
+    color: var(--green);
     margin-bottom: var(--space-sm);
     padding-bottom: var(--space-xs);
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--border);
 }
 
 h3 {
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: 600;
-    color: var(--color-text-primary);
+    color: var(--cyan);
     margin-top: var(--space-lg);
     margin-bottom: var(--space-sm);
 }
 
 h4 {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-accent);
+    color: var(--orange);
     margin-top: var(--space-sm);
     margin-bottom: var(--space-xs);
 }
 
-p { margin-bottom: var(--space-sm); color: var(--color-text-primary); }
+p { margin-bottom: var(--space-sm); color: var(--fg); line-height: 1.7; }
 
 ul, ol { margin-left: var(--space-md); margin-bottom: var(--space-sm); }
-li { margin-bottom: var(--space-xs); color: var(--color-text-primary); }
+li { margin-bottom: var(--space-xs); color: var(--fg); line-height: 1.65; }
 
-/* ==================== Code Blocks ==================== */
+/* ==================== Code & Terminal ==================== */
 pre {
-    background: var(--color-bg-code);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    background: var(--bg-code);
+    border: 1px solid var(--border);
     padding: var(--space-sm);
     margin-bottom: var(--space-sm);
     overflow-x: auto;
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
+    font-family: var(--font);
+    font-size: 0.85rem;
     line-height: 1.6;
+    color: var(--fg);
+    border-radius: var(--radius-sm);
 }
 
 code {
-    font-family: var(--font-mono);
+    font-family: var(--font);
     font-size: 0.875em;
-    color: var(--color-accent);
-    background: var(--color-bg-tertiary);
-    padding: 0.1em 0.35em;
+    color: var(--cyan);
+    background: var(--bg-elev);
+    padding: 0.1em 0.4em;
     border-radius: var(--radius-sm);
 }
 
 pre code {
-    color: var(--color-text-primary);
+    color: var(--fg);
     background: transparent;
     padding: 0;
     font-size: 1em;
 }
 
 .terminal {
-    background: var(--color-bg-code);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    background: var(--bg-code);
+    border: 1px solid var(--border);
     margin-bottom: var(--space-sm);
     overflow: hidden;
+    border-radius: var(--radius-sm);
 }
 
 .terminal pre {
     border: none;
-    border-radius: var(--radius-md);
-    background: var(--color-bg-code);
-    color: var(--color-text-primary);
+    border-radius: 0;
+    background: var(--bg-code);
+    color: var(--fg);
     margin: 0;
 }
 
+/* Prompt line inside .terminal pre */
+.terminal pre .prompt { color: var(--green); }
+.terminal pre .comment { color: var(--fg-dim); }
+
 .architecture {
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
     padding: var(--space-sm);
     margin-bottom: var(--space-sm);
+    border-radius: var(--radius-sm);
 }
 
 .architecture pre {
     background: transparent;
     border: none;
-    color: var(--color-text-secondary);
+    color: var(--fg-dim);
     font-size: 0.8rem;
     margin: 0;
     padding: 0;
+    border-radius: 0;
 }
 
 /* ==================== Collapsible Sections ==================== */
 .collapsible {
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
     margin-bottom: var(--space-xs);
     overflow: hidden;
+    border-radius: var(--radius-sm);
 }
 
 .collapsible-header {
@@ -338,21 +362,21 @@ pre code {
     justify-content: space-between;
     align-items: center;
     user-select: none;
-    transition: background 0.2s;
+    transition: background 0.15s;
 }
-.collapsible-header:hover { background: var(--color-bg-tertiary); }
+.collapsible-header:hover { background: var(--bg-elev); }
 
 .collapsible-title {
-    font-family: var(--font-display);
+    font-family: var(--font);
     font-weight: 600;
-    color: var(--color-text-primary);
-    font-size: 1rem;
+    color: var(--fg);
+    font-size: 0.95rem;
 }
 
 .collapsible-icon {
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    transition: transform 0.25s;
+    font-size: 0.7rem;
+    color: var(--fg-dim);
+    transition: transform 0.2s;
     flex-shrink: 0;
 }
 .collapsible.active .collapsible-icon { transform: rotate(180deg); }
@@ -369,38 +393,38 @@ pre code {
 
 .collapsible-inner {
     padding: 0 var(--space-md) var(--space-md);
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--border);
 }
 
 /* ==================== Info Boxes ==================== */
 .info-box {
-    background: rgba(163, 230, 53, 0.06);
-    border: 1px solid rgba(163, 230, 53, 0.3);
-    border-radius: var(--radius-md);
+    background: rgba(102, 217, 239, 0.06);
+    border: 1px solid rgba(102, 217, 239, 0.25);
     padding: var(--space-sm);
     margin-bottom: var(--space-sm);
+    border-radius: var(--radius-sm);
 }
-.info-box strong { color: var(--color-accent); }
+.info-box strong { color: var(--cyan); }
 
 .success-box {
-    background: rgba(163, 230, 53, 0.06);
-    border: 1px solid rgba(163, 230, 53, 0.3);
-    border-radius: var(--radius-md);
+    background: rgba(166, 226, 46, 0.06);
+    border: 1px solid rgba(166, 226, 46, 0.25);
     padding: var(--space-sm);
     margin-bottom: var(--space-sm);
+    border-radius: var(--radius-sm);
 }
-.success-box strong { color: var(--color-accent); }
+.success-box strong { color: var(--green); }
 
 .warning-box {
-    background: rgba(251, 146, 60, 0.08);
-    border: 1px solid rgba(251, 146, 60, 0.35);
-    border-radius: var(--radius-md);
+    background: rgba(253, 151, 31, 0.06);
+    border: 1px solid rgba(253, 151, 31, 0.25);
     padding: var(--space-sm);
     margin-bottom: var(--space-sm);
+    border-radius: var(--radius-sm);
 }
-.warning-box strong { color: var(--color-accent-warning); }
+.warning-box strong { color: var(--orange); }
 
-/* ==================== Comparison Boxes (shared) ==================== */
+/* ==================== Comparison Grid ==================== */
 .comparison-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -410,45 +434,64 @@ pre code {
 
 .before-box, .after-box {
     padding: var(--space-sm);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
 }
 
 .before-box {
-    background: rgba(248, 113, 113, 0.08);
-    border: 1px solid rgba(248, 113, 113, 0.3);
+    background: rgba(249, 38, 114, 0.06);
+    border: 1px solid rgba(249, 38, 114, 0.25);
 }
-.before-box h4 { color: var(--color-accent-danger); }
+.before-box h4 { color: var(--pink); }
 
 .after-box {
-    background: rgba(163, 230, 53, 0.06);
-    border: 1px solid rgba(163, 230, 53, 0.3);
+    background: rgba(166, 226, 46, 0.06);
+    border: 1px solid rgba(166, 226, 46, 0.25);
 }
-.after-box h4 { color: var(--color-accent); }
+.after-box h4 { color: var(--green); }
 
 @media (max-width: 600px) { .comparison-grid { grid-template-columns: 1fr; } }
 
-/* ==================== Story Section (replaces STAR format) ==================== */
+/* ==================== Story Section ==================== */
 .story-section {
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
     padding: var(--space-md);
+    border-radius: var(--radius-sm);
 }
 
 .story-section p {
-    color: var(--color-text-secondary);
+    color: var(--fg-dim);
     line-height: 1.75;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     margin-bottom: var(--space-sm);
 }
 .story-section p:last-child { margin-bottom: 0; }
 
-.job li { font-size: 1.05rem; }
+.job li { font-size: 0.95rem; }
 
-/* ==================== Project Page Footer ==================== */
+/* ==================== Skill Badges ==================== */
+.skill-badge {
+    display: inline-block;
+    font-family: var(--font);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--bg-elev);
+    color: var(--fg-dim);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.project-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
+}
+
+/* ==================== Footer (Project Pages) ==================== */
 footer.project-footer {
-    background: var(--color-bg-secondary);
-    border-top: 1px solid var(--color-border);
+    background: var(--bg-soft);
+    border-top: 1px solid var(--border);
     padding: var(--space-lg) var(--space-sm);
     margin-top: var(--space-2xl);
 }
@@ -469,30 +512,30 @@ footer.project-footer .footer-content {
 }
 
 .footer-links a {
-    color: var(--color-text-secondary);
+    color: var(--fg-dim);
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.2s;
+    font-size: 0.85rem;
+    transition: color 0.15s;
 }
-.footer-links a:hover { color: var(--color-text-primary); }
+.footer-links a:hover { color: var(--green); }
 
 .footer-copy {
-    font-family: var(--font-mono);
+    font-family: var(--font);
     font-size: 0.8rem;
-    color: var(--color-text-muted);
+    color: var(--fg-dim);
 }
 
 /* ==================== Responsive (Project Pages) ==================== */
 @media (max-width: 768px) {
-    h1 { font-size: 1.875rem; }
-    h2 { font-size: 1.4rem; }
-    h3 { font-size: 1.15rem; }
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1rem; }
+    h3 { font-size: 0.95rem; }
 
     main.project-main { padding: var(--space-lg) var(--space-xs); }
 
     .project-meta { flex-direction: column; gap: var(--space-xs); }
 
-    pre { font-size: 0.8rem; }
+    pre { font-size: 0.78rem; }
 
     footer.project-footer .footer-content { flex-direction: column; text-align: center; }
     .footer-links { flex-wrap: wrap; justify-content: center; }

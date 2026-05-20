@@ -1,995 +1,1083 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Nate's Portfolio - Systems Administration & Infrastructure. Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack, and enterprise-grade implementations.">
-
-    <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
-
-    <title>Nate - Systems Administration & Infrastructure</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="manifest" href="/site.webmanifest">
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://seggsy.co/">
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="Nate - Systems Administration & Infrastructure">
-    <meta property="og:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack, and enterprise-grade implementations.">
-    <meta property="og:image" content="https://seggsy.co/og-image.png">
-    <meta property="og:url" content="https://seggsy.co/">
-    <meta property="og:type" content="website">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Nate - Systems Administration & Infrastructure">
-    <meta name="twitter:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack, and enterprise-grade implementations.">
-    <meta name="twitter:image" content="https://seggsy.co/og-image.png">
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,200;1,9..144,300&family=Crimson+Pro:ital,wght@0,400;0,500;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-
-    <!-- Shared styles -->
-    <link rel="stylesheet" href="/styles.css">
-
-    <style>
-        /* ==================== Hero ==================== */
-        .hero {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: var(--space-2xl) var(--space-sm);
-            min-height: calc(100vh - 100px);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .hero-content { max-width: 800px; }
-
-        .hero-label {
-            font-family: var(--font-mono);
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
-            margin-bottom: var(--space-md);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .hero-title {
-            font-size: var(--font-size-3xl);
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: var(--space-lg);
-        }
-
-        .highlight { color: var(--color-accent); }
-
-        .hero-description {
-            font-size: var(--font-size-lg);
-            color: var(--color-text-primary);
-            line-height: 1.8;
-            margin-bottom: var(--space-xl);
-            max-width: 700px;
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: var(--space-md);
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 0.875rem 1.75rem;
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: var(--radius-md);
-            transition: all 0.2s;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-primary {
-            background: var(--color-accent);
-            color: var(--color-bg-primary);
-        }
-
-        .btn-primary:hover {
-            background: #b8f059;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--color-text-primary);
-            border: 2px solid var(--color-border);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--color-accent);
-            color: var(--color-accent);
-        }
-
-        /* ==================== Projects Section ==================== */
-        .projects {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: var(--space-2xl) var(--space-sm);
-        }
-
-        .section-header { margin-bottom: var(--space-xl); }
-
-        .section-title {
-            font-size: var(--font-size-2xl);
-            font-weight: 700;
-            margin-bottom: var(--space-sm);
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .section-subtitle {
-            font-size: 1.05rem;
-            color: var(--color-text-secondary);
-            max-width: 600px;
-        }
-
-        /* Grid Layouts */
-        .live-project-grid {
-            display: grid;
-            gap: var(--space-lg);
-            margin-bottom: var(--space-lg);
-        }
-
-        .secondary-project-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-lg);
-            margin-bottom: var(--space-lg);
-        }
-
-        .wip-project-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-lg);
-        }
-
-        /* Project Cards */
-        .project-card {
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            padding: var(--space-lg);
-            text-decoration: none;
-            color: var(--color-text-primary);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            min-height: 100%;
-            position: relative;
-        }
-
-        .project-card:hover {
-            border-color: var(--color-accent);
-            transform: translateY(-4px);
-        }
-
-        /* Featured card — full width, row layout */
-        .project-card--featured {
-            flex-direction: row;
-            gap: var(--space-xl);
-            align-items: flex-start;
-            border-left: 3px solid var(--color-accent);
-        }
-
-        .project-card--featured .card-body { flex: 1; }
-
-        .project-card--featured .card-meta {
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-            min-width: 180px;
-        }
-
-        .project-card--featured .project-title { font-size: 1.75rem; }
-
-        .project-card--featured .project-description {
-            font-size: 1rem;
-            line-height: 1.75;
-            color: var(--color-text-primary);
-        }
-
-        .project-card--featured:hover {
-            box-shadow: 0 8px 32px rgba(163, 230, 53, 0.1);
-        }
-
-        /* Status Badges */
-        .project-status-badge {
-            display: inline-block;
-            font-family: var(--font-mono);
-            font-size: var(--font-size-xs);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 0.35rem 0.75rem;
-            border-radius: var(--radius-sm);
-        }
-
-        .project-card:not(.project-card--featured) .project-status-badge {
-            position: absolute;
-            top: var(--space-md);
-            right: var(--space-md);
-        }
-
-        .status-live {
-            background: rgba(163, 230, 53, 0.12);
-            color: var(--color-accent);
-            border: 1px solid rgba(163, 230, 53, 0.4);
-        }
-
-        .status-wip {
-            background: rgba(136, 142, 153, 0.1);
-            color: var(--color-text-secondary);
-            border: 1px solid rgba(136, 142, 153, 0.3);
-        }
-
-        /* Live cards: left accent border */
-        .project-card:has(.status-live):not(.project-card--featured) {
-            border-left: 3px solid var(--color-accent);
-        }
-
-        .project-card:has(.status-live):not(.project-card--featured):hover {
-            box-shadow: 0 8px 24px rgba(163, 230, 53, 0.1);
-        }
-
-        /* WIP cards */
-        .wip-card-style {
-            cursor: default;
-            opacity: 0.85;
-        }
-
-        .wip-card-style:hover {
-            transform: none;
-            border-color: var(--color-border);
-            box-shadow: none;
-            opacity: 1;
-        }
-
-        .project-tag-card {
-            font-family: var(--font-mono);
-            font-size: 0.78rem;
-            color: var(--color-text-secondary);
-            margin-bottom: var(--space-sm);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding-right: 4.5rem;
-        }
-
-        .project-card--featured .project-tag-card { padding-right: 0; }
-
-        .project-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-top: 0;
-            margin-bottom: var(--space-sm);
-            color: var(--color-text-primary);
-        }
-
-        .project-description {
-            font-size: 0.95rem;
-            line-height: 1.65;
-            color: var(--color-text-secondary);
-            margin-bottom: var(--space-md);
-            flex-grow: 1;
-        }
-
-        .project-cta-link {
-            font-size: 0.9rem;
-            color: var(--color-accent);
-            margin-bottom: var(--space-md);
-            font-weight: 600;
-            transition: color 0.2s;
-        }
-
-        .wip-card-style .project-cta-link { display: none; }
-
-        .project-meta-row {
-            display: flex;
-            gap: var(--space-md);
-            font-family: var(--font-mono);
-            font-size: 0.82rem;
-            color: var(--color-text-muted);
-            margin-bottom: var(--space-md);
-        }
-
-        .card-meta .project-meta-row {
-            flex-direction: column;
-            gap: 0.25rem;
-            margin-bottom: 0;
-        }
-
-        .project-skills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-xs);
-            margin-top: auto;
-        }
-
-        .skill-badge {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
-            background: var(--color-bg-tertiary);
-            color: var(--color-text-secondary);
-            border-radius: var(--radius-sm);
-        }
-
-        /* ==================== Skills Section ==================== */
-        .skills {
-            background: var(--color-bg-secondary);
-            padding: var(--space-2xl) var(--space-sm);
-        }
-
-        .skills-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .skills-intro {
-            font-size: 1.05rem;
-            color: var(--color-text-secondary);
-            margin-bottom: var(--space-xl);
-            max-width: 700px;
-        }
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: var(--space-lg);
-        }
-
-        .skill-category {
-            background: var(--color-bg-primary);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            padding: var(--space-lg);
-        }
-
-        .skill-category h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--color-accent);
-            margin-top: 0;
-            margin-bottom: var(--space-md);
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .skill-category ul { list-style: none; margin: 0; }
-
-        .skill-category li {
-            font-size: 0.92rem;
-            color: var(--color-text-secondary);
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--color-border);
-            margin-bottom: 0;
-        }
-
-        .skill-category li:last-child { border-bottom: none; }
-
-        /* ==================== Contact Section ==================== */
-        .contact {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: var(--space-2xl) var(--space-sm);
-            text-align: center;
-        }
-
-        .contact-quote-wrapper {
-            max-width: 900px;
-            margin: 0 auto var(--space-xl);
-        }
-
-        .contact-quote {
-            font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
-            font-style: italic;
-            line-height: 1.6;
-            margin-bottom: var(--space-sm);
-            color: var(--color-text-primary);
-        }
-
-        .contact-attribution {
-            font-family: var(--font-mono);
-            font-weight: 600;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            color: var(--color-accent);
-            margin-bottom: var(--space-md);
-        }
-
-        .contact-tagline {
-            font-size: 1.05rem;
-            color: var(--color-text-secondary);
-            line-height: 1.6;
-        }
-
-        .contact-grid {
-            display: flex;
-            gap: var(--space-md);
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: var(--space-lg);
-        }
-
-        .contact-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 2rem;
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: var(--radius-md);
-            transition: all 0.2s;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .contact-btn--primary {
-            background: var(--color-accent);
-            color: var(--color-bg-primary);
-        }
-
-        .contact-btn--primary:hover {
-            background: #b8f059;
-            transform: translateY(-2px);
-        }
-
-        .contact-info {
-            font-size: 0.88rem;
-            color: var(--color-text-muted);
-        }
-
-        /* ==================== Footer (Homepage) ==================== */
-        footer {
-            background: var(--color-bg-secondary);
-            border-top: 1px solid var(--color-border);
-            padding: var(--space-lg) var(--space-sm);
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: var(--space-md);
-        }
-
-        .footer-text {
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-        }
-
-        .footer-links {
-            display: flex;
-            gap: var(--space-lg);
-        }
-
-        .footer-links a {
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-
-        .footer-links a:hover { color: var(--color-accent); }
-
-        /* ==================== Homelab Callout ==================== */
-        .homelab-callout {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            margin: var(--space-xl) 0;
-            padding: var(--space-md) var(--space-lg);
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
-            border-left: 3px solid var(--color-accent);
-            border-radius: var(--radius-md);
-            text-decoration: none;
-            color: inherit;
-            transition: border-color 0.2s ease, background 0.2s ease;
-        }
-
-        .homelab-callout:hover {
-            background: var(--color-bg-tertiary);
-            border-color: var(--color-border-hover);
-            border-left-color: var(--color-accent);
-        }
-
-        .homelab-callout-label {
-            font-family: var(--font-mono);
-            font-size: var(--font-size-xs);
-            color: var(--color-accent);
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .homelab-callout-body { flex: 1; }
-
-        .homelab-callout-title {
-            font-size: var(--font-size-lg);
-            font-weight: 600;
-            color: var(--color-text-primary);
-            margin-top: 0;
-            margin-bottom: 0.25rem;
-        }
-
-        .homelab-callout-desc {
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
-            margin-bottom: 0;
-        }
-
-        .homelab-callout-arrow {
-            font-size: var(--font-size-xl);
-            color: var(--color-accent);
-            flex-shrink: 0;
-            transition: transform 0.2s ease;
-        }
-
-        .homelab-callout:hover .homelab-callout-arrow { transform: translateX(4px); }
-
-        /* ==================== Mobile Nav ==================== */
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: var(--space-lg);
-            margin: 0;
-        }
-
-        .nav-links a {
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover { color: var(--color-accent); }
-
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--color-text-primary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* ==================== Responsive ==================== */
-        @media (max-width: 1024px) {
-            .secondary-project-grid { grid-template-columns: repeat(2, 1fr); }
-            .wip-project-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 768px) {
-            .project-card--featured {
-                flex-direction: column;
-            }
-            .project-card--featured .card-meta { min-width: auto; }
-            .secondary-project-grid { grid-template-columns: 1fr; }
-            .wip-project-grid { grid-template-columns: 1fr; }
-            .skills-grid { grid-template-columns: 1fr; }
-
-            .project-status-badge {
-                top: var(--space-sm);
-                right: var(--space-sm);
-                font-size: 0.7rem;
-                padding: 0.25rem 0.5rem;
-            }
-
-            .nav-links {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100vh;
-                background: var(--color-bg-primary);
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                gap: var(--space-xl);
-                z-index: 999;
-            }
-
-            .nav-links.active { display: flex; }
-
-            .nav-links li {
-                opacity: 0;
-                animation: fadeInUp 0.3s forwards;
-            }
-
-            .nav-links.active li:nth-child(1) { animation-delay: 0.1s; }
-            .nav-links.active li:nth-child(2) { animation-delay: 0.2s; }
-            .nav-links.active li:nth-child(3) { animation-delay: 0.3s; }
-            .nav-links.active li:nth-child(4) { animation-delay: 0.4s; }
-            .nav-links.active li:nth-child(5) { animation-delay: 0.5s; }
-            .nav-links.active li:nth-child(6) { animation-delay: 0.6s; }
-
-            @keyframes fadeInUp {
-                from { opacity: 0; transform: translateY(20px); }
-                to   { opacity: 1; transform: translateY(0); }
-            }
-
-            .nav-links a { font-size: 1.5rem; }
-            .menu-toggle { display: block; z-index: 1000; }
-            .hero-cta { flex-direction: column; }
-            .btn { text-align: center; }
-            .footer-content { flex-direction: column; text-align: center; }
-
-            .homelab-callout {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: var(--space-xs);
-            }
-
-            .homelab-callout-arrow { display: none; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Nate's Portfolio — Systems Administration & Infrastructure. Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack.">
+
+<!-- Security Headers -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<title>nate@seggsy — Austin, TX</title>
+
+<!-- Favicons -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="canonical" href="https://seggsy.co/">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Nate - Systems Administration & Infrastructure">
+<meta property="og:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack.">
+<meta property="og:image" content="https://seggsy.co/og-image.png">
+<meta property="og:url" content="https://seggsy.co/">
+<meta property="og:type" content="website">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Nate - Systems Administration & Infrastructure">
+<meta name="twitter:description" content="Homelab projects featuring SSO, backup infrastructure, SSH hardening, monitoring stack.">
+<meta name="twitter:image" content="https://seggsy.co/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #1a1a1c;
+    --bg-deep:   #0f0f10;
+    --bg-soft:   #232325;
+    --bg-elev:   #2a2a2c;
+    --fg:        #e6e6dc;
+    --fg-dim:    #75715e;
+    --green:     #a6e22e;
+    --orange:    #fd971f;
+    --cyan:      #66d9ef;
+    --pink:      #f92672;
+    --yellow:    #e6db74;
+    --purple:    #ae81ff;
+    --border:    #3e3d32;
+    --border-active: #75715e;
+    --font: 'IBM Plex Mono', 'JetBrains Mono', 'Cascadia Mono', monospace;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.55;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Scanlines — restrained ~3% */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 2px,
+      rgba(0,0,0,0.04) 2px,
+      rgba(0,0,0,0.04) 3px
+    );
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: multiply;
+  }
+
+  /* =================================================================
+     BOOT SCREEN
+     ================================================================= */
+  .boot {
+    padding: 24px 32px 140px 32px;
+    background: var(--bg-deep);
+    min-height: 100vh;
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+
+  .boot-line {
+    white-space: pre;
+    margin-bottom: 1px;
+    color: var(--fg);
+  }
+
+  .boot-line.empty { height: 1.45em; }
+
+  .ts      { color: var(--fg-dim); }
+  .ok      { color: var(--green); }
+  .fail    { color: var(--pink); }
+  .warn    { color: var(--yellow); }
+  .info    { color: var(--cyan); }
+  .hl      { color: var(--orange); }
+  .dim     { color: var(--fg-dim); }
+  .bracket { color: var(--fg); }
+
+  /* =================================================================
+     NEOFETCH
+     ================================================================= */
+  .neofetch {
+    display: flex;
+    gap: 32px;
+    margin: 16px 0 8px 0;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .neofetch-art {
+    color: var(--orange);
+    white-space: pre;
+    flex-shrink: 0;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .neofetch-info { flex: 1; min-width: 0; }
+
+  .neofetch-info .head { color: var(--green); margin-bottom: 2px; }
+  .neofetch-info .head .at   { color: var(--fg); }
+  .neofetch-info .head .host { color: var(--cyan); }
+  .neofetch-info .sep  { color: var(--fg-dim); margin-bottom: 4px; }
+
+  .neofetch-info .row { display: flex; gap: 8px; }
+  .neofetch-info .row .k { color: var(--green); min-width: 88px; }
+  .neofetch-info .row .v { color: var(--fg); }
+  .neofetch-info .row .v .hl    { color: var(--cyan); }
+  .neofetch-info .row .v .meter { color: var(--orange); }
+
+  .neofetch-colors { margin-top: 8px; display: flex; flex-direction: column; gap: 2px; }
+  .neofetch-colors .strip { display: flex; }
+  .neofetch-colors .sw { width: 18px; height: 12px; }
+
+  /* =================================================================
+     PROMPT + INPUT
+     ================================================================= */
+  .prompt-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+    font-size: 14px;
+    margin: 8px 0 4px 0;
+  }
+
+  .p-user   { color: var(--green); }
+  .p-at     { color: var(--fg); }
+  .p-host   { color: var(--cyan); }
+  .p-colon  { color: var(--fg); }
+  .p-path   { color: var(--orange); }
+  .p-branch { color: var(--purple); font-style: italic; margin-left: 8px; }
+  .p-sigil  { color: var(--fg); margin: 0 6px 0 8px; }
+
+  .prompt-input {
+    background: transparent;
+    border: none;
+    outline: none !important;
+    color: var(--fg);
+    font-family: inherit;
+    font-size: inherit;
+    flex: 1;
+    caret-color: transparent;
+    padding: 0;
+  }
+
+  .prompt-input::placeholder { color: var(--fg-dim); font-style: italic; }
+
+  .cursor {
+    display: inline-block;
+    width: 0.55em;
+    height: 1em;
+    background: var(--green);
+    vertical-align: text-bottom;
+    margin-left: -0.55em;
+    animation: blink 1.1s step-end infinite;
+    pointer-events: none;
+    position: relative;
+  }
+
+  .cursor.input-cursor { margin-left: 2px; }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* =================================================================
+     COMMAND OUTPUT
+     ================================================================= */
+  .output {
+    margin: 4px 0 12px 0;
+    color: var(--fg);
+    font-size: 13.5px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+
+  .output .heading { color: var(--green); font-weight: 600; }
+  .output .sub     { color: var(--fg-dim); }
+  .output .hl      { color: var(--cyan); }
+  .output .accent  { color: var(--orange); }
+  .output .warn    { color: var(--yellow); }
+  .output .fail    { color: var(--pink); }
+  .output .ok      { color: var(--green); }
+
+  .output a {
+    color: var(--cyan);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.15s;
+  }
+  .output a:hover { text-decoration-color: var(--cyan); }
+
+  /* systemctl-style row */
+  .sc-row {
+    display: grid;
+    grid-template-columns: 18px 1fr auto auto;
+    gap: 14px;
+    padding: 2px 0;
+    cursor: pointer;
+    transition: background 0.12s;
+    margin: 0 -4px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .sc-row:hover { background: var(--bg-soft); }
+  .sc-row .dot   { }
+  .sc-row .dot.g { color: var(--green); }
+  .sc-row .dot.y { color: var(--yellow); }
+  .sc-row .dot.d { color: var(--fg-dim); }
+  .sc-row .name  { color: var(--fg); }
+  .sc-row .state { font-size: 11.5px; color: var(--fg-dim); }
+  .sc-row .state.a { color: var(--green); }
+  .sc-row .state.w { color: var(--yellow); }
+  .sc-row .when  { font-size: 11.5px; color: var(--fg-dim); }
+
+  /* tree */
+  .tree { font-size: 13px; line-height: 1.65; }
+  .tree .branch { color: var(--fg-dim); }
+  .tree .dir    { color: var(--cyan); font-weight: 500; }
+  .tree .file   { color: var(--fg); }
+
+  /* dig */
+  .dig-row { display: grid; grid-template-columns: 100px 1fr; gap: 16px; padding: 2px 0; }
+  .dig-row .k { color: var(--green); }
+  .dig-row .v { color: var(--fg); }
+  .dig-row .v a { color: var(--cyan); }
+
+  /* =================================================================
+     COMMAND PALETTE — pinned bottom
+     ================================================================= */
+  .palette {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid var(--border);
+    padding: 10px 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    z-index: 100;
+    background: rgba(15, 15, 16, 0.95);
+    backdrop-filter: blur(8px);
+  }
+
+  .palette-label {
+    font-size: 10px;
+    color: var(--fg-dim);
+    letter-spacing: 0.1em;
+    margin-right: 8px;
+    text-transform: uppercase;
+  }
+
+  .chip {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--fg);
+    padding: 5px 11px;
+    font-family: var(--font);
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.12s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .chip:hover { border-color: var(--green); color: var(--green); background: rgba(166,226,46,0.05); }
+  .chip:active { transform: scale(0.97); }
+  .chip .key  { color: var(--orange); font-weight: 600; }
+  .chip.icon  { margin-left: auto; }
+
+  /* =================================================================
+     GUI SECTIONS
+     ================================================================= */
+  .gui-section {
+    margin: 32px 0;
+    padding: 20px 24px;
+    border-left: 2px solid var(--border);
+    background: var(--bg-soft);
+  }
+  .gui-section h2 { color: var(--green); font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+  .gui-section h3 { color: var(--cyan); font-size: 14px; font-weight: 600; margin: 16px 0 6px; }
+  .gui-section p  { color: var(--fg); line-height: 1.7; margin-bottom: 10px; }
+  .gui-section ul { list-style: none; }
+  .gui-section li { color: var(--fg); padding: 4px 0; line-height: 1.6; }
+  .gui-section li::before { content: '▸ '; color: var(--green); }
+
+  /* =================================================================
+     SKIP BUTTON
+     ================================================================= */
+  .skip-boot {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    color: var(--fg-dim);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 3px;
+    background: rgba(15,15,16,0.92);
+    cursor: pointer;
+    z-index: 200;
+    font-family: var(--font);
+  }
+  .skip-boot kbd {
+    color: var(--orange);
+    background: transparent;
+    border: 1px solid var(--border-active);
+    padding: 1px 5px;
+    border-radius: 2px;
+    margin-right: 6px;
+    font-family: inherit;
+    font-size: 10px;
+  }
+
+  /* =================================================================
+     MUTE
+     ================================================================= */
+  .mute-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--fg-dim);
+    width: 28px;
+    height: 28px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.12s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mute-btn:hover { border-color: var(--border-active); color: var(--fg); }
+
+  /* =================================================================
+     APP — hidden until boot completes
+     ================================================================= */
+  .app {
+    display: none;
+    padding: 20px 32px 100px 32px;
+    min-height: 100vh;
+  }
+  .app.visible { display: block; }
+
+  /* Mobile */
+  @media (max-width: 700px) {
+    .boot, .app { padding: 16px 16px 140px 16px; font-size: 12.5px; }
+    .neofetch { flex-direction: column; gap: 12px; }
+    .neofetch-art { font-size: 10px; }
+    .neofetch-info .row .k { min-width: 70px; font-size: 12px; }
+    .sc-row { grid-template-columns: 16px 1fr; gap: 8px; }
+    .sc-row .state, .sc-row .when { display: none; }
+    .palette { padding: 8px 10px; gap: 4px; }
+    .palette-label { display: none; }
+    .chip { padding: 4px 9px; font-size: 11px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+
+  *:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+  *:focus:not(:focus-visible) { outline: none; }
+</style>
 </head>
 <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <header>
-        <nav aria-label="Main navigation">
-            <a href="/" class="logo">nate</a>
+<!-- Boot screen -->
+<div class="boot" id="boot">
+  <div id="boot-output"></div>
+</div>
 
-            <button type="button" class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
-                &#9776;
-            </button>
+<div class="skip-boot" id="skip-boot" style="display:none;">
+  <kbd>esc</kbd>skip boot
+</div>
 
-            <ul class="nav-links">
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="/work-highlights">Work Examples</a></li>
-                <li><a href="/homelab-highlights">Homelab</a></li>
-                <li><a href="/resume">Resume</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+<!-- App shell -->
+<div class="app" id="app">
+  <div id="app-output"></div>
 
-    <main id="main-content" role="main">
-        <!-- Hero -->
-        <section class="hero">
-            <div class="hero-content">
-                <div class="hero-label">Systems Administration & Infrastructure</div>
+  <div class="prompt-line" id="active-prompt">
+    <span class="p-user">nate</span><span class="p-at">@</span><span class="p-host">seggsy</span><span class="p-colon">:</span><span class="p-path" id="cwd">~</span><span class="p-branch">(main)</span><span class="p-sigil">$</span>
+    <input
+      type="text"
+      class="prompt-input"
+      id="prompt-input"
+      placeholder="type a command, or click one below ↓"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <span class="cursor input-cursor" id="input-cursor"></span>
+  </div>
+</div>
 
-                <h1 class="hero-title">
-                    <span class="highlight">Building</span> infrastructure.<br>
-                    <span class="highlight">Documenting</span> everything.<br>
-                    <span class="highlight">Learning</span> constantly.
-                </h1>
+<!-- Command palette -->
+<div class="palette" id="palette" style="display:none;">
+  <span class="palette-label">// click or type</span>
+  <button class="chip" data-cmd="me"><span class="key">me</span> bio</button>
+  <button class="chip" data-cmd="ls"><span class="key">ls</span> projects</button>
+  <button class="chip" data-cmd="cat resume"><span class="key">cat resume</span></button>
+  <button class="chip" data-cmd="tree"><span class="key">tree</span></button>
+  <button class="chip" data-cmd="dig"><span class="key">dig</span> contact</button>
+  <button class="chip" data-cmd="ssh"><span class="key">ssh</span> send msg</button>
+  <button class="chip" data-cmd="gui"><span class="key">gui</span> readable</button>
+  <button class="chip" data-cmd="reboot"><span class="key">reboot</span></button>
+  <button class="chip" data-cmd="clear"><span class="key">clr</span></button>
+  <button class="chip" data-cmd="?"><span class="key">?</span> help</button>
+  <button class="mute-btn icon" id="mute-btn" title="Toggle sound">🔊</button>
+</div>
 
-                <p class="hero-description">
-                    I'm obsessed with understanding how things actually work. My homelab isn't
-                    just a collection of services — it's where I break things, fix them, and
-                    document every step so I can do it better next time. I build SSO authentication,
-                    automated backups, and clustering because it's the best way I've found to
-                    actually understand infrastructure.
-                </p>
+<script>
+// =================================================================
+// STATE
+// =================================================================
+let muted = false;
+let bootTimeouts = [];
+let history = [];
+let historyIdx = -1;
 
-                <div class="hero-cta">
-                    <a href="#projects" class="btn btn-primary">View Projects</a>
-                    <a href="/resume" class="btn btn-secondary">Full Resume</a>
-                </div>
-            </div>
-        </section>
+const BOOT_KEY  = 'seggsy:bootSeen:v1';
+const MUTE_KEY  = 'seggsy:muted:v1';
 
-        <!-- Projects -->
-        <section id="projects" class="projects">
-            <div class="section-header">
-                <h2 class="section-title">What I'm Working On</h2>
-                <p class="section-subtitle">Production systems and active skill development</p>
-            </div>
+try {
+  if (localStorage.getItem(MUTE_KEY) === '1') {
+    muted = true;
+    document.getElementById('mute-btn').textContent = '🔇';
+  }
+} catch(e) {}
 
-            <!-- Featured: Authentik SSO -->
-            <div class="live-project-grid">
-                <a href="/authentik-sso" class="project-card project-card--featured">
-                    <div class="card-body">
-                        <div class="project-tag-card">Identity & Access Management</div>
-                        <h3 class="project-title">Enterprise SSO Implementation</h3>
-                        <p class="project-description">
-                            Deployed forward authentication at the reverse proxy layer using Authentik + Active Directory.
-                            Works for any HTTP application without touching the app itself.
-                            The interesting part wasn't the installation; it was understanding how LDAP bind queries work at the
-                            packet level and why StartTLS matters in a mixed-trust network.
-                        </p>
-                        <p class="project-cta-link">Learn more about this project &rarr;</p>
-                    </div>
-                    <div class="card-meta">
-                        <span class="project-status-badge status-live">Live</span>
-                        <div class="project-meta-row">
-                            <span>February 2026</span>
-                            <span>~15 hours</span>
-                        </div>
-                        <div class="project-skills">
-                            <span class="skill-badge">Active Directory</span>
-                            <span class="skill-badge">LDAP</span>
-                            <span class="skill-badge">Authentik</span>
-                            <span class="skill-badge">nginx</span>
-                        </div>
-                    </div>
-                </a>
-            </div>
+// =================================================================
+// AUDIO — Web Audio API, no assets
+// =================================================================
+let audioCtx = null;
 
-            <!-- Secondary Live Projects -->
-            <div class="secondary-project-grid">
-                <a href="/monitoring-stack" class="project-card">
-                    <div class="project-status-badge status-live">Live</div>
-                    <div class="project-tag-card">Observability</div>
-                    <h3 class="project-title">Monitoring Stack</h3>
-                    <p class="project-description">
-                        End-to-end observability across a 3-node Proxmox cluster. Prometheus, Grafana, Loki,
-                        and a live-tested alerting pipeline routing to Discord.
-                    </p>
-                    <p class="project-cta-link">Learn more &rarr;</p>
-                    <div class="project-meta-row">
-                        <span>March 2026</span>
-                        <span>~6 hrs</span>
-                    </div>
-                    <div class="project-skills">
-                        <span class="skill-badge">Prometheus</span>
-                        <span class="skill-badge">Grafana</span>
-                        <span class="skill-badge">Loki</span>
-                    </div>
-                </a>
+function ensureAudio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
 
-                <a href="/pbs-storage" class="project-card">
-                    <div class="project-status-badge status-live">Live</div>
-                    <div class="project-tag-card">Infrastructure</div>
-                    <h3 class="project-title">Backup Infrastructure</h3>
-                    <p class="project-description">
-                        Migrated from unreliable USB backups to Proxmox Backup Server. Jobs were failing 40% of nights
-                        due to USB power management. Now four weeks of daily backups fit on a 1TB drive, and nothing's
-                        failed since.
-                    </p>
-                    <p class="project-cta-link">Learn more &rarr;</p>
-                    <div class="project-meta-row">
-                        <span>February 2026</span>
-                        <span>~8 hrs</span>
-                    </div>
-                    <div class="project-skills">
-                        <span class="skill-badge">Proxmox</span>
-                        <span class="skill-badge">PBS</span>
-                        <span class="skill-badge">Storage</span>
-                    </div>
-                </a>
+function keyClack() {
+  if (muted) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  const osc = ctx.createOscillator(), g = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.value = 1200 + Math.random() * 400;
+  g.gain.setValueAtTime(0.04, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+  osc.connect(g).connect(ctx.destination);
+  osc.start(); osc.stop(ctx.currentTime + 0.03);
+}
 
-                <a href="/ssh-hardening" class="project-card">
-                    <div class="project-status-badge status-live">Live</div>
-                    <div class="project-tag-card">Security</div>
-                    <h3 class="project-title">SSH Hardening</h3>
-                    <p class="project-description">
-                        Ed25519 key-based auth and fail2ban across 6 systems. Rolled out without a single lockout
-                        by testing in a parallel session before closing the original — a pattern you only forget once.
-                    </p>
-                    <p class="project-cta-link">Learn more &rarr;</p>
-                    <div class="project-meta-row">
-                        <span>February 2026</span>
-                        <span>~2 hrs</span>
-                    </div>
-                    <div class="project-skills">
-                        <span class="skill-badge">SSH</span>
-                        <span class="skill-badge">fail2ban</span>
-                        <span class="skill-badge">Ed25519</span>
-                    </div>
-                </a>
-            </div>
+function failBeep() {
+  if (muted) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  const osc = ctx.createOscillator(), g = ctx.createGain();
+  osc.type = 'sine'; osc.frequency.value = 220;
+  g.gain.setValueAtTime(0.06, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+  osc.connect(g).connect(ctx.destination);
+  osc.start(); osc.stop(ctx.currentTime + 0.15);
+}
 
-            <a href="/homelab-highlights" class="homelab-callout" aria-label="Homelab Highlights">
-                <div class="homelab-callout-label">// homelab</div>
-                <div class="homelab-callout-body">
-                    <h3 class="homelab-callout-title">Homelab Highlights</h3>
-                    <p class="homelab-callout-desc">When these projects break, I document the fix — real troubleshooting logs from the lab.</p>
-                </div>
-                <span class="homelab-callout-arrow">→</span>
-            </a>
+function bootBeep() {
+  if (muted) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  const osc = ctx.createOscillator(), g = ctx.createGain();
+  osc.type = 'sine'; osc.frequency.value = 660;
+  g.gain.setValueAtTime(0.05, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+  osc.connect(g).connect(ctx.destination);
+  osc.start(); osc.stop(ctx.currentTime + 0.08);
+}
 
-            <!-- WIP Projects -->
-            <div class="wip-project-grid">
-                <div class="project-card wip-card-style">
-                    <div class="project-status-badge status-wip">WIP</div>
-                    <div class="project-tag-card">Identity & Access Management</div>
-                    <h3 class="project-title">MFA Implementation</h3>
-                    <p class="project-description">
-                        Adding TOTP/WebAuthn second factor to Authentik SSO for enhanced security across all protected applications.
-                    </p>
-                    <div class="project-skills">
-                        <span class="skill-badge">Authentik</span>
-                        <span class="skill-badge">TOTP</span>
-                        <span class="skill-badge">WebAuthn</span>
-                    </div>
-                </div>
+document.getElementById('mute-btn').addEventListener('click', function() {
+  muted = !muted;
+  this.textContent = muted ? '🔇' : '🔊';
+  try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch(e) {}
+  if (!muted) bootBeep();
+});
 
-                <div class="project-card wip-card-style">
-                    <div class="project-status-badge status-wip">WIP</div>
-                    <div class="project-tag-card">Container Orchestration</div>
-                    <h3 class="project-title">K3s Cluster Deployment</h3>
-                    <p class="project-description">
-                        Lightweight Kubernetes across the 3-node Proxmox cluster with persistent storage and load balancing —
-                        what most orgs run in production, minus the AWS bill.
-                    </p>
-                    <div class="project-skills">
-                        <span class="skill-badge">K3s</span>
-                        <span class="skill-badge">Kubernetes</span>
-                        <span class="skill-badge">Longhorn</span>
-                    </div>
-                </div>
+// =================================================================
+// ASCII ART — server rack (locked)
+// =================================================================
+const SYSADMIN_ART = `    ╔══════════════════╗
+    ║ ▓▓▓ seggsy ▓▓▓   ║
+    ╟──────────────────╢
+    ║ ● ● ● ●  ▓▓▓▓▓▓▓ ║
+    ║ ● ● ● ●  ▓▓▓▓▓▓▓ ║
+    ╟──────────────────╢
+    ║ ░░░░░░  [  /  ]  ║
+    ║ ▓▓▓▓▓▓  [══════] ║
+    ║ ▓▓▓▓▓▓  [══════] ║
+    ╟──────────────────╢
+    ║  ┌──┐  ┌──┐ ┌──┐ ║
+    ║  │░░│  │▓▓│ │░░│ ║
+    ║  └──┘  └──┘ └──┘ ║
+    ╚══════════════════╝
+       │││   │││   │││
+    ═══╧╧╧═══╧╧╧═══╧╧╧═`;
 
-                <div class="project-card wip-card-style">
-                    <div class="project-status-badge status-wip">WIP</div>
-                    <div class="project-tag-card">Certification</div>
-                    <h3 class="project-title">RHCSA Preparation</h3>
-                    <p class="project-description">
-                        Hands-on Linux administration labs — the kind of practice that closes the gap between
-                        "I've used Linux" and actually knowing it.
-                    </p>
-                    <div class="project-skills">
-                        <span class="skill-badge">Linux</span>
-                        <span class="skill-badge">Red Hat</span>
-                        <span class="skill-badge">System Admin</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+const SYSADMIN_ART_HTML =
+`<span style="color:var(--fg-dim)">    ╔══════════════════╗</span>
+<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--green)">▓▓▓</span> <span style="color:var(--cyan)">seggsy</span> <span style="color:var(--green)">▓▓▓</span>   <span style="color:var(--fg-dim)">║</span>
+<span style="color:var(--fg-dim)">    ╟──────────────────╢</span>
+<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--yellow)">●</span>  <span style="color:var(--orange)">▓▓▓▓▓▓▓</span> <span style="color:var(--fg-dim)">║</span>
+<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span>  <span style="color:var(--orange)">▓▓▓▓▓▓▓</span> <span style="color:var(--fg-dim)">║</span>
+<span style="color:var(--fg-dim)">    ╟──────────────────╢</span>
+<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--fg-dim)">░░░░░░  [  /  ]  ║</span>
+<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--cyan)">▓▓▓▓▓▓</span>  <span style="color:var(--fg-dim)">[</span><span style="color:var(--green)">══════</span><span style="color:var(--fg-dim)">] ║</span>
+<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--cyan)">▓▓▓▓▓▓</span>  <span style="color:var(--fg-dim)">[</span><span style="color:var(--green)">══════</span><span style="color:var(--fg-dim)">] ║</span>
+<span style="color:var(--fg-dim)">    ╟──────────────────╢</span>
+<span style="color:var(--fg-dim)">    ║  ┌──┐  ┌──┐ ┌──┐ ║</span>
+<span style="color:var(--fg-dim)">    ║  │</span><span style="color:var(--fg-dim)">░░</span><span style="color:var(--fg-dim)">│  │</span><span style="color:var(--orange)">▓▓</span><span style="color:var(--fg-dim)">│ │░░│ ║</span>
+<span style="color:var(--fg-dim)">    ║  └──┘  └──┘ └──┘ ║</span>
+<span style="color:var(--fg-dim)">    ╚══════════════════╝</span>
+<span style="color:var(--fg-dim)">       │││   │││   │││</span>
+<span style="color:var(--fg-dim)">    ═══╧╧╧═══╧╧╧═══╧╧╧═</span>`;
 
-        <!-- Skills -->
-        <section id="skills" class="skills">
-            <div class="skills-content">
-                <h2 class="section-title">Technical Skills</h2>
-                <p class="skills-intro">Skills built by doing the work — in the homelab and on the job.</p>
+// =================================================================
+// BOOT SEQUENCE
+// =================================================================
+const BOOT_LINES = [
+  { d: 100,  c: 'info', t: 'GNU GRUB  version 2.06' },
+  { d: 250,  c: 'fg',   t: '  Loading Linux 6.6.0-seggsy ...' },
+  { d: 450,  c: 'fg',   t: '  Loading initial ramdisk ...' },
+  { d: 700,  c: 'fg',   t: '' },
+  { d: 800,  c: 'fg',   ts: '[    0.000000]', t: ' Linux version 6.6.0-seggsy (gcc 13.2.0) #1 SMP PREEMPT_DYNAMIC' },
+  { d: 900,  c: 'fg',   ts: '[    0.000000]', t: ' Command line: BOOT_IMAGE=/vmlinuz-6.6.0 root=UUID=a3f...' },
+  { d: 1000, c: 'fg',   ts: '[    0.012448]', t: ' ACPI: Early table checksum verification disabled' },
+  { d: 1100, c: 'fg',   ts: '[    0.034182]', t: ' CPU: Intel(R) Core(TM) i7-12700K @ 3.60GHz · 12 cores' },
+  { d: 1200, c: 'fg',   ts: '[    0.078901]', t: ' Memory: 64GiB available · ZRAM enabled' },
+  { d: 1300, c: 'fg',   ts: '[    0.124556]', t: ' PCI: Using configuration type 1 for base access' },
+  { d: 1400, c: 'fg',   ts: '[    0.198223]', t: ' usbcore: registered new interface driver hub' },
+  { d: 1500, c: 'fg',   ts: '[    0.245691]', t: ' e1000e: Intel(R) PRO/1000 Network Driver' },
+  { d: 1600, c: 'fg',   ts: '[    0.301442]', t: ' NET: Registered PF_INET protocol family' },
+  { d: 1700, c: 'fg',   ts: '[    0.387114]', t: ' EXT4-fs: mounted filesystem with ordered data mode' },
+  { d: 1800, c: 'fg',   ts: '[    0.421889]', t: ' random: crng init done' },
+  { d: 1900, c: 'fg',   ts: '[    0.498003]', t: ' systemd[1]: <span class="hl">Welcome to Kali GNU/Linux Rolling!</span>' },
+  { d: 2050, c: 'fg',   t: '' },
+  { d: 2150, svc: 'Network Manager', state: 'ok' },
+  { d: 2270, svc: 'OpenSSH server', state: 'ok' },
+  { d: 2390, svc: 'Network', state: 'ok', isTarget: true },
+  { d: 2510, svc: '/home/nate/coffee', state: 'ok', isMount: true },
+  { d: 2630, svc: 'Proxmox cluster sync', state: 'ok' },
+  { d: 2750, svc: 'Authentik identity provider', state: 'ok' },
+  { d: 2870, svc: 'Prometheus + Grafana stack', state: 'ok' },
+  { d: 2990, svc: 'PBS backup target', state: 'ok' },
+  { d: 3110, svc: 'networking-with-extroverts.service', state: 'fail', beep: true },
+  { d: 3230, svc: 'curiosity.service', state: 'ok' },
+  { d: 3350, svc: 'tuesday-night-debugging.service', state: 'ok' },
+  { d: 3470, svc: 'cluster.target — Multi-User System', state: 'ok', isTarget: true },
+  { d: 3600, c: 'fg',   t: '' },
+  { d: 3700, c: 'fg',   t: 'Kali GNU/Linux Rolling seggsy tty1' },
+  { d: 3800, c: 'fg',   t: '' },
+  { d: 3900, c: 'fg',   t: 'seggsy login: ', typed: 'nate', typeDur: 350 },
+  { d: 4400, c: 'fg',   t: 'Password: ', typed: '••••••••••', typeDur: 400, clack: true },
+  { d: 4900, c: 'fg',   t: '' },
+  { d: 5050, c: 'dim',  t: 'Last login: Wed May 14 09:42:08 on ttys003' },
+  { d: 5200, c: 'fg',   t: '' },
+  { d: 5350, prompt: true, cmd: 'neofetch' },
+  { d: 5550, neofetch: true },
+  { d: 6800, prompt: true, cmd: 'ls projects/' },
+  { d: 7000, projectList: true },
+  { d: 7800, dropToShell: true }
+];
 
-                <div class="skills-grid">
-                    <div class="skill-category">
-                        <h3>Identity & Access</h3>
-                        <ul>
-                            <li>Active Directory</li>
-                            <li>Authentik SSO</li>
-                            <li>LDAP & StartTLS</li>
-                            <li>Certificate Management</li>
-                        </ul>
-                    </div>
+// =================================================================
+// BOOT RENDERER
+// =================================================================
+function emitBootLine(html) {
+  const out = document.getElementById('boot-output');
+  const div = document.createElement('div');
+  div.className = 'boot-line';
+  div.innerHTML = html || '&nbsp;';
+  out.appendChild(div);
+  out.scrollTop = out.scrollHeight;
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+}
 
-                    <div class="skill-category">
-                        <h3>Virtualization</h3>
-                        <ul>
-                            <li>Proxmox Clustering</li>
-                            <li>Backup Server (PBS)</li>
-                            <li>VM/CT Lifecycle</li>
-                            <li>Storage (NFS, LVM)</li>
-                        </ul>
-                    </div>
+function renderPromptLine(cmd) {
+  return '<span class="p-user">nate</span><span class="p-at">@</span><span class="p-host">seggsy</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-branch">(main)</span><span class="p-sigil">$</span> ' + cmd;
+}
 
-                    <div class="skill-category">
-                        <h3>Networking</h3>
-                        <ul>
-                            <li>VLAN Segmentation</li>
-                            <li>Firewall Policies</li>
-                            <li>Reverse Proxy (nginx)</li>
-                            <li>DNS Management</li>
-                        </ul>
-                    </div>
+function renderProjectList() {
+  return '<div class="output">' +
+    '<div class="sc-row"><span class="dot g">●</span><span class="name">authentik-sso.service</span><span class="state a">active (running)</span><span class="when">2mo ago</span></div>' +
+    '<div class="sc-row"><span class="dot g">●</span><span class="name">pbs-backup.service</span><span class="state a">active (running)</span><span class="when">3mo ago</span></div>' +
+    '<div class="sc-row"><span class="dot g">●</span><span class="name">monitoring-stack.service</span><span class="state a">active (running)</span><span class="when">2mo ago</span></div>' +
+    '<div class="sc-row"><span class="dot g">●</span><span class="name">ssh-hardening.service</span><span class="state a">active (running)</span><span class="when">3mo ago</span></div>' +
+    '<div class="sc-row"><span class="dot y">◐</span><span class="name">k3s-cluster.service</span><span class="state w">activating (in progress)</span><span class="when">—</span></div>' +
+    '<div class="sc-row"><span class="dot y">◐</span><span class="name">rhcsa-prep.service</span><span class="state w">activating (studying)</span><span class="when">—</span></div>' +
+    '<div style="margin-top:8px;font-size:11.5px;" class="dim">6 loaded units. Pass <span class="hl">cat &lt;project&gt;</span> for details.</div>' +
+    '</div>';
+}
 
-                    <div class="skill-category">
-                        <h3>Security</h3>
-                        <ul>
-                            <li>SSH Hardening</li>
-                            <li>fail2ban IPS</li>
-                            <li>Key-Based Auth</li>
-                            <li>Defense-in-Depth</li>
-                        </ul>
-                    </div>
+function neofetchHtml() {
+  return '<div class="neofetch">' +
+    '<div class="neofetch-art">' + SYSADMIN_ART_HTML + '</div>' +
+    '<div class="neofetch-info">' +
+    '<div class="head"><span>nate</span><span class="at">@</span><span class="host">seggsy</span></div>' +
+    '<div class="sep">─────────────</div>' +
+    '<div class="row"><span class="k">OS:</span>       <span class="v">Kali GNU/Linux Rolling x86_64</span></div>' +
+    '<div class="row"><span class="k">Host:</span>     <span class="v">Self-hosted · Austin, TX</span></div>' +
+    '<div class="row"><span class="k">Kernel:</span>   <span class="v">6.6.0-seggsy</span></div>' +
+    '<div class="row"><span class="k">Uptime:</span>   <span class="v"><span class="hl">3.4 years</span> in IT</span></div>' +
+    '<div class="row"><span class="k">Shell:</span>    <span class="v">zsh 5.9 / starship</span></div>' +
+    '<div class="row"><span class="k">DE:</span>       <span class="v">GNOME · i3 on the homelab</span></div>' +
+    '<div class="row"><span class="k">Terminal:</span> <span class="v">you\'re in it</span></div>' +
+    '<div class="row"><span class="k">CPU:</span>      <span class="v">endpoint · identity · platform</span></div>' +
+    '<div class="row"><span class="k">GPU:</span>      <span class="v">proxmox · authentik · monitoring</span></div>' +
+    '<div class="row"><span class="k">Memory:</span>   <span class="v"><span class="meter">████████████░░░░░░░░</span> 12/20 yrs</span></div>' +
+    '<div class="row"><span class="k">Disk:</span>     <span class="v">~/projects (6)  ~/incidents (5)</span></div>' +
+    '<div class="neofetch-colors">' +
+    '<div class="strip"><div class="sw" style="background:#272822"></div><div class="sw" style="background:#f92672"></div><div class="sw" style="background:#a6e22e"></div><div class="sw" style="background:#e6db74"></div><div class="sw" style="background:#66d9ef"></div><div class="sw" style="background:#ae81ff"></div><div class="sw" style="background:#fd971f"></div><div class="sw" style="background:#f8f8f2"></div></div>' +
+    '<div class="strip"><div class="sw" style="background:#75715e"></div><div class="sw" style="background:#f92672;opacity:.6"></div><div class="sw" style="background:#a6e22e;opacity:.6"></div><div class="sw" style="background:#e6db74;opacity:.6"></div><div class="sw" style="background:#66d9ef;opacity:.6"></div><div class="sw" style="background:#ae81ff;opacity:.6"></div><div class="sw" style="background:#fd971f;opacity:.6"></div><div class="sw" style="background:#f8f8f2;opacity:.6"></div></div>' +
+    '</div>' +
+    '</div>' +
+    '</div>';
+}
 
-                    <div class="skill-category">
-                        <h3>Observability</h3>
-                        <ul>
-                            <li>Prometheus</li>
-                            <li>Grafana</li>
-                            <li>Loki</li>
-                            <li>PromQL & Alerting</li>
-                        </ul>
-                    </div>
+function startBoot() {
+  document.getElementById('boot').style.display = 'block';
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('boot-output').innerHTML = '';
+  document.getElementById('palette').style.display = 'none';
 
-                    <div class="skill-category">
-                        <h3>Systems & Tools</h3>
-                        <ul>
-                            <li>Linux Administration</li>
-                            <li>Docker Orchestration</li>
-                            <li>Bash Scripting</li>
-                            <li>Git & Documentation</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
+  bootTimeouts.push(setTimeout(function() {
+    document.getElementById('skip-boot').style.display = 'block';
+  }, 800));
+  bootTimeouts.push(setTimeout(bootBeep, 100));
 
-        <!-- Contact -->
-        <section id="contact" class="contact">
-            <div class="contact-quote-wrapper">
-                <blockquote class="contact-quote">
-                    "He never stopped asking questions. I knew that would take him somewhere."
-                </blockquote>
-                <div class="contact-attribution">
-                    Helpdesk Operations Manager (and former colleague)
-                </div>
-                <p class="contact-tagline">
-                    I owe a lot to that moment. Still learning, still building.
-                </p>
-            </div>
-
-            <div class="contact-grid">
-                <a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener noreferrer" class="contact-btn contact-btn--primary">
-                    Let's Chat
-                </a>
-            </div>
-            <div class="contact-info">Austin, TX &middot; Open to the right role in Austin.</div>
-        </section>
-    </main>
-
-    <footer role="contentinfo">
-        <div class="footer-content">
-            <div class="footer-text">&copy; 2026 Nate &mdash; Austin, TX</div>
-            <div class="footer-links">
-                <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
-                <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const navLinks = document.querySelector('.nav-links');
-
-        menuToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-            menuToggle.setAttribute('aria-expanded', !isExpanded);
-            navLinks.classList.toggle('active');
+  BOOT_LINES.forEach(function(line) {
+    var t = setTimeout(function() {
+      if (line.svc !== undefined) {
+        var bracket, label;
+        if (line.state === 'ok') {
+          bracket = '<span class="bracket">[</span>  <span class="ok">OK</span>  <span class="bracket">]</span>';
+          label = line.isTarget ? 'Reached target' : (line.isMount ? 'Mounted' : 'Started');
+        } else {
+          bracket = '<span class="bracket">[</span> <span class="fail">FAIL</span> <span class="bracket">]</span>';
+          label = 'Failed to start';
+          if (line.beep) failBeep();
+        }
+        var cls = line.state === 'fail' ? 'dim' : 'info';
+        emitBootLine(bracket + ' ' + label + ' <span class="' + cls + '">' + line.svc + '</span>.');
+        return;
+      }
+      if (line.neofetch) {
+        emitBootLine(neofetchHtml());
+        return;
+      }
+      if (line.projectList) {
+        emitBootLine(renderProjectList());
+        return;
+      }
+      if (line.prompt) {
+        emitBootLine(renderPromptLine(line.cmd));
+        return;
+      }
+      if (line.dropToShell) {
+        completeBoot();
+        return;
+      }
+      if (line.typed !== undefined) {
+        var lineEl = document.createElement('div');
+        lineEl.className = 'boot-line';
+        lineEl.innerHTML = '<span class="' + (line.c || 'fg') + '">' + line.t + '</span><span class="typed-target"></span>';
+        document.getElementById('boot-output').appendChild(lineEl);
+        var target = lineEl.querySelector('.typed-target');
+        var chars = line.typed.split('');
+        var interval = line.typeDur / chars.length;
+        chars.forEach(function(ch, i) {
+          bootTimeouts.push(setTimeout(function() {
+            target.textContent += ch;
+            if (line.clack !== false) keyClack();
+          }, i * interval));
         });
+        return;
+      }
+      var tsHtml = line.ts ? '<span class="ts">' + line.ts + '</span>' : '';
+      emitBootLine(tsHtml + '<span class="' + (line.c || 'fg') + '">' + line.t + '</span>');
+    }, line.d);
+    bootTimeouts.push(t);
+  });
+}
 
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('nav')) {
-                navLinks.classList.remove('active');
-                menuToggle.setAttribute('aria-expanded', 'false');
-            }
-        });
+function completeBoot() {
+  try { localStorage.setItem(BOOT_KEY, '1'); } catch(e) {}
+  var bootOut = document.getElementById('boot-output');
+  var appOut  = document.getElementById('app-output');
+  appOut.innerHTML = bootOut.innerHTML;
+  document.getElementById('boot').style.display = 'none';
+  document.getElementById('skip-boot').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  document.getElementById('palette').style.display = 'flex';
+  document.getElementById('prompt-input').focus();
+  setTimeout(function() {
+    document.getElementById('active-prompt').scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 100);
+}
 
-        navLinks.querySelectorAll('a').forEach(function(link) {
-            link.addEventListener('click', function() {
-                navLinks.classList.remove('active');
-                menuToggle.setAttribute('aria-expanded', 'false');
-            });
-        });
-    </script>
+function skipBoot() {
+  bootTimeouts.forEach(function(t) { clearTimeout(t); });
+  bootTimeouts = [];
+  var appOut = document.getElementById('app-output');
+  appOut.innerHTML =
+    '<div class="boot-line">' + renderPromptLine('neofetch') + '</div>' +
+    neofetchHtml() +
+    '<div class="boot-line">' + renderPromptLine('ls projects/') + '</div>' +
+    renderProjectList();
+  document.getElementById('boot').style.display = 'none';
+  document.getElementById('skip-boot').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  document.getElementById('palette').style.display = 'flex';
+  try { localStorage.setItem(BOOT_KEY, '1'); } catch(e) {}
+  document.getElementById('prompt-input').focus();
+}
+
+document.getElementById('skip-boot').addEventListener('click', skipBoot);
+
+// =================================================================
+// COMMANDS
+// =================================================================
+function printOutput(html) {
+  var div = document.createElement('div');
+  div.innerHTML = html;
+  document.getElementById('app-output').appendChild(div);
+  setTimeout(function() {
+    document.getElementById('active-prompt').scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 50);
+}
+
+function catProject(slug, title, desc, stack, time, state) {
+  return '<div class="output">' +
+    '<span class="heading">●</span> <span class="hl">' + slug + '.service</span> — ' + title + '\n' +
+    '    Loaded: loaded (<span class="sub">~/projects/' + slug + '/</span>; enabled)\n' +
+    '    Active: <span class="ok">' + state + '</span>  since <span class="hl">' + time + '</span>\n' +
+    '      Docs: <a href="/' + slug + '">https://seggsy.co/' + slug + '</a>\n\n' +
+    '    <span class="sub">' + desc.replace(/\n/g, '\n    ') + '</span>\n\n' +
+    '    Stack: ' + stack.map(function(s) { return '<span class="hl">' + s + '</span>'; }).join(' · ') +
+    '</div>';
+}
+
+var COMMANDS = {
+  'me': function() { printOutput('<div class="output">' +
+    '<span class="heading">▸ nate nwaeze</span>\n' +
+    '<span class="sub">IT Support Engineer II · Austin, TX</span>\n\n' +
+    'I do endpoint and identity support at <span class="hl">The Zebra</span> in Austin. Mostly Mac fleet\n' +
+    'management with Jamf, Okta administration, Google Workspace, and the kind of\n' +
+    'escalated tickets that turn out to be three problems wearing a trenchcoat.\n\n' +
+    'Before this: <span class="hl">Pretium Enterprise Services</span> (T2 Technology Delivery) and\n' +
+    '<span class="hl">ZenGuard MSP</span> (T2, Apple SME for 200+ devices). Before IT I managed\n' +
+    'restaurants. A networking tech ran cable through my dining room one afternoon\n' +
+    "and I haven't stopped asking questions since.\n\n" +
+    "The homelab is a 3-node Proxmox cluster — where I learn most of what I know\n" +
+    "about platform engineering by breaking things on purpose and writing down what\n" +
+    "happened. I'm open to the right role in Austin, ideally moving toward platform\n" +
+    "or systems work. Type <span class=\"accent\">'dig'</span> to reach me." +
+    '</div>'); },
+
+  'whoami': function() { COMMANDS['me'](); },
+  'about':  function() { COMMANDS['me'](); },
+
+  'ls': function() { printOutput(renderProjectList()); },
+  'projects': function() { COMMANDS['ls'](); },
+
+  'cat resume': function() { printOutput('<div class="output">' +
+    '<span class="heading">▸ resume — nate nwaeze</span>\n\n' +
+    '<span class="ok">●</span> <span class="hl">The Zebra</span> — IT Support Engineer II <span class="sub">· 2026–present</span>\n' +
+    '  · 10–15 escalated tickets/day · 99% SLA · top 3 on team for resolution speed\n' +
+    '  · IT onboarding sessions: SSPR, VPN, MFA, password policy\n' +
+    '  · Windows 365 Cloud PC provisioning: traced license → Entra group → Intune scope\n' +
+    '  · TokenBroker cache forensics for HTTP 400 msrdc auth failures\n\n' +
+    '<span class="ok">●</span> <span class="hl">Pretium Enterprise Services</span> — Tech Delivery T2 <span class="sub">· 2024–2026</span>\n' +
+    '  · Apple SME after previous admin left and broke ABM-Addigy token\n' +
+    '  · Restored MDM integration for 200+ devices, documented annual renewal\n' +
+    '  · PowerShell printer deployment script: 5min → &lt;1min per device\n\n' +
+    '<span class="ok">●</span> <span class="hl">ZenGuard (MSP)</span> — IT Support T2 <span class="sub">· 2023–2024</span>\n' +
+    '  · 350+ users across multiple clients · macOS/Windows/Linux\n' +
+    '  · LDAP server misconfiguration → 15–20 VPN auth failures · same-day fix\n' +
+    '  · Huntress MITM mitigation · session revoked before lateral movement\n\n' +
+    '<span class="ok">●</span> <span class="hl">Barrage Systems</span> — Desktop Support <span class="sub">· 2022–2023</span>\n' +
+    '  · 8–12 tickets/day · 200+ user endpoint support\n' +
+    '  · Pre-provisioned 10–15 devices/week · saved new hires 3–5h on day 1\n\n' +
+    '<span class="sub">▸ Stack: M365 · Entra ID · AD · Exchange Online · PowerShell · Intune · Jamf\n' +
+    '         Okta · Authentik · Proxmox · Prometheus · Grafana · Loki · CyberArk</span>\n\n' +
+    '<span class="sub">▸ Full page: <a href="/resume">seggsy.co/resume</a></span>' +
+    '</div>'); },
+
+  'resume': function() { COMMANDS['cat resume'](); },
+
+  'cat authentik-sso': function() { printOutput(catProject(
+    'authentik-sso', 'Enterprise SSO Implementation',
+    'Forward authentication at the reverse proxy. Active Directory backed,\n8 services protected, ~5 min to add a new app. Same architecture\nas Cloudflare Access — auth enforced at the network edge before\nrequests reach the app.',
+    ['authentik', 'active directory', 'nginx-proxy-manager', 'docker', 'ldap', 'oidc'],
+    '15h · feb 2026', 'active (running)')); },
+
+  'cat monitoring-stack': function() { printOutput(catProject(
+    'monitoring-stack', 'Observability Stack',
+    'Prometheus + Grafana + Loki across a 3-node Proxmox cluster. OS metrics\nvia node_exporter, per-VM metrics via parametric scraping against the\nProxmox REST API. 4 live-tested alert rules routing to Discord.',
+    ['prometheus', 'grafana', 'loki', 'promql', 'node_exporter', 'pve-exporter'],
+    '6h · mar 2026', 'active (running)')); },
+
+  'cat pbs-storage': function() { printOutput(catProject(
+    'pbs-storage', 'Backup Infrastructure Migration',
+    'USB to internal SATA migration. Chunk-level deduplication via PBS.\n40% nightly failure rate (USB power management) → 0%.\n85% storage reduction vs traditional full backups.',
+    ['proxmox', 'pbs', 'ext4', 'rsync', 'acme', 'cloudflare dns'],
+    '8h · feb 2026', 'active (running)')); },
+
+  'cat ssh-hardening': function() { printOutput(catProject(
+    'ssh-hardening', 'SSH Hardening',
+    'Ed25519 + fail2ban across 6 systems (3 Proxmox hypervisors, 3 Linux VMs).\nZero lockouts during rollout — tested key auth in a new session before\nclosing the existing one.',
+    ['openssh', 'fail2ban', 'ed25519', 'systemd', 'tailscale'],
+    '2h · feb 2026', 'active (running)')); },
+
+  'cat homelab-highlights': function() { printOutput(catProject(
+    'homelab-highlights', 'Homelab Highlights',
+    'Incident logs from the lab — real troubleshooting when these projects\nbreak. e1000e NIC hang, LDAP bind-dn misconfig, and more.',
+    ['proxmox', 'linux', 'debugging', 'documentation'],
+    'ongoing', 'active (logging)')); },
+
+  'cat work-highlights': function() { printOutput(catProject(
+    'work-highlights', 'Work Examples',
+    'Examples of work from enterprise environments — PAM, IAM, MDM,\ncloud, automation, and network security scenarios.',
+    ['okta', 'entra id', 'jamf', 'intune', 'powershell'],
+    'ongoing', 'active')); },
+
+  'cat k3s-cluster': function() { printOutput(catProject(
+    'k3s-cluster', 'k3s Cluster',
+    'Lightweight Kubernetes across the 3-node Proxmox cluster.\nPersistent storage via Longhorn, load balancing via MetalLB.',
+    ['k3s', 'longhorn', 'metallb', 'helm', 'flux'],
+    'wip', 'activating (in progress)')); },
+
+  'cat rhcsa-prep': function() { printOutput(catProject(
+    'rhcsa-prep', 'RHCSA Preparation',
+    'Hands-on Linux administration labs and practice exams.\nTargeting EX200. Closing the gap between "I\'ve used Linux"\nand actually knowing it cold.',
+    ['rhel', 'systemd', 'firewalld', 'selinux', 'ansible'],
+    'wip', 'activating (studying)')); },
+
+  'cat mfa': function() { printOutput(catProject(
+    'mfa', 'MFA Implementation',
+    'Adding TOTP/WebAuthn second factor to Authentik SSO for enhanced\nsecurity across all protected applications.',
+    ['authentik', 'totp', 'webauthn'],
+    'wip', 'activating (in progress)')); },
+
+  'tree': function() { printOutput('<div class="output tree">' +
+    '<span class="dir">~/</span>\n' +
+    '<span class="branch">├──</span> <span class="dir">projects/</span>\n' +
+    '<span class="branch">│   ├──</span> <a href="/authentik-sso">authentik-sso</a>       <span class="sub">— enterprise SSO across 8 services</span>\n' +
+    '<span class="branch">│   ├──</span> <a href="/pbs-storage">pbs-storage</a>         <span class="sub">— USB → SATA migration, 0% failure</span>\n' +
+    '<span class="branch">│   ├──</span> <a href="/monitoring-stack">monitoring-stack</a>    <span class="sub">— prometheus + grafana + loki</span>\n' +
+    '<span class="branch">│   ├──</span> <a href="/ssh-hardening">ssh-hardening</a>       <span class="sub">— ed25519 + fail2ban, 6 hosts</span>\n' +
+    '<span class="branch">│   ├──</span> <span class="file">k3s-cluster</span>         <span class="sub">— wip · lightweight k8s</span>\n' +
+    '<span class="branch">│   └──</span> <span class="file">rhcsa-prep</span>          <span class="sub">— wip · red hat cert</span>\n' +
+    '<span class="branch">├──</span> <a href="/homelab-highlights">homelab-highlights</a>  <span class="sub">— incident logs from the lab</span>\n' +
+    '<span class="branch">├──</span> <a href="/work-highlights">work-highlights</a>     <span class="sub">— work examples</span>\n' +
+    '<span class="branch">└──</span> <a href="/resume">resume</a>              <span class="sub">— full career history</span>\n' +
+    '</div>'); },
+
+  'dig': function() { printOutput('<div class="output">' +
+    '<span class="heading">; &lt;&lt;&gt;&gt; DiG 9.18.x &lt;&lt;&gt;&gt;  nate</span>\n' +
+    '<span class="sub">;; ANSWER SECTION:</span>\n\n' +
+    '<div class="dig-row"><span class="k">calendar</span><span class="v"><a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener">calendly.com/nnwaeze/let-s-connect</a></span></div>' +
+    '<div class="dig-row"><span class="k">github</span><span class="v"><a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener">github.com/NWA-F3RG</a></span></div>' +
+    '<div class="dig-row"><span class="k">linkedin</span><span class="v"><a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener">linkedin.com/in/nathannwaeze</a></span></div>' +
+    '<div class="dig-row"><span class="k">location</span><span class="v">Austin, TX (open to local roles)</span></div>' +
+    '\n<span class="sub">;; Query time: 2 msec\n;; status: NOERROR</span>' +
+    '</div>'); },
+
+  'contact': function() { COMMANDS['dig'](); },
+
+  'ssh': function() { printOutput('<div class="output">' +
+    '<span class="sub">$ ssh recruiter@nate</span>\n' +
+    "<span class=\"hl\">The authenticity of host 'nate (austin, tx)' can't be established.</span>\n" +
+    '<span class="sub">Are you sure you want to continue connecting? <span class="ok">yes</span></span>\n\n' +
+    '<span class="ok">Connection established.</span> Drop a message:\n' +
+    '<div style="margin-top:12px;padding:12px;border:1px solid var(--border);background:var(--bg-soft);">' +
+    '<div style="margin-bottom:8px;"><span class="sub">From:</span> <input type="text" placeholder="your.email@company.com" style="background:transparent;border:1px solid var(--border);color:var(--fg);font-family:var(--font);padding:4px 8px;width:260px;outline:none;font-size:13px;" /></div>' +
+    '<textarea placeholder="hey nate — " style="background:transparent;border:1px solid var(--border);color:var(--fg);font-family:var(--font);padding:8px;width:100%;outline:none;font-size:13px;min-height:70px;resize:vertical;"></textarea>' +
+    '<div style="margin-top:8px;"><a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener" style="display:inline-block;background:var(--green);color:var(--bg-deep);padding:5px 14px;font-family:var(--font);font-size:12px;font-weight:600;text-decoration:none;border-radius:3px;">schedule a call →</a></div>' +
+    '</div>' +
+    '</div>'); },
+
+  'gui': function() { printOutput('<div class="output">' +
+    '<span class="warn">↳</span>  Expanding all sections into readable view...\n\n' +
+    '<div class="gui-section"><h2>about</h2>' +
+    '<p>IT Support Engineer II at <strong style="color:var(--cyan)">The Zebra</strong> in Austin, TX. 3.4 years across MSP and enterprise environments. Mac fleet management with Jamf, Okta administration, Google Workspace, and escalated tickets.</p>' +
+    "<p>The homelab is a 3-node Proxmox cluster where I learn what I know about platform engineering — by breaking things on purpose and writing down what happened.</p></div>" +
+    '<div class="gui-section"><h2>projects</h2>' +
+    '<h3><a href="/authentik-sso">authentik-sso</a> · live</h3><p>Forward authentication at the reverse proxy. AD backed, 8 services protected.</p>' +
+    '<h3><a href="/pbs-storage">pbs-storage</a> · live</h3><p>USB → SATA. Chunk-level dedup. 40% nightly failure → 0%.</p>' +
+    '<h3><a href="/monitoring-stack">monitoring-stack</a> · live</h3><p>Prometheus + Grafana + Loki across the cluster. 4 alert rules → Discord.</p>' +
+    '<h3><a href="/ssh-hardening">ssh-hardening</a> · live</h3><p>Ed25519 + fail2ban across 6 systems. Zero lockouts during rollout.</p>' +
+    '<h3>k3s-cluster · wip</h3><p>Lightweight Kubernetes. Longhorn + MetalLB.</p></div>' +
+    '<div class="gui-section"><h2>experience</h2><ul>' +
+    '<li><strong>The Zebra</strong> — IT Support Engineer II · 2026–present</li>' +
+    '<li><strong>Pretium Enterprise Services</strong> — Tech Delivery T2 · 2024–2026</li>' +
+    '<li><strong>ZenGuard (MSP)</strong> — IT Support T2 · 2023–2024</li>' +
+    '<li><strong>Barrage Systems</strong> — Desktop Support · 2022–2023</li>' +
+    '</ul></div>' +
+    '<div class="gui-section"><h2>contact</h2><ul>' +
+    '<li>Calendar: <a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener">calendly.com/nnwaeze</a></li>' +
+    '<li>GitHub: <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener">github.com/NWA-F3RG</a></li>' +
+    '<li>LinkedIn: <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener">linkedin.com/in/nathannwaeze</a></li>' +
+    '<li>Location: Austin, TX — open to the right role</li>' +
+    '</ul></div>' +
+    '</div>'); },
+
+  'reboot': function() {
+    document.getElementById('app').classList.remove('visible');
+    document.getElementById('palette').style.display = 'none';
+    try { localStorage.removeItem(BOOT_KEY); } catch(e) {}
+    bootTimeouts.forEach(function(t) { clearTimeout(t); }); bootTimeouts = [];
+    document.getElementById('boot-output').innerHTML = '';
+    document.getElementById('boot').style.display = 'block';
+    startBoot();
+  },
+
+  'clear': function() { document.getElementById('app-output').innerHTML = ''; },
+  'cls':   function() { COMMANDS['clear'](); },
+  'clr':   function() { COMMANDS['clear'](); },
+
+  '?':     function() { printOutput('<div class="output">' +
+    '<span class="heading">▸ available commands</span>\n\n' +
+    '<div style="display:grid;grid-template-columns:140px 1fr;gap:4px 16px;margin-top:8px;">' +
+    '<span class="accent">me</span><span class="sub">about nate</span>' +
+    '<span class="accent">ls</span><span class="sub">list projects (systemctl-style)</span>' +
+    '<span class="accent">cat &lt;project&gt;</span><span class="sub">read a project — authentik-sso, monitoring-stack, pbs-storage, ssh-hardening</span>' +
+    '<span class="accent">cat resume</span><span class="sub">career history</span>' +
+    '<span class="accent">tree</span><span class="sub">site map</span>' +
+    '<span class="accent">dig</span><span class="sub">contact info</span>' +
+    '<span class="accent">ssh</span><span class="sub">send a message</span>' +
+    '<span class="accent">gui</span><span class="sub">expand everything into a readable view</span>' +
+    '<span class="accent">reboot</span><span class="sub">replay the boot sequence</span>' +
+    '<span class="accent">clear</span><span class="sub">clear the screen</span>' +
+    '<span class="accent">?</span><span class="sub">this help</span>' +
+    '</div>' +
+    '<span class="sub" style="margin-top:12px;display:block;">↑/↓ arrow keys cycle command history</span>' +
+    '</div>'); },
+
+  'help':  function() { COMMANDS['?'](); },
+
+  'sudo':  function() { printOutput('<div class="output">' +
+    'nate is not in the sudoers file. This incident will be reported.' +
+    '</div>'); },
+
+  'sudo hire nate': function() { printOutput('<div class="output">' +
+    '<span class="ok">[sudo] password for recruiter: ········</span>\n' +
+    '<span class="hl">Permission granted.</span>\n' +
+    "Type <span class=\"accent\">'dig'</span> for contact info, or <span class=\"accent\">'ssh'</span> to send a message." +
+    '</div>'); },
+};
+
+// =================================================================
+// DISPATCH
+// =================================================================
+function exec(rawInput) {
+  var input = rawInput.trim();
+  if (!input) return;
+
+  history.unshift(input);
+  historyIdx = -1;
+
+  var echo = document.createElement('div');
+  echo.className = 'boot-line';
+  echo.innerHTML = renderPromptLine(input.replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+  document.getElementById('app-output').appendChild(echo);
+
+  var key = input.toLowerCase();
+  if (COMMANDS[key]) {
+    COMMANDS[key]();
+  } else if (key.startsWith('sudo ')) {
+    COMMANDS['sudo']();
+  } else if (key.startsWith('cat ')) {
+    printOutput('<div class="output"><span class="fail">cat: ' + key.replace(/</g,'&lt;') + ': No such file or directory</span>\n<span class="sub">Run <span class="accent">ls</span> to see available projects.</span></div>');
+  } else {
+    printOutput('<div class="output"><span class="fail">zsh: command not found: ' + key.replace(/</g,'&lt;') + '</span>\n<span class="sub">Type <span class="accent">?</span> for available commands.</span></div>');
+  }
+}
+
+// =================================================================
+// INPUT HANDLERS
+// =================================================================
+var promptInput = document.getElementById('prompt-input');
+
+promptInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    var val = this.value;
+    this.value = '';
+    ensureAudio();
+    exec(val);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (historyIdx < history.length - 1) { historyIdx++; this.value = history[historyIdx]; }
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (historyIdx > 0) { historyIdx--; this.value = history[historyIdx]; }
+    else { historyIdx = -1; this.value = ''; }
+  } else {
+    keyClack();
+  }
+});
+
+document.querySelectorAll('.chip[data-cmd]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    ensureAudio();
+    exec(this.dataset.cmd);
+    promptInput.focus();
+  });
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('boot').style.display !== 'none') {
+    skipBoot();
+  }
+});
+
+document.addEventListener('click', function(e) {
+  if (document.getElementById('app').classList.contains('visible')) {
+    if (!e.target.closest('a, button, input, textarea')) {
+      promptInput.focus();
+    }
+  }
+});
+
+// =================================================================
+// INIT
+// =================================================================
+try {
+  if (localStorage.getItem(BOOT_KEY)) {
+    skipBoot();
+  } else {
+    startBoot();
+  }
+} catch(e) {
+  startBoot();
+}
+</script>
 </body>
 </html>

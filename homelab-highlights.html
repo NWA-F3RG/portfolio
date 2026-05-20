@@ -45,150 +45,10 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,200;1,9..144,300&family=Crimson+Pro:ital,wght@0,400;0,500;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
 
     <style>
-        /* ==================== CSS Variables ==================== */
-        :root {
-            --color-bg-primary:    #16171a;
-            --color-bg-secondary:  #1e2023;
-            --color-bg-tertiary:   #26282d;
-            --color-bg-code:       #111214;
-
-            --color-text-primary:  #e8e8e8;
-            --color-text-secondary:#888e99;
-            --color-text-muted:    #545962;
-
-            --color-accent:           #a3e635;
-            --color-accent-primary:   #a3e635;
-            --color-accent-secondary: #a3e635;
-            --color-accent-warning:   #fb923c;
-            --color-accent-red:       #f87171;
-            --color-accent-green:     #a3e635;
-
-            --color-border:       #2d3038;
-            --color-border-hover: #3d4149;
-
-            --font-mono: 'Courier Prime', 'Courier New', monospace;
-            --font-sans: 'Crimson Pro', Georgia, serif;
-            --font-display: 'Fraunces', Georgia, serif;
-
-            --font-size-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
-            --font-size-sm:   clamp(0.875rem, 0.8rem  + 0.375vw, 1rem);
-            --font-size-base: clamp(1rem,     0.9rem  + 0.5vw,   1.125rem);
-            --font-size-lg:   clamp(1.125rem, 1rem    + 0.625vw, 1.25rem);
-            --font-size-xl:   clamp(1.25rem,  1.1rem  + 0.75vw,  1.5rem);
-            --font-size-2xl:  clamp(1.5rem,   1.3rem  + 1vw,     2rem);
-            --font-size-3xl:  clamp(2rem,     1.5rem  + 2.5vw,   3rem);
-
-            --space-xs: 0.5rem;
-            --space-sm: 1rem;
-            --space-md: 1.5rem;
-            --space-lg: 2rem;
-            --space-xl: 3rem;
-            --space-2xl: 4rem;
-
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-        }
-
-        /* ==================== Reset ==================== */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html { scroll-behavior: smooth; }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-
-        body {
-            font-family: var(--font-sans);
-            background: var(--color-bg-primary);
-            color: var(--color-text-primary);
-            line-height: 1.6;
-            font-size: 16px;
-        }
-
-        h1, h2, h3, h4 { font-family: var(--font-display); }
-
-        /* ==================== Skip Link ==================== */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: var(--color-accent-primary);
-            color: var(--color-bg-primary);
-            padding: var(--space-sm);
-            text-decoration: none;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            z-index: 100;
-        }
-        .skip-link:focus { top: var(--space-sm); left: var(--space-sm); }
-
-        *:focus-visible { outline: 2px solid var(--color-accent-primary); outline-offset: 2px; }
-        *:focus:not(:focus-visible) { outline: none; }
-
-        /* ==================== Header ==================== */
-        header {
-            background: var(--color-bg-secondary);
-            border-bottom: 1px solid var(--color-border);
-            padding: var(--space-md) 0;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--space-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: var(--font-mono);
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--color-accent);
-            text-decoration: none;
-            min-height: 44px;
-            display: inline-flex;
-            align-items: center;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .logo::after {
-            content: '_';
-            animation: cursor-blink 1.1s step-end infinite;
-            color: var(--color-accent);
-            margin-left: 1px;
-        }
-        @keyframes cursor-blink { 50% { opacity: 0; } }
-
-        .back-link {
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.2s;
-            min-height: 44px;
-            display: inline-flex;
-            align-items: center;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .back-link:hover { color: var(--color-text-primary); }
-        .back-link::before { content: '← '; color: var(--color-accent-primary); }
-
         /* ==================== Main ==================== */
         main {
             max-width: 900px;
@@ -201,10 +61,9 @@
 
         .hero-label {
             display: inline-block;
-            font-family: var(--font-mono);
             font-size: var(--font-size-sm);
-            color: var(--color-accent-secondary);
-            background: var(--color-bg-secondary);
+            color: var(--green);
+            background: var(--bg-soft);
             padding: var(--space-xs) var(--space-sm);
             border-radius: var(--radius-sm);
             margin-bottom: var(--space-md);
@@ -219,30 +78,26 @@
 
         .hero p {
             font-size: var(--font-size-lg);
-            color: var(--color-text-secondary);
+            color: var(--fg-dim);
             line-height: 1.7;
             margin-bottom: var(--space-md);
         }
 
         /* ==================== Context Note ==================== */
         .context-note {
-            background: var(--color-bg-secondary);
-            border-left: 3px solid var(--color-accent-warning);
+            background: var(--bg-soft);
+            border-left: 3px solid var(--orange);
             padding: var(--space-md);
             border-radius: var(--radius-md);
             margin-bottom: var(--space-xl);
         }
-        .context-note p {
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
-            margin: 0;
-        }
-        .context-note strong { color: var(--color-text-primary); }
+        .context-note p { font-size: var(--font-size-sm); color: var(--fg-dim); margin: 0; }
+        .context-note strong { color: var(--fg); }
 
         /* ==================== Incident Cards ==================== */
         .incident-card {
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
+            background: var(--bg-soft);
+            border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: var(--space-xl);
             margin-bottom: var(--space-xl);
@@ -256,7 +111,6 @@
         }
 
         .severity-indicator {
-            font-family: var(--font-mono);
             font-size: var(--font-size-xs);
             padding: 0.25rem 0.6rem;
             border-radius: var(--radius-sm);
@@ -265,28 +119,27 @@
             margin-top: 0.4rem;
             flex-shrink: 0;
         }
-        .sev-high   { color: var(--color-accent-red);    border-color: var(--color-accent-red);    background: rgba(244,71,71,0.08); }
-        .sev-medium { color: var(--color-accent-warning); border-color: var(--color-accent-warning); background: rgba(206,145,120,0.08); }
-        .sev-low    { color: var(--color-accent-green);   border-color: var(--color-accent-green);  background: rgba(106,153,85,0.08); }
+        .sev-high   { color: var(--pink);   border-color: var(--pink);   background: rgba(249,38,114,0.08); }
+        .sev-medium { color: var(--orange); border-color: var(--orange); background: rgba(253,151,31,0.08); }
+        .sev-low    { color: var(--green);  border-color: var(--green);  background: rgba(166,226,46,0.08); }
 
         .incident-card h2 {
             font-size: var(--font-size-2xl);
             font-weight: 600;
-            color: var(--color-text-primary);
+            color: var(--green);
             margin-bottom: 0.35rem;
+            border-bottom: none;
         }
 
         .card-meta-line {
-            font-family: var(--font-mono);
             font-size: var(--font-size-xs);
-            color: var(--color-text-secondary);
+            color: var(--fg-dim);
             margin-bottom: 0.35rem;
         }
 
         .card-env-line {
-            font-family: var(--font-mono);
             font-size: var(--font-size-xs);
-            color: var(--color-accent-secondary);
+            color: var(--green);
             opacity: 0.75;
         }
 
@@ -294,75 +147,51 @@
         .example-section { margin-bottom: var(--space-lg); }
         .example-section:last-child { margin-bottom: 0; }
 
-        .example-section h3 {
-            font-size: var(--font-size-lg);
-            font-weight: 600;
-            color: var(--color-accent-primary);
-            margin-bottom: var(--space-sm);
-        }
-
-        .example-section p {
-            color: var(--color-text-secondary);
-            line-height: 1.7;
-            margin-bottom: var(--space-sm);
-        }
+        .example-section p { color: var(--fg-dim); line-height: 1.7; margin-bottom: var(--space-sm); }
         .example-section p:last-child { margin-bottom: 0; }
 
         .example-section ol,
-        .example-section ul {
-            color: var(--color-text-secondary);
-            line-height: 1.8;
-            padding-left: var(--space-lg);
-        }
+        .example-section ul { color: var(--fg-dim); line-height: 1.8; padding-left: var(--space-lg); }
         .example-section li { margin-bottom: var(--space-xs); }
         .example-section li:last-child { margin-bottom: 0; }
 
         /* ==================== Code Blocks ==================== */
         .code-block {
-            background: var(--color-bg-code);
-            border: 1px solid var(--color-border);
+            background: var(--bg-code);
+            border: 1px solid var(--border);
             border-radius: var(--radius-md);
             padding: var(--space-md);
             margin: var(--space-sm) 0;
             overflow-x: auto;
         }
         .code-block code {
-            font-family: var(--font-mono);
             font-size: var(--font-size-xs);
             color: #9cdcfe;
             line-height: 1.7;
             white-space: pre;
             display: block;
         }
-        .code-block code .comment { color: var(--color-accent-green); font-style: italic; }
+        .code-block code .comment { color: var(--green); font-style: italic; }
         .code-block code .value   { color: #4ec9b0; }
         .code-block code .flag    { color: #ce9178; }
 
         code {
-            font-family: var(--font-mono);
             font-size: 0.875em;
-            color: var(--color-accent-secondary);
-            background: var(--color-bg-tertiary);
+            color: var(--green);
+            background: var(--bg-elev);
             padding: 0.1em 0.35em;
             border-radius: var(--radius-sm);
         }
 
-        /* ==================== Skills List ==================== */
-        .skills-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-xs);
-            list-style: none;
-            padding: 0;
-        }
+        /* ==================== Skills ==================== */
+        .skills-list { display: flex; flex-wrap: wrap; gap: var(--space-xs); list-style: none; padding: 0; }
         .skill-badge {
-            font-family: var(--font-mono);
             font-size: var(--font-size-xs);
-            background: var(--color-bg-tertiary);
-            color: var(--color-accent-secondary);
+            background: var(--bg-elev);
+            color: var(--green);
             padding: 0.4rem 0.8rem;
             border-radius: var(--radius-sm);
-            border: 1px solid var(--color-border);
+            border: 1px solid var(--border);
         }
 
         /* ==================== Footer ==================== */
@@ -370,24 +199,24 @@
             max-width: 900px;
             margin: var(--space-2xl) auto 0;
             padding: var(--space-xl) var(--space-md);
-            border-top: 1px solid var(--color-border);
+            border-top: 1px solid var(--border);
         }
         .footer-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: var(--color-text-secondary);
+            color: var(--fg-dim);
             font-size: var(--font-size-sm);
         }
         .footer-links { display: flex; gap: var(--space-lg); }
         .footer-links a {
-            color: var(--color-text-secondary);
+            color: var(--fg-dim);
             text-decoration: none;
             transition: color 0.2s;
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
         }
-        .footer-links a:hover { color: var(--color-text-primary); }
+        .footer-links a:hover { color: var(--fg); }
 
         /* ==================== Responsive ==================== */
         @media (max-width: 768px) {
@@ -397,7 +226,6 @@
             .footer-content { flex-direction: column; gap: var(--space-md); text-align: center; }
         }
 
-        /* ==================== Sub-480px ==================== */
         @media (max-width: 480px) {
             main { padding: var(--space-md) var(--space-sm); }
             .incident-card { padding: var(--space-md); }
@@ -411,8 +239,8 @@
 
     <header>
         <nav aria-label="Main navigation">
-            <a href="/" class="logo">nate</a>
-            <a href="/" class="back-link">Back</a>
+            <a href="/" class="logo"><span class="logo-user">nate</span><span class="logo-at">@</span><span class="logo-host">seggsy</span><span class="logo-path">:~/projects</span><span class="logo-dollar"> $</span></a>
+            <a href="/" class="back-link">back to terminal</a>
         </nav>
     </header>
 
