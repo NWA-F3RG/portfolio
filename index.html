@@ -92,7 +92,7 @@
      BOOT SCREEN
      ================================================================= */
   .boot {
-    padding: 24px 32px 140px 32px;
+    padding: 24px 32px 24px 32px;
     background: var(--bg-deep);
     min-height: 100vh;
     font-size: 13.5px;
@@ -161,6 +161,11 @@
     gap: 0;
     font-size: 14px;
     margin: 8px 0 4px 0;
+    position: sticky;
+    bottom: 52px;
+    background: var(--bg-deep);
+    z-index: 50;
+    padding: 4px 0;
   }
 
   .p-user   { color: var(--green); }
@@ -264,6 +269,7 @@
   .sc-row .dot.g { color: var(--green); }
   .sc-row .dot.y { color: var(--yellow); }
   .sc-row .dot.d { color: var(--fg-dim); }
+  .sc-row .dot.c { color: var(--cyan); }
   .sc-row .name  { color: var(--fg); }
   .sc-row .state { font-size: 11.5px; color: var(--fg-dim); }
   .sc-row .state.a { color: var(--green); }
@@ -407,7 +413,8 @@
   /* Mobile — 700px */
   @media (max-width: 700px) {
     html, body { overflow-x: hidden; }
-    .boot, .app { padding: 16px 14px 150px 14px; font-size: 12px; }
+    .boot { padding: 16px 14px 16px 14px; font-size: 12px; }
+    .app  { padding: 16px 14px 150px 14px; font-size: 12px; }
     /* Boot lines: pre-wrap so long lines wrap instead of overflow */
     .boot-line { white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; }
     .neofetch { flex-direction: column; gap: 10px; }
@@ -421,7 +428,7 @@
     .palette-label { display: none; }
     .chip { padding: 4px 9px; font-size: 11px; }
     .chip.icon { margin-left: 0; }
-    .prompt-line { font-size: 13px; }
+    .prompt-line { font-size: 13px; bottom: 40px; }
     .output { font-size: 12px; }
     /* Prevent iOS Safari auto-zoom (triggers on any input < 16px) */
     .prompt-input, .ssh-field { font-size: 16px; }
@@ -429,7 +436,8 @@
 
   /* Very small screens — 420px */
   @media (max-width: 420px) {
-    .boot, .app { padding: 12px 12px 160px 12px; font-size: 11px; }
+    .boot { padding: 12px 12px 12px 12px; font-size: 11px; }
+    .app  { padding: 12px 12px 160px 12px; font-size: 11px; }
     .ts { display: none; }        /* hide [timestamp] prefixes — too wide */
     .neofetch-art { display: none; } /* ASCII art not readable at this size */
     .chip { padding: 3px 7px; font-size: 10.5px; }
@@ -486,9 +494,11 @@
 <div class="palette" id="palette" style="display:none;">
   <span class="palette-label">// click or type</span>
   <button class="chip" data-cmd="me"><span class="key">me</span><span class="chip-desc"> — bio</span></button>
+  <button class="chip" data-cmd="motd"><span class="key">motd</span><span class="chip-desc"> — ethos</span></button>
   <button class="chip" data-cmd="ls"><span class="key">ls</span><span class="chip-desc"> — projects</span></button>
   <button class="chip" data-cmd="cat resume"><span class="key">cat resume</span></button>
-  <button class="chip" data-cmd="tree"><span class="key">tree</span></button>
+  <button class="chip" data-cmd="cat homelab-highlights"><span class="key">homelab</span><span class="chip-desc"> — logs</span></button>
+  <button class="chip" data-cmd="cat work-highlights"><span class="key">work</span><span class="chip-desc"> — examples</span></button>
   <button class="chip" data-cmd="dig"><span class="key">dig</span><span class="chip-desc"> — contact</span></button>
   <button class="chip" data-cmd="ssh"><span class="key">ssh</span><span class="chip-desc"> — msg</span></button>
   <button class="chip" data-cmd="gui"><span class="key">gui</span><span class="chip-desc"> — readable</span></button>
@@ -650,11 +660,13 @@ const BOOT_LINES = [
   { d: 4900, c: 'fg',   t: '' },
   { d: 5050, c: 'dim',  t: 'Last login: Wed May 14 09:42:08 on ttys003' },
   { d: 5200, c: 'fg',   t: '' },
-  { d: 5350, prompt: true, cmd: 'neofetch' },
-  { d: 5550, neofetch: true },
-  { d: 6800, prompt: true, cmd: 'ls projects/' },
-  { d: 7000, projectList: true },
-  { d: 7800, dropToShell: true }
+  { d: 5350, prompt: true, cmd: 'cat /etc/motd' },
+  { d: 5500, motd: true },
+  { d: 6200, prompt: true, cmd: 'neofetch' },
+  { d: 6400, neofetch: true },
+  { d: 7700, prompt: true, cmd: 'ls projects/' },
+  { d: 7900, projectList: true },
+  { d: 8700, dropToShell: true }
 ];
 
 // =================================================================
@@ -674,6 +686,21 @@ function renderPromptLine(cmd) {
   return '<span class="p-user">nate</span><span class="p-at">@</span><span class="p-host">seggsy</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-branch">(main)</span><span class="p-sigil">$</span> ' + cmd;
 }
 
+function renderMotd() {
+  return '<div class="boot-line" style="margin:4px 0;">' +
+    '<span class="dim">─────────────────────────────────────────────────────────────────────────</span>\n' +
+    '  <span class="hl">Building</span>     infrastructure.\n' +
+    '  <span class="hl">Documenting</span>  everything.\n' +
+    '  <span class="hl">Learning</span>     constantly.\n\n' +
+    '  <span class="dim">I\'m obsessed with understanding how things actually work. My homelab</span>\n' +
+    '  <span class="dim">isn\'t just a collection of services — it\'s where I break things, fix</span>\n' +
+    '  <span class="dim">them, and document every step so I can do it better next time. I build</span>\n' +
+    '  <span class="dim">SSO auth, automated backups, and clustering because it\'s the best way</span>\n' +
+    '  <span class="dim">I\'ve found to actually understand infrastructure.</span>\n' +
+    '<span class="dim">─────────────────────────────────────────────────────────────────────────</span>' +
+    '</div>';
+}
+
 function renderProjectList() {
   return '<div class="output">' +
     '<div class="sc-row" data-cmd="cat authentik-sso"><span class="dot g">●</span><span class="name">authentik-sso.service</span><span class="state a">active (running)</span><span class="when">2mo ago</span></div>' +
@@ -682,7 +709,10 @@ function renderProjectList() {
     '<div class="sc-row" data-cmd="cat ssh-hardening"><span class="dot g">●</span><span class="name">ssh-hardening.service</span><span class="state a">active (running)</span><span class="when">3mo ago</span></div>' +
     '<div class="sc-row" data-cmd="cat k3s-cluster"><span class="dot y">◐</span><span class="name">k3s-cluster.service</span><span class="state w">activating (in progress)</span><span class="when">—</span></div>' +
     '<div class="sc-row" data-cmd="cat rhcsa-prep"><span class="dot y">◐</span><span class="name">rhcsa-prep.service</span><span class="state w">activating (studying)</span><span class="when">—</span></div>' +
-    '<div style="margin-top:8px;font-size:11.5px;" class="dim">6 loaded units. Click a row or type <span class="hl">cat &lt;project-name&gt;</span> for details.</div>' +
+    '<div class="dim" style="font-size:11px;padding:5px 4px 3px;">──── notes &amp; examples ────</div>' +
+    '<div class="sc-row" data-cmd="cat homelab-highlights"><span class="dot c">◈</span><span class="name">homelab-highlights.log</span><span class="state a">active (logging)</span><span class="when">ongoing</span></div>' +
+    '<div class="sc-row" data-cmd="cat work-highlights"><span class="dot c">◈</span><span class="name">work-highlights.log</span><span class="state a">active</span><span class="when">ongoing</span></div>' +
+    '<div style="margin-top:8px;font-size:11.5px;" class="dim">8 loaded units. Click a row or type <span class="hl">cat &lt;name&gt;</span> for details.</div>' +
     '</div>';
 }
 
@@ -738,6 +768,16 @@ function startBoot() {
         emitBootLine(bracket + ' ' + label + ' <span class="' + cls + '">' + line.svc + '</span>.');
         return;
       }
+      if (line.motd) {
+        var motdOut = document.getElementById('boot-output');
+        var motdDiv = document.createElement('div');
+        motdDiv.className = 'boot-line';
+        motdDiv.id = 'boot-motd-anchor';
+        motdDiv.innerHTML = renderMotd();
+        motdOut.appendChild(motdDiv);
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+        return;
+      }
       if (line.neofetch) {
         var nfOut = document.getElementById('boot-output');
         var nfDiv = document.createElement('div');
@@ -787,14 +827,16 @@ function completeBoot() {
   try { localStorage.setItem(BOOT_KEY, '1'); } catch(e) {}
   document.getElementById('skip-boot').style.display = 'none';
 
-  // The boot animation already rendered neofetch + ls — no duplication needed.
-  // Show the prompt below the boot history and scroll so neofetch is at the top.
+  document.getElementById('app-output').innerHTML =
+    '<div class="boot-line">' + renderPromptLine('cat /etc/motd') + '</div>' +
+    renderMotd();
+
   document.getElementById('app').classList.add('visible');
   document.getElementById('palette').style.display = 'flex';
 
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
-      var anchor = document.getElementById('boot-neofetch-anchor');
+      var anchor = document.getElementById('boot-motd-anchor');
       if (anchor) anchor.scrollIntoView({ behavior: 'instant', block: 'start' });
       document.getElementById('prompt-input').focus();
     });
@@ -806,6 +848,8 @@ function skipBoot() {
   bootTimeouts = [];
   var appOut = document.getElementById('app-output');
   appOut.innerHTML =
+    '<div class="boot-line">' + renderPromptLine('cat /etc/motd') + '</div>' +
+    renderMotd() +
     '<div class="boot-line">' + renderPromptLine('neofetch') + '</div>' +
     neofetchHtml() +
     '<div class="boot-line">' + renderPromptLine('ls projects/') + '</div>' +
@@ -824,13 +868,17 @@ document.getElementById('skip-boot').addEventListener('click', skipBoot);
 // =================================================================
 // COMMANDS
 // =================================================================
-function printOutput(html) {
+function printOutput(html, topAlign) {
   var div = document.createElement('div');
   div.innerHTML = html;
   document.getElementById('app-output').appendChild(div);
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
-      document.getElementById('active-prompt').scrollIntoView({ behavior: 'instant', block: 'nearest' });
+      if (topAlign) {
+        div.scrollIntoView({ behavior: 'instant', block: 'start' });
+      } else {
+        document.getElementById('active-prompt').scrollIntoView({ behavior: 'instant', block: 'nearest' });
+      }
     });
   });
 }
@@ -861,15 +909,29 @@ var COMMANDS = {
     "about platform engineering by breaking things on purpose and writing down what\n" +
     "happened. I'm open to the right role in Austin, ideally moving toward platform\n" +
     "or systems work. Type <span class=\"accent\">'dig'</span> to reach me." +
-    '</div>'); },
+    '</div>', true); },
 
   'whoami': function() { COMMANDS['me'](); },
   'about':  function() { COMMANDS['me'](); },
+
+  'cat /etc/motd': function() { printOutput(renderMotd()); },
+  'motd': function() { printOutput(renderMotd()); },
 
   'ls': function() { printOutput(renderProjectList()); },
   'projects': function() { COMMANDS['ls'](); },
 
   'cat resume': function() { printOutput('<div class="output">' +
+    '<span class="heading">▸ From <span class="hl">restaurants</span> to <span class="hl">infrastructure</span></span>\n\n' +
+    'Picture a restaurant. A networking tech is running cable while someone\n' +
+    'watches every move, asking what each port does and why the switch matters.\n' +
+    'Not another engineer — the general manager. That was me three years ago,\n' +
+    'and that moment rewired my career. I started building home labs after my\n' +
+    'shifts, teaching myself the systems I\'d spent years walking past. When a\n' +
+    'former colleague saw my name on a help desk application, he vouched for me\n' +
+    'without hesitation, zero IT experience and all. Three companies, 350+\n' +
+    'users, and countless solved tickets later, I\'m ready to move from fixing\n' +
+    'what\'s broken to building infrastructure that doesn\'t break.\n\n' +
+    '<span class="dim">────────────────────────────────────────────────────────────</span>\n\n' +
     '<span class="heading">▸ resume — nate nwaeze</span>\n\n' +
     '<span class="ok">●</span> <span class="hl">The Zebra</span> — IT Support Engineer II <span class="sub">· 2026–present</span>\n' +
     '  · 10–15 escalated tickets/day · 99% SLA · top 3 on team for resolution speed\n' +
@@ -890,7 +952,7 @@ var COMMANDS = {
     '<span class="sub">▸ Stack: M365 · Entra ID · AD · Exchange Online · PowerShell · Intune · Jamf\n' +
     '         Okta · Authentik · Proxmox · Prometheus · Grafana · Loki · CyberArk</span>\n\n' +
     '<span class="sub">▸ Full page: <a href="/resume">seggsy.co/resume</a></span>' +
-    '</div>'); },
+    '</div>', true); },
 
   'resume': function() { COMMANDS['cat resume'](); },
 
@@ -947,6 +1009,10 @@ var COMMANDS = {
     'Adding TOTP/WebAuthn second factor to Authentik SSO for enhanced\nsecurity across all protected applications.',
     ['authentik', 'totp', 'webauthn'],
     'wip', 'activating (in progress)')); },
+
+  // Bare-noun aliases for homelab/work chips
+  'homelab': function() { COMMANDS['cat homelab-highlights'](); },
+  'work':    function() { COMMANDS['cat work-highlights'](); },
 
   // Chip-label aliases — users may type what they read on the palette
   'me bio':       function() { COMMANDS['me'](); },
@@ -1044,6 +1110,7 @@ var COMMANDS = {
   'reboot': function() {
     document.getElementById('app').classList.remove('visible');
     document.getElementById('palette').style.display = 'none';
+    document.getElementById('app-output').innerHTML = '';
     try { localStorage.removeItem(BOOT_KEY); } catch(e) {}
     bootTimeouts.forEach(function(t) { clearTimeout(t); }); bootTimeouts = [];
     document.getElementById('boot-output').innerHTML = '';
@@ -1060,6 +1127,7 @@ var COMMANDS = {
     '<span class="heading">▸ available commands</span>\n\n' +
     '<div style="display:grid;grid-template-columns:140px 1fr;gap:4px 16px;margin-top:8px;">' +
     '<span class="accent">me</span><span class="sub">about nate</span>' +
+    '<span class="accent">motd</span><span class="sub">building. documenting. learning.</span>' +
     '<span class="accent">ls</span><span class="sub">list projects (systemctl-style)</span>' +
     '<span class="accent">cat &lt;project&gt;</span><span class="sub">read a project — authentik-sso, monitoring-stack, pbs-storage, ssh-hardening</span>' +
     '<span class="accent">cat resume</span><span class="sub">career history</span>' +
