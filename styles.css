@@ -77,7 +77,7 @@ html { scroll-behavior: smooth; }
 /* ==================== Base ==================== */
 body {
     font-family: var(--font);
-    background: var(--bg);
+    background: var(--bg-code);
     color: var(--fg);
     line-height: 1.65;
     font-size: 15px;
