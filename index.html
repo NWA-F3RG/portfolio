@@ -199,6 +199,7 @@
   .cursor.input-cursor { margin-left: 2px; }
 
   @keyframes blink { 50% { opacity: 0; } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   /* =================================================================
      COMMAND OUTPUT
@@ -382,22 +383,38 @@
     padding: 20px 32px 100px 32px;
     min-height: 100vh;
   }
-  .app.visible { display: block; }
+  .app.visible { display: block; animation: fadeIn 0.35s ease; }
 
-  /* Mobile */
+  /* Mobile — 700px */
   @media (max-width: 700px) {
-    .boot, .app { padding: 16px 16px 140px 16px; font-size: 12.5px; }
-    .neofetch { flex-direction: column; gap: 12px; }
-    .neofetch-art { font-size: 10px; }
-    .neofetch-info .row .k { min-width: 70px; font-size: 12px; }
+    html, body { overflow-x: hidden; }
+    .boot, .app { padding: 16px 14px 150px 14px; font-size: 12px; }
+    /* Boot lines: pre-wrap so long lines wrap instead of overflow */
+    .boot-line { white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; }
+    .neofetch { flex-direction: column; gap: 10px; }
+    .neofetch-art { font-size: 9px; line-height: 1.15; }
+    .neofetch-info { font-size: 12px; }
+    .neofetch-info .row .k { min-width: 64px; }
+    .neofetch-info .row .v { word-break: break-word; }
     .sc-row { grid-template-columns: 16px 1fr; gap: 8px; }
     .sc-row .state, .sc-row .when { display: none; }
     .palette { padding: 8px 10px; gap: 4px; }
     .palette-label { display: none; }
     .chip { padding: 4px 9px; font-size: 11px; }
+    .chip.icon { margin-left: 0; }
+    .prompt-line { font-size: 13px; }
+    .output { font-size: 12px; }
   }
 
-  @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+  /* Very small screens — 420px */
+  @media (max-width: 420px) {
+    .boot, .app { padding: 12px 12px 160px 12px; font-size: 11px; }
+    .ts { display: none; }        /* hide [timestamp] prefixes — too wide */
+    .neofetch-art { display: none; } /* ASCII art not readable at this size */
+    .chip { padding: 3px 7px; font-size: 10.5px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { .cursor, .app.visible { animation: none; } }
 
   *:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
   *:focus:not(:focus-visible) { outline: none; }
@@ -729,17 +746,18 @@ function startBoot() {
 
 function completeBoot() {
   try { localStorage.setItem(BOOT_KEY, '1'); } catch(e) {}
-  var bootOut = document.getElementById('boot-output');
-  var appOut  = document.getElementById('app-output');
-  appOut.innerHTML = bootOut.innerHTML;
+  var appOut = document.getElementById('app-output');
+  appOut.innerHTML =
+    '<div class="boot-line">' + renderPromptLine('neofetch') + '</div>' +
+    neofetchHtml() +
+    '<div class="boot-line">' + renderPromptLine('ls projects/') + '</div>' +
+    renderProjectList();
   document.getElementById('boot').style.display = 'none';
   document.getElementById('skip-boot').style.display = 'none';
+  window.scrollTo(0, 0);
   document.getElementById('app').classList.add('visible');
   document.getElementById('palette').style.display = 'flex';
   document.getElementById('prompt-input').focus();
-  setTimeout(function() {
-    document.getElementById('active-prompt').scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, 100);
 }
 
 function skipBoot() {
@@ -753,6 +771,7 @@ function skipBoot() {
     renderProjectList();
   document.getElementById('boot').style.display = 'none';
   document.getElementById('skip-boot').style.display = 'none';
+  window.scrollTo(0, 0);
   document.getElementById('app').classList.add('visible');
   document.getElementById('palette').style.display = 'flex';
   try { localStorage.setItem(BOOT_KEY, '1'); } catch(e) {}
@@ -768,9 +787,9 @@ function printOutput(html) {
   var div = document.createElement('div');
   div.innerHTML = html;
   document.getElementById('app-output').appendChild(div);
-  setTimeout(function() {
-    document.getElementById('active-prompt').scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, 50);
+  requestAnimationFrame(function() {
+    document.getElementById('active-prompt').scrollIntoView({ behavior: 'instant', block: 'end' });
+  });
 }
 
 function catProject(slug, title, desc, stack, time, state) {
