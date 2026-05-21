@@ -107,6 +107,7 @@
   }
 
   .boot-line.empty { height: 1.45em; }
+  .boot-line.motd-body-wrap { white-space: pre-wrap; word-wrap: break-word; }
 
   .ts      { color: var(--fg-dim); }
   .ok      { color: var(--green); }
@@ -409,7 +410,9 @@
     padding: 20px 32px 100px 32px;
     min-height: 100vh;
   }
-  .app.visible { display: block; animation: fadeIn 0.35s ease; }
+  .boot.fading { opacity: 0; transition: opacity 1.2s ease-out; }
+  .app.visible { display: block; opacity: 0; animation: fadeInSlow 1s ease-in 0.3s forwards; }
+  @keyframes fadeInSlow { from { opacity: 0; } to { opacity: 1; } }
 
   /* Mobile — 700px */
   @media (max-width: 700px) {
@@ -455,7 +458,10 @@
     outline: none;
   }
 
-  @media (prefers-reduced-motion: reduce) { .cursor, .app.visible { animation: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .cursor, .app.visible { animation: none; opacity: 1; }
+    .boot.fading { transition: none; }
+  }
 
   *:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
   *:focus:not(:focus-visible) { outline: none; }
@@ -700,12 +706,14 @@ const BOOT_LINES = [
   { d: 5050, c: 'dim',  t: 'Last login: Wed May 14 09:42:08 on ttys003' },
   { d: 5200, c: 'fg',   t: '' },
   { d: 5350, prompt: true, cmd: 'cat /etc/motd' },
-  { d: 5500, motd: true },
-  { d: 6200, prompt: true, cmd: 'neofetch' },
-  { d: 6400, neofetch: true },
-  { d: 7700, prompt: true, cmd: 'ls projects/' },
-  { d: 7900, projectList: true },
-  { d: 8700, dropToShell: true }
+  // — MOTD theatrical reveal —
+  { d: 5500, motdRule: true },
+  { d: 5900, motdBody: true, charInterval: 49, periodPause: 1500, text: "I'm obsessed with understanding how things actually work. My homelab isn't just a collection of services \u2014 it's where I break things, fix them, and document every step so I can do it better next time. I build SSO auth, automated backups, and clustering because it's the best way I've found to actually understand infrastructure." },
+  { d: 28500, motdTagline: true, hl: 'Building',    rest: ' infrastructure.', typeDur: 1200, dotPause: 0, dotCount: 0, dotInterval: 0 },
+  { d: 31200, motdTagline: true, hl: 'Documenting', rest: ' everything.',     typeDur: 1300, dotPause: 0, dotCount: 0, dotInterval: 0 },
+  { d: 34000, motdTagline: true, hl: 'Learning',    rest: ' constantly.',     typeDur: 1200, dotPause: 0, dotCount: 0, dotInterval: 0 },
+  { d: 36500, motdCrescendo: true, dotCount: 35, startInterval: 220, endInterval: 30 },
+  { d: 40500, dropToShell: true }
 ];
 
 // =================================================================
@@ -727,16 +735,15 @@ function renderPromptLine(cmd) {
 
 function renderMotd() {
   return '<div class="boot-line" style="margin:4px 0;">' +
-    '<span class="dim">─────────────────────────────────────────────────────────────────────────</span>\n' +
-    '  <span class="hl">Building</span>     infrastructure.\n' +
-    '  <span class="hl">Documenting</span>  everything.\n' +
-    '  <span class="hl">Learning</span>     constantly.\n\n' +
-    '  <span class="dim">I\'m obsessed with understanding how things actually work. My homelab</span>\n' +
-    '  <span class="dim">isn\'t just a collection of services — it\'s where I break things, fix</span>\n' +
-    '  <span class="dim">them, and document every step so I can do it better next time. I build</span>\n' +
-    '  <span class="dim">SSO auth, automated backups, and clustering because it\'s the best way</span>\n' +
-    '  <span class="dim">I\'ve found to actually understand infrastructure.</span>\n' +
     '<span class="dim">─────────────────────────────────────────────────────────────────────────</span>' +
+    '</div>' +
+    '<div class="boot-line motd-body-wrap" style="margin-bottom:6px;">' +
+    '  <span class="dim">I\'m obsessed with understanding how things actually work. My homelab isn\'t just a collection of services — it\'s where I break things, fix them, and document every step so I can do it better next time. I build SSO auth, automated backups, and clustering because it\'s the best way I\'ve found to actually understand infrastructure.</span>' +
+    '</div>' +
+    '<div class="boot-line">' +
+    '  <span class="hl">Building</span> infrastructure.\n' +
+    '  <span class="hl">Documenting</span> everything.\n' +
+    '  <span class="hl">Learning</span> constantly.' +
     '</div>';
 }
 
@@ -817,6 +824,107 @@ function startBoot() {
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
         return;
       }
+      if (line.motdRule) {
+        var rDiv = document.createElement('div');
+        rDiv.className = 'boot-line';
+        if (!document.getElementById('boot-motd-anchor')) {
+          rDiv.id = 'boot-motd-anchor';
+        }
+        rDiv.innerHTML = '<span class="dim">─────────────────────────────────────────────────────────────────────────</span>';
+        document.getElementById('boot-output').appendChild(rDiv);
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+        return;
+      }
+      if (line.motdBody) {
+        var charMs = line.charInterval;
+        var pauseMs = line.periodPause;
+        var bDiv = document.createElement('div');
+        bDiv.className = 'boot-line motd-body-wrap';
+        bDiv.innerHTML = '  <span class="dim" id="motd-body-text"></span>';
+        document.getElementById('boot-output').appendChild(bDiv);
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+        var chars = line.text.split('');
+        var elapsed = 0;
+        chars.forEach(function(ch, ci) {
+          elapsed += charMs;
+          (function(t, c) {
+            bootTimeouts.push(setTimeout(function() {
+              var el = document.getElementById('motd-body-text');
+              if (el) {
+                el.textContent += c;
+                keyClack();
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+              }
+            }, t));
+          })(elapsed, ch);
+          if (ch === '.' && (ci === chars.length - 1 || chars[ci + 1] === ' ')) {
+            elapsed += pauseMs;
+          }
+        });
+        return;
+      }
+      if (line.motdTagline) {
+        var tDiv = document.createElement('div');
+        tDiv.className = 'boot-line';
+        tDiv.innerHTML = '  <span class="hl motd-tl-hl"></span><span class="motd-tl-rest"></span><span class="dim motd-tl-dots"></span>';
+        document.getElementById('boot-output').appendChild(tDiv);
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+        var hlTarget = tDiv.querySelector('.motd-tl-hl');
+        var restTarget = tDiv.querySelector('.motd-tl-rest');
+        var dotsTarget = tDiv.querySelector('.motd-tl-dots');
+        var hlChars = line.hl.split('');
+        var restChars = line.rest.split('');
+        var allChars = hlChars.concat(restChars);
+        var charInterval = line.typeDur / allChars.length;
+        var offset = 0;
+        hlChars.forEach(function(ch, i) {
+          bootTimeouts.push(setTimeout(function() {
+            hlTarget.textContent += ch;
+            keyClack();
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+          }, i * charInterval));
+        });
+        offset = hlChars.length * charInterval;
+        restChars.forEach(function(ch, i) {
+          bootTimeouts.push(setTimeout(function() {
+            restTarget.textContent += ch;
+            keyClack();
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+          }, offset + i * charInterval));
+        });
+        offset += restChars.length * charInterval;
+        var dotStart = offset + line.dotPause;
+        for (var d = 0; d < line.dotCount; d++) {
+          (function(idx) {
+            bootTimeouts.push(setTimeout(function() {
+              dotsTarget.textContent += '.';
+              keyClack();
+            }, dotStart + idx * line.dotInterval));
+          })(d);
+        }
+        return;
+      }
+      if (line.motdCrescendo) {
+        var cDiv = document.createElement('div');
+        cDiv.className = 'boot-line';
+        cDiv.innerHTML = '  <span class="dim motd-cresc-target"></span>';
+        document.getElementById('boot-output').appendChild(cDiv);
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+        var cTarget = cDiv.querySelector('.motd-cresc-target');
+        var elapsed = 0;
+        for (var ci = 0; ci < line.dotCount; ci++) {
+          var progress = ci / (line.dotCount - 1);
+          var interval = line.startInterval + (line.endInterval - line.startInterval) * progress;
+          (function(ms) {
+            bootTimeouts.push(setTimeout(function() {
+              cTarget.textContent += '.';
+              keyClack();
+            }, ms));
+          })(elapsed);
+          elapsed += interval;
+        }
+        return;
+      }
       if (line.neofetch) {
         var nfOut = document.getElementById('boot-output');
         var nfDiv = document.createElement('div');
@@ -866,20 +974,28 @@ function completeBoot() {
   try { localStorage.setItem(BOOT_KEY, '1'); } catch(e) {}
   document.getElementById('skip-boot').style.display = 'none';
 
+  // Prepare app content while boot is still showing
   document.getElementById('app-output').innerHTML =
     '<div class="boot-line">' + renderPromptLine('cat /etc/motd') + '</div>' +
     renderMotd();
 
-  document.getElementById('app').classList.add('visible');
-  document.getElementById('palette').style.display = 'flex';
+  // Fade out boot screen
+  var bootEl = document.getElementById('boot');
+  bootEl.classList.add('fading');
 
-  requestAnimationFrame(function() {
+  // After boot fades out, hide it and reveal the app
+  bootTimeouts.push(setTimeout(function() {
+    bootEl.style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    document.getElementById('palette').style.display = 'flex';
+    window.scrollTo(0, 0);
+
     requestAnimationFrame(function() {
-      var anchor = document.getElementById('boot-motd-anchor');
-      if (anchor) anchor.scrollIntoView({ behavior: 'instant', block: 'start' });
-      document.getElementById('prompt-input').focus();
+      requestAnimationFrame(function() {
+        document.getElementById('prompt-input').focus();
+      });
     });
-  });
+  }, 1300));
 }
 
 function skipBoot() {
