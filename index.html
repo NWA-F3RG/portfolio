@@ -225,6 +225,27 @@
 
   @keyframes blink { 50% { opacity: 0; } }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes bootSlideUp {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-100%); }
+  }
+  .boot-exiting {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 10;
+    animation: bootSlideUp 420ms cubic-bezier(0.7, 0, 1, 1) forwards;
+    will-change: transform;
+  }
+  /* Standalone blinking cursor that appears when shell claims the TTY */
+  .shell-drop-cursor {
+    display: inline-block;
+    width: 0.55em;
+    height: 1em;
+    background: var(--green);
+    vertical-align: text-bottom;
+    animation: blink 1.1s step-end infinite;
+  }
 
   .type-cursor {
     display: inline-block;
@@ -455,7 +476,7 @@
     min-height: 100vh;
   }
   .boot.fading { opacity: 0; transition: opacity 1.2s ease-out; }
-  .app.visible { display: block; opacity: 0; animation: fadeInSlow 1s ease-in 0.3s forwards; }
+  .app.visible { display: block; opacity: 0; animation: fadeInSlow 0.35s ease-in 0.15s forwards; }
   @keyframes fadeInSlow { from { opacity: 0; } to { opacity: 1; } }
 
   /* Mobile — 700px */
@@ -503,7 +524,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .cursor, .app.visible { animation: none; opacity: 1; }
+    .cursor, .app.visible, .boot-exiting { animation: none; opacity: 1; }
     .boot.fading { transition: none; }
   }
 
@@ -1010,28 +1031,106 @@ function startBoot() {
 function completeBoot() {
   try { localStorage.setItem(BOOT_KEY, '1'); } catch(e) {}
 
-  // Prepare app content while boot is still showing
   document.getElementById('app-output').innerHTML =
     '<div class="boot-line">' + renderPromptLine('cat /etc/motd') + '</div>' +
     renderMotd();
 
-  // Fade out boot screen
-  var bootEl = document.getElementById('boot');
-  bootEl.classList.add('fading');
+  var boot    = document.getElementById('boot');
+  var bootOut = document.getElementById('boot-output');
+  var app     = document.getElementById('app');
 
-  // After boot fades out, hide it and reveal the app
-  bootTimeouts.push(setTimeout(function() {
-    bootEl.style.display = 'none';
-    document.getElementById('app').classList.add('visible');
+  function revealApp() {
     document.getElementById('palette').style.display = 'flex';
-    window.scrollTo(0, 0);
-
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
         document.getElementById('prompt-input').focus();
       });
     });
-  }, 1300));
+  }
+
+  // Reduced-motion: instant swap, no animation
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    boot.style.display = 'none';
+    app.classList.add('visible');
+    revealApp();
+    return;
+  }
+
+  // --- Theatrical shell-drop sequence ---
+  //
+  // Phase 1 (400ms pause): silence after the boot sequence ends — the weight
+  // of the system finishing its work before handing off to the user.
+  //
+  // Phase 2 (850ms cursor): a standalone blinking prompt cursor appears.
+  // This is the TTY being claimed by the shell — the moment the system
+  // transitions from init-land to user-land. Nothing happens yet.
+  //
+  // Phase 3 (3 × 110ms): PAM/logind auth lines bleed through, exactly as
+  // they do on a real Linux login. The system acknowledging the session.
+  //
+  // Phase 4: green phosphor bloom fades in and out over the transition —
+  // the CRT tube getting new content. Boot slides up, app fades in beneath.
+
+  var PAM_LINES = [
+    { ts: '[38.011234]', c: 'dim',  t: ' pam_unix(login:session): session opened for user nate (uid=0 by LOGIN(uid=0))' },
+    { ts: '[38.014891]', c: 'info', t: ' systemd-logind[1]: New session 1 of user nate.' },
+    { ts: '[38.017443]', c: 'fg',   t: ' systemd[1]: Started session-1.scope - Session 1 of User nate.' },
+  ];
+
+  // Phase 1: pause
+  bootTimeouts.push(setTimeout(function() {
+
+    // Phase 2: shell claims the TTY — standalone blinking cursor
+    var cursorLine = document.createElement('div');
+    cursorLine.className = 'boot-line';
+    cursorLine.innerHTML = renderPromptLine('') + '<span class="shell-drop-cursor"></span>';
+    bootOut.appendChild(cursorLine);
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+
+    // Phase 3: PAM/logind messages bleed through
+    bootTimeouts.push(setTimeout(function() {
+      PAM_LINES.forEach(function(line, i) {
+        bootTimeouts.push(setTimeout(function() {
+          var div = document.createElement('div');
+          div.className = 'boot-line';
+          div.innerHTML = '<span class="ts">' + line.ts + '</span>'
+                        + '<span class="' + line.c + '">' + line.t + '</span>';
+          bootOut.appendChild(div);
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+        }, i * 110));
+      });
+
+      // Phase 4: phosphor bloom + slide
+      bootTimeouts.push(setTimeout(function() {
+        // Green phosphor bloom — CRT getting new content
+        var flash = document.createElement('div');
+        flash.style.cssText = 'position:fixed;inset:0;z-index:15;background:rgba(166,226,46,0.10);'
+                            + 'pointer-events:none;transition:opacity 500ms ease';
+        document.body.appendChild(flash);
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            flash.style.opacity = '0';
+            setTimeout(function() { if (flash.parentNode) flash.parentNode.removeChild(flash); }, 550);
+          });
+        });
+
+        // Freeze cursor blink so it doesn't flicker mid-slide
+        var dropCursor = bootOut.querySelector('.shell-drop-cursor');
+        if (dropCursor) dropCursor.style.animation = 'none';
+
+        window.scrollTo(0, 0);
+        app.classList.add('visible');
+        boot.classList.add('boot-exiting');
+
+        bootTimeouts.push(setTimeout(function() {
+          boot.style.display = 'none';
+          boot.classList.remove('boot-exiting');
+          revealApp();
+        }, 460));
+
+      }, PAM_LINES.length * 110 + 220)); // last PAM line + brief pause
+    }, 850)); // cursor sits for ~850ms — deliberate, weighted
+  }, 400)); // silence after boot ends
 }
 
 function skipBoot() {
