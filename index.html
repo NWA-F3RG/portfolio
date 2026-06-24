@@ -817,12 +817,13 @@ function renderProjectList() {
     '<div class="sc-row" data-cmd="cat pbs-storage"><span class="dot g">●</span><span class="name">pbs-storage.service</span><span class="state a">active (running)</span><span class="when">3mo ago</span></div>' +
     '<div class="sc-row" data-cmd="cat monitoring-stack"><span class="dot g">●</span><span class="name">monitoring-stack.service</span><span class="state a">active (running)</span><span class="when">2mo ago</span></div>' +
     '<div class="sc-row" data-cmd="cat ssh-hardening"><span class="dot g">●</span><span class="name">ssh-hardening.service</span><span class="state a">active (running)</span><span class="when">3mo ago</span></div>' +
+    '<div class="sc-row" data-cmd="cat ci-cd-pipeline"><span class="dot g">●</span><span class="name">ci-cd-pipeline.service</span><span class="state a">active (running)</span><span class="when">4mo ago</span></div>' +
     '<div class="sc-row" data-cmd="cat k3s-cluster"><span class="dot y">◐</span><span class="name">k3s-cluster.service</span><span class="state w">activating (in progress)</span><span class="when">—</span></div>' +
     '<div class="sc-row" data-cmd="cat rhcsa-prep"><span class="dot y">◐</span><span class="name">rhcsa-prep.service</span><span class="state w">activating (studying)</span><span class="when">—</span></div>' +
     '<div class="dim" style="font-size:11px;padding:5px 4px 3px;">──── notes &amp; examples ────</div>' +
     '<div class="sc-row" data-cmd="cat homelab-highlights"><span class="dot c">◈</span><span class="name">homelab-highlights.log</span><span class="state a">active (logging)</span><span class="when">ongoing</span></div>' +
     '<div class="sc-row" data-cmd="cat work-highlights"><span class="dot c">◈</span><span class="name">work-highlights.log</span><span class="state a">active</span><span class="when">ongoing</span></div>' +
-    '<div style="margin-top:8px;font-size:11.5px;" class="dim">8 loaded units. Click a row or type <span class="hl">cat &lt;name&gt;</span> for details.</div>' +
+    '<div style="margin-top:8px;font-size:11.5px;" class="dim">9 loaded units. Click a row or type <span class="hl">cat &lt;name&gt;</span> for details.</div>' +
     '</div>';
 }
 
@@ -1309,6 +1310,12 @@ var COMMANDS = {
     ['openssh', 'fail2ban', 'ed25519', 'systemd', 'tailscale'],
     '2h · feb 2026', 'active (running)')); },
 
+  'cat ci-cd-pipeline': function() { printOutput(catProject(
+    'ci-cd-pipeline', 'CI/CD Pipeline for Docker Apps',
+    'Self-hosted GitHub Actions runner on the Docker host auto-deploys Dockerized\nservices on every push to main. checkout → docker compose pull → up -d.\nOne reusable deploy.yml template across the whole lab.',
+    ['github actions', 'self-hosted runner', 'docker compose', 'systemd', 'nginx-proxy-manager'],
+    '3h · feb 2026', 'active (running)')); },
+
   'cat homelab-highlights': function() { printOutput(catProject(
     'homelab-highlights', 'Homelab Highlights',
     'Incident logs from the lab — real troubleshooting when these projects\nbreak. e1000e NIC hang, LDAP bind-dn misconfig, and more.',
@@ -1363,6 +1370,11 @@ var COMMANDS = {
   'cat prometheus':   function() { COMMANDS['cat monitoring-stack'](); },
   'cat ssh':          function() { COMMANDS['cat ssh-hardening'](); },
   'cat hardening':    function() { COMMANDS['cat ssh-hardening'](); },
+  'cat ci-cd':        function() { COMMANDS['cat ci-cd-pipeline'](); },
+  'cat cicd':         function() { COMMANDS['cat ci-cd-pipeline'](); },
+  'cat ci/cd':        function() { COMMANDS['cat ci-cd-pipeline'](); },
+  'cat pipeline':     function() { COMMANDS['cat ci-cd-pipeline'](); },
+  'cat actions':      function() { COMMANDS['cat ci-cd-pipeline'](); },
   'cat homelab':      function() { COMMANDS['cat homelab-highlights'](); },
   'cat incidents':    function() { COMMANDS['cat homelab-highlights'](); },
   'cat work':         function() { COMMANDS['cat work-highlights'](); },
@@ -1380,6 +1392,7 @@ var COMMANDS = {
     '<span class="branch">│   ├──</span> <a href="/pbs-storage">pbs-storage</a>         <span class="sub">— USB → SATA migration, 0% failure</span>\n' +
     '<span class="branch">│   ├──</span> <a href="/monitoring-stack">monitoring-stack</a>    <span class="sub">— prometheus + grafana + loki</span>\n' +
     '<span class="branch">│   ├──</span> <a href="/ssh-hardening">ssh-hardening</a>       <span class="sub">— ed25519 + fail2ban, 6 hosts</span>\n' +
+    '<span class="branch">│   ├──</span> <a href="/ci-cd-pipeline">ci-cd-pipeline</a>      <span class="sub">— github actions auto-deploy</span>\n' +
     '<span class="branch">│   ├──</span> <span class="file">k3s-cluster</span>         <span class="sub">— wip · lightweight k8s</span>\n' +
     '<span class="branch">│   └──</span> <span class="file">rhcsa-prep</span>          <span class="sub">— wip · red hat cert</span>\n' +
     '<span class="branch">├──</span> <a href="/homelab-highlights">homelab-highlights</a>  <span class="sub">— incident logs from the lab</span>\n' +
@@ -1421,6 +1434,7 @@ var COMMANDS = {
     '<h3><a href="/pbs-storage">pbs-storage</a> · live</h3><p>USB → SATA. Chunk-level dedup. 40% nightly failure → 0%.</p>' +
     '<h3><a href="/monitoring-stack">monitoring-stack</a> · live</h3><p>Prometheus + Grafana + Loki across the cluster. 4 alert rules → Discord.</p>' +
     '<h3><a href="/ssh-hardening">ssh-hardening</a> · live</h3><p>Ed25519 + fail2ban across 6 systems. Zero lockouts during rollout.</p>' +
+    '<h3><a href="/ci-cd-pipeline">ci-cd-pipeline</a> · live</h3><p>GitHub Actions + self-hosted runner. Every push to main auto-deploys.</p>' +
     '<h3>k3s-cluster · wip</h3><p>Lightweight Kubernetes. Longhorn + MetalLB.</p></div>' +
     '<div class="gui-section"><h2>experience</h2><ul>' +
     '<li><strong>The Zebra</strong> — IT Support Engineer II · 2026–present</li>' +
@@ -1458,7 +1472,7 @@ var COMMANDS = {
     '<span class="accent">me</span><span class="sub">about nate</span>' +
     '<span class="accent">motd</span><span class="sub">building. documenting. learning.</span>' +
     '<span class="accent">ls</span><span class="sub">list projects (systemctl-style)</span>' +
-    '<span class="accent">cat &lt;project&gt;</span><span class="sub">read a project — authentik-sso, monitoring-stack, pbs-storage, ssh-hardening</span>' +
+    '<span class="accent">cat &lt;project&gt;</span><span class="sub">read a project — authentik-sso, monitoring-stack, pbs-storage, ssh-hardening, ci-cd-pipeline</span>' +
     '<span class="accent">cat resume</span><span class="sub">career history</span>' +
     '<span class="accent">tree</span><span class="sub">site map</span>' +
     '<span class="accent">dig</span><span class="sub">contact info</span>' +

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CI/CD Pipeline for Docker Apps - GitHub Actions and a self-hosted runner auto-deploy Dockerized homelab services on every push to main.">
+
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+
+    <title>CI/CD Pipeline for Docker Apps - Nate's Portfolio</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://seggsy.co/ci-cd-pipeline">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="CI/CD Pipeline for Docker Apps - Nate's Portfolio">
+    <meta property="og:description" content="GitHub Actions plus a self-hosted runner on apps-node auto-deploy Dockerized homelab services on every push to main. One reusable template across the lab.">
+    <meta property="og:image" content="https://seggsy.co/og-image.png">
+    <meta property="og:url" content="https://seggsy.co/ci-cd-pipeline">
+    <meta property="og:type" content="article">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CI/CD Pipeline for Docker Apps - Nate's Portfolio">
+    <meta name="twitter:description" content="GitHub Actions plus a self-hosted runner auto-deploy Dockerized homelab services on every push to main.">
+    <meta name="twitter:image" content="https://seggsy.co/og-image.png">
+
+    <!-- Fonts: IBM Plex Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <nav aria-label="Main navigation">
+            <a href="/" class="logo">
+                <span class="logo-user">nate</span><span class="logo-at">@</span><span class="logo-host">seggsy</span><span class="logo-path">:~/projects</span><span class="logo-dollar"> $</span>
+            </a>
+            <a href="/" class="back-link">back to terminal</a>
+        </nav>
+    </header>
+
+    <main id="main-content" class="project-main" role="main">
+        <!-- Project Header -->
+        <div class="project-header">
+            <span class="project-tag">Automation &amp; DevOps</span>
+            <h1>CI/CD Pipeline for Docker Apps</h1>
+
+            <div class="project-meta">
+                <span class="meta-item"><strong>Duration:</strong> ~3 hours</span>
+                <span class="meta-item"><strong>Date:</strong> February 2026</span>
+                <span class="meta-item"><strong>Status:</strong> Production</span>
+            </div>
+
+            <div class="tldr">
+                <div class="tldr-title">TL;DR</div>
+                <p>Built a full production-style CI/CD loop for Dockerized homelab services: edit locally in VS Code, push to GitHub, and a self-hosted GitHub Actions runner on <code>apps-node</code> redeploys the container automatically. Every push to <code>main</code> deploys. The whole thing is one reusable template — the same workflow drops onto <code>hello-web</code>, <code>glance</code>, <code>kuma</code>, <code>bookstack</code>, and anything else in the lab.</p>
+
+                <div class="key-achievement">
+                    <strong>Key Achievement:</strong> Manual SSH-and-redeploy turned into <code>git push</code>. One <code>deploy.yml</code> pattern is reused across every Dockerized service in the homelab.
+                </div>
+            </div>
+        </div>
+
+        <!-- The Problem -->
+        <section class="section">
+            <h2>The Problem</h2>
+
+            <p>Deploying a change to any Dockerized service in the homelab meant the same manual ritual every time: SSH into <code>apps-node</code>, edit files in place or copy them up, then <code>docker compose pull</code> and <code>docker compose up -d</code> by hand. Fine for one service. Tedious and error-prone across a growing lab of them.</p>
+
+            <div class="comparison-grid">
+                <div class="before-box">
+                    <h4>Before (Manual)</h4>
+                    <ul>
+                        <li>SSH into the Docker host for every change</li>
+                        <li>Edit in place or copy files up by hand</li>
+                        <li>Manual <code>docker compose pull &amp;&amp; up -d</code></li>
+                        <li>No record of what deployed or when</li>
+                        <li>Each service redeployed differently</li>
+                    </ul>
+                </div>
+                <div class="after-box">
+                    <h4>After (Automated)</h4>
+                    <ul>
+                        <li>Edit locally in VS Code, <code>git push</code></li>
+                        <li>GitHub Actions triggers on push to <code>main</code></li>
+                        <li>Self-hosted runner redeploys automatically</li>
+                        <li>Git history is the deploy log</li>
+                        <li>One reusable workflow across all services</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p>I wanted the same loop a real team uses — commit, push, automated deploy — without leaving the homelab network or exposing the Docker host to the internet.</p>
+        </section>
+
+        <!-- The Solution -->
+        <section class="section">
+            <h2>The Solution</h2>
+
+            <h3>Pipeline Architecture</h3>
+            <p>A self-hosted GitHub Actions runner lives on the same VM as the containers, so deploys happen locally on the Docker host — no inbound ports, no secrets shipped to a third-party builder.</p>
+
+            <div class="architecture">
+                <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                    CI/CD PIPELINE ARCHITECTURE                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   Local VS Code  ──git push──►  GitHub (repo + Actions)         │
+│        │                              │                          │
+│        │                              │ on: push → main          │
+│        │                              ▼                          │
+│   ┌────────────────────────────────────────────────────────┐    │
+│   │  Self-Hosted Runner on apps-node (systemd service)    │    │
+│   │  • actions/checkout@v4                                  │    │
+│   │  • docker compose pull                                  │    │
+│   │  • docker compose up -d                                 │    │
+│   └────────────────────────────────────────────────────────┘    │
+│        │                                                         │
+│        ▼                                                         │
+│   Container live  ──►  (optional) NGINX Proxy Manager           │
+│                        → https://&lt;app&gt;.seggsy.co                │
+│                                                                  │
+├─────────────────────────────────────────────────────────────────┤
+│   Reusable across: hello-web · glance · kuma · bookstack · …    │
+└─────────────────────────────────────────────────────────────────┘
+                </pre>
+            </div>
+
+            <h3>The Deploy Loop</h3>
+            <p>Five moving parts, each doing one job:</p>
+            <ul>
+                <li><strong>Local dev</strong> — GitHub Desktop + VS Code; commit and push from the workstation.</li>
+                <li><strong>GitHub</strong> — source of truth and the trigger surface.</li>
+                <li><strong>GitHub Actions</strong> — fires <code>deploy.yml</code> on every push to <code>main</code>.</li>
+                <li><strong>Self-hosted runner</strong> — runs the job on <code>apps-node</code>, next to the containers.</li>
+                <li><strong>Docker Compose</strong> — pulls the new image and recreates the service.</li>
+            </ul>
+        </section>
+
+        <!-- Implementation Details -->
+        <section class="section">
+            <h2>Implementation Details</h2>
+
+            <h3>Phase 1: Project Structure &amp; Git</h3>
+            <p>Each service gets its own folder under <code>~/docker</code> on <code>apps-node</code>, initialized as a Git repo and pushed to GitHub:</p>
+
+            <div class="terminal">
+                <pre># Create the service folder
+cd ~/docker
+mkdir &lt;app-name&gt; &amp;&amp; cd &lt;app-name&gt;
+# add docker-compose.yml + config (html/, config/, …)
+
+# Initialize and push
+git init
+git remote add origin https://github.com/&lt;username&gt;/&lt;repo&gt;.git
+git add .
+git commit -m "initial commit"
+git push -u origin main</pre>
+            </div>
+
+            <h3>Phase 2: Install the Self-Hosted Runner</h3>
+            <p>From the repo's <em>Settings → Actions → Runners → New self-hosted runner</em> (Linux / x64), I ran the generated commands on <code>apps-node</code> and installed the runner as a systemd service so it survives reboots:</p>
+
+            <div class="terminal">
+                <pre>cd ~
+mkdir actions-runner &amp;&amp; cd actions-runner
+# download + extract runner (GitHub provides exact commands)
+./config.sh
+
+# Install &amp; start as a service
+sudo ./svc.sh install
+sudo ./svc.sh start</pre>
+            </div>
+
+            <div class="success-box">
+                <strong>Why a service:</strong> running the runner under systemd (not a login shell) means deploys keep working after a reboot with no one logged in. It shows as <strong>Online</strong> in GitHub once started.
+            </div>
+
+            <h3>Phase 3: The Deployment Workflow</h3>
+            <p>The entire pipeline is one file — <code>.github/workflows/deploy.yml</code> — committed alongside the service:</p>
+
+            <pre><code>name: deploy-&lt;app-name&gt;
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy with Docker Compose
+        run: |
+          docker compose pull
+          docker compose up -d</code></pre>
+
+            <p>Commit and push it, and GitHub Actions auto-deploys on every push to <code>main</code> from then on:</p>
+
+            <div class="terminal">
+                <pre>git add .github/workflows/deploy.yml
+git commit -m "add deploy workflow"
+git push</pre>
+            </div>
+
+            <h3>Phase 4: Verify the Deploy</h3>
+            <p>After a push, confirm the container is running the latest content:</p>
+
+            <div class="terminal">
+                <pre># Container is up
+$ docker ps --filter "name=&lt;app-name&gt;"
+
+# Content reflects the latest push
+$ curl http://127.0.0.1:&lt;port&gt; | head</pre>
+            </div>
+            <p>If the output reflects the latest push, the loop is working end to end.</p>
+        </section>
+
+        <!-- Design Decisions -->
+        <section class="section">
+            <h2>Design Decisions</h2>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Self-hosted runner instead of GitHub-hosted</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>The Decision:</h4>
+                        <p>The deploy job runs on a runner installed on <code>apps-node</code> itself, not on GitHub's cloud builders.</p>
+
+                        <h4>Why:</h4>
+                        <p>The Docker host lives on a private homelab network behind Tailscale — there are no inbound ports for a cloud builder to reach. Putting the runner <em>on</em> the host means the deploy happens locally, with direct access to the Docker socket and compose files, and no credentials or SSH access ever leave the network.</p>
+
+                        <h4>Trade-off:</h4>
+                        <p>A self-hosted runner is infrastructure I own and patch. Installing it as a systemd service keeps it running unattended, which is the point — but it's one more thing to keep healthy.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">Exposing the app through NGINX Proxy Manager</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>The Gotcha:</h4>
+                        <p>For NGINX Proxy Manager to route to a freshly deployed container, the container has to share NPM's Docker network. That network already exists, so Compose must join it as <strong>external</strong> — not define its own:</p>
+                        <pre><code>networks:
+  - proxy-net
+
+networks:
+  proxy-net:
+    external: true</code></pre>
+
+                        <h4>Then in NPM:</h4>
+                        <p>Add a proxy host — Domain <code>&lt;app&gt;.seggsy.co</code>, Forward Host <code>&lt;app-name&gt;</code>, Forward Port <code>80</code>, scheme <code>http</code> — plus a NextDNS rewrite pointing <code>&lt;app&gt;.seggsy.co</code> at the NPM VM's IP.</p>
+
+                        <h4>Lesson Learned:</h4>
+                        <p>Forgetting <code>external: true</code> spins up a brand-new isolated network and NPM silently can't see the container. The container is "up" but unreachable — a confusing failure until you check which network it joined.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">One template, reused across the lab</div>
+                    <div class="collapsible-icon">▼</div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>The Decision:</h4>
+                        <p>Rather than bespoke deploy scripts per service, every Dockerized app uses the same <code>deploy.yml</code> pattern with only the name changed.</p>
+
+                        <h4>Why:</h4>
+                        <p>Consistency. Onboarding a new service — <code>hello-web</code>, <code>glance</code>, <code>kuma</code>, <code>bookstack</code> — is copy the workflow, change the name, push. Nothing new to learn per app, and every service behaves identically when something breaks.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results -->
+        <section class="section">
+            <h2>Results</h2>
+
+            <div class="success-box">
+                <ul style="margin-bottom: 0;">
+                    <li>Every push to <code>main</code> redeploys the service automatically — no manual SSH, no manual compose</li>
+                    <li>The runner runs as a systemd service, so deploys keep working after reboots with nobody logged in</li>
+                    <li>Git history doubles as the deploy log — what changed, when, and by which commit</li>
+                    <li>One reusable <code>deploy.yml</code> pattern works across every Dockerized service in the homelab</li>
+                </ul>
+            </div>
+
+            <h3>The Loop</h3>
+            <div class="terminal">
+                <pre>Local VS Code → GitHub → GitHub Actions → Self-Hosted Runner → docker compose up -d</pre>
+            </div>
+        </section>
+
+        <!-- The Short Version -->
+        <section class="section">
+            <h2>The Short Version</h2>
+
+            <div class="story-section">
+                <p>Deploying any Dockerized service in my homelab used to mean SSHing into <code>apps-node</code>, copying files up, and running <code>docker compose pull &amp;&amp; up -d</code> by hand — fine for one service, tedious and inconsistent across a growing lab of them. I built a production-style CI/CD loop instead: a self-hosted GitHub Actions runner installed as a systemd service on the Docker host, plus a one-file <code>deploy.yml</code> workflow that triggers on every push to <code>main</code> and runs <code>actions/checkout</code> → <code>docker compose pull</code> → <code>docker compose up -d</code>. Now I edit locally in VS Code, push, and the container redeploys itself. Git history becomes the deploy log.</p>
+                <p>I chose a self-hosted runner specifically because the Docker host sits on a private network behind Tailscale — there's no inbound path for a cloud builder, and running the deploy locally means no SSH access or secrets ever leave the network. The one gotcha worth documenting: to expose a freshly deployed container through NGINX Proxy Manager, the Compose file has to join NPM's existing network as <code>external: true</code> — otherwise Compose creates a new isolated network and the container comes up healthy but unreachable. The whole thing is deliberately a template: copy <code>deploy.yml</code>, change the name, push, and any new service — <code>glance</code>, <code>kuma</code>, <code>bookstack</code> — is on the same automated loop.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="project-footer" role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-copy">&copy; 2026 Nate &mdash; Austin, TX</div>
+            <nav class="footer-links" aria-label="Footer navigation">
+                <a href="/">Projects</a>
+                <a href="/resume">Resume</a>
+                <a href="/work-highlights">Work Examples</a>
+            </nav>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const collapsible = header.parentElement;
+                collapsible.classList.toggle('active');
+            });
+
+            header.setAttribute('tabindex', '0');
+            header.setAttribute('role', 'button');
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    header.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
