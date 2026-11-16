@@ -25,7 +25,7 @@
 
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="SSH Hardening Implementation - Nate's Portfolio">
-    <meta property="og:description" content="Enterprise-grade SSH hardening across 6 systems with key-based authentication, fail2ban intrusion prevention, and zero downtime deployment.">
+    <meta property="og:description" content="Enterprise-grade SSH hardening across 7 systems with key-based authentication, fail2ban intrusion prevention, and zero downtime deployment.">
     <meta property="og:image" content="https://seggsy.co/og-image.png">
     <meta property="og:url" content="https://seggsy.co/ssh-hardening">
     <meta property="og:type" content="article">
@@ -33,7 +33,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="SSH Hardening Implementation - Nate's Portfolio">
-    <meta name="twitter:description" content="Enterprise-grade SSH hardening across 6 systems with key-based authentication and automated intrusion prevention.">
+    <meta name="twitter:description" content="Enterprise-grade SSH hardening across 7 systems with key-based authentication and automated intrusion prevention.">
     <meta name="twitter:image" content="https://seggsy.co/og-image.png">
 
     <!-- Fonts: IBM Plex Mono -->
@@ -69,7 +69,7 @@
 
             <div class="tldr">
                 <div class="tldr-title">TL;DR</div>
-                <p>Rolled out Ed25519 key-based authentication and fail2ban across 6 systems — 3 Proxmox hypervisors and 3 Linux VMs. Did it without a single lockout by testing in a parallel session before closing the existing one. Password authentication is now disabled everywhere.</p>
+                <p>Rolled out Ed25519 key-based authentication and fail2ban across 6 systems — 3 Proxmox hypervisors and 3 Linux VMs. Did it without a single lockout by testing in a parallel session before closing the existing one. Password authentication is now disabled everywhere. A fourth Proxmox node (pve04) joined in October 2026 with the same config, so it now covers 7 systems.</p>
 
                 <div class="key-achievement">
                     <strong>Key Achievement:</strong> No system accepts password authentication. fail2ban bans IPs after 5 failures — slows attackers without risking permanent self-lockout.

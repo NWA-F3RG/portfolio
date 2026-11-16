@@ -843,7 +843,7 @@ function neofetchHtml() {
     '<div class="row"><span class="k">CPU:</span>      <span class="v">endpoint · identity · platform</span></div>' +
     '<div class="row"><span class="k">GPU:</span>      <span class="v">proxmox · authentik · monitoring</span></div>' +
     '<div class="row"><span class="k">Memory:</span>   <span class="v"><span class="meter">████████████░░░░░░░░</span> 12/20 yrs</span></div>' +
-    '<div class="row"><span class="k">Disk:</span>     <span class="v">~/projects (6)  ~/incidents (5)</span></div>' +
+    '<div class="row"><span class="k">Disk:</span>     <span class="v">~/projects (7)  ~/incidents (1)</span></div>' +
     '<div class="neofetch-colors">' +
     '<div class="strip"><div class="sw" style="background:#272822"></div><div class="sw" style="background:#f92672"></div><div class="sw" style="background:#a6e22e"></div><div class="sw" style="background:#e6db74"></div><div class="sw" style="background:#66d9ef"></div><div class="sw" style="background:#ae81ff"></div><div class="sw" style="background:#fd971f"></div><div class="sw" style="background:#f8f8f2"></div></div>' +
     '<div class="strip"><div class="sw" style="background:#75715e"></div><div class="sw" style="background:#f92672;opacity:.6"></div><div class="sw" style="background:#a6e22e;opacity:.6"></div><div class="sw" style="background:#e6db74;opacity:.6"></div><div class="sw" style="background:#66d9ef;opacity:.6"></div><div class="sw" style="background:#ae81ff;opacity:.6"></div><div class="sw" style="background:#fd971f;opacity:.6"></div><div class="sw" style="background:#f8f8f2;opacity:.6"></div></div>' +
@@ -1228,14 +1228,14 @@ var COMMANDS = {
   'me': function() { printOutput('<div class="output">' +
     '<span class="heading">▸ nate nwaeze</span>\n' +
     '<span class="sub">IT Support Engineer II · Austin, TX</span>\n\n' +
-    'I do endpoint and identity support at <span class="hl">The Zebra</span> in Austin. Mostly Mac fleet\n' +
-    'management with Jamf, Okta administration, Google Workspace, and the kind of\n' +
-    'escalated tickets that turn out to be three problems wearing a trenchcoat.\n\n' +
+    'I do identity and access work at <span class="hl">The Zebra</span> in Austin. Mostly Okta,\n' +
+    'Google Workspace, Jira and Confluence admin, and the kind of escalated\n' +
+    'tickets that turn out to be three problems wearing a trenchcoat.\n\n' +
     'Before this: <span class="hl">Pretium Enterprise Services</span> (T2 Technology Delivery) and\n' +
     '<span class="hl">ZenGuard MSP</span> (T2, Apple SME for 200+ devices). Before IT I managed\n' +
     'restaurants. A networking tech ran cable through my dining room one afternoon\n' +
     "and I haven't stopped asking questions since.\n\n" +
-    "The homelab is a 3-node Proxmox cluster — where I learn most of what I know\n" +
+    "The homelab is a 4-node Proxmox cluster — where I learn most of what I know\n" +
     "about platform engineering by breaking things on purpose and writing down what\n" +
     "happened. I'm open to the right role in Austin, ideally moving toward platform\n" +
     "or systems work. Type <span class=\"accent\">'dig'</span> to reach me." +
@@ -1258,29 +1258,37 @@ var COMMANDS = {
     'and that moment rewired my career. I started building home labs after my\n' +
     'shifts, teaching myself the systems I\'d spent years walking past. When a\n' +
     'former colleague saw my name on a help desk application, he vouched for me\n' +
-    'without hesitation, zero IT experience and all. Three companies, 350+\n' +
+    'without hesitation, zero IT experience and all. Four companies, 350+\n' +
     'users, and countless solved tickets later, I\'m ready to move from fixing\n' +
     'what\'s broken to building infrastructure that doesn\'t break.\n\n' +
     '<span class="dim">────────────────────────────────────────────────────────────</span>\n\n' +
     '<span class="heading">▸ resume — nate nwaeze</span>\n\n' +
     '<span class="ok">●</span> <span class="hl">The Zebra</span> — IT Support Engineer II <span class="sub">· 2026–present</span>\n' +
-    '  · 10–15 escalated tickets/day · 99% SLA · top 3 on team for resolution speed\n' +
-    '  · IT onboarding sessions: SSPR, VPN, MFA, password policy\n' +
+    '  · Employee access from hire to exit: new hires, contractors, role changes\n' +
+    '  · Okta SSO admin: which apps each employee can reach, kept consistent\n' +
+    '  · Jira + Confluence lead admin: permissions, workspaces, automation, access reviews\n' +
+    '  · Jira request intake for IT, Security, and data teams\n' +
+    '  · 15+ weekly security alerts → sorted, prioritized Security tickets, no hand entry\n' +
+    '  · Offboarding: access cut across every system the moment someone leaves\n\n' +
+    '<span class="ok">●</span> <span class="hl">Pretium Enterprise Services</span> — Technology Delivery T2 <span class="sub">· 2025–2026</span>\n' +
+    '  · 10–15 escalated tickets/day · 99% SLA · top 3 for resolution speed and CSAT\n' +
     '  · Windows 365 Cloud PC provisioning: traced license → Entra group → Intune scope\n' +
-    '  · TokenBroker cache forensics for HTTP 400 msrdc auth failures\n\n' +
-    '<span class="ok">●</span> <span class="hl">Pretium Enterprise Services</span> — Tech Delivery T2 <span class="sub">· 2024–2026</span>\n' +
-    '  · Apple SME after previous admin left and broke ABM-Addigy token\n' +
-    '  · Restored MDM integration for 200+ devices, documented annual renewal\n' +
-    '  · PowerShell printer deployment script: 5min → &lt;1min per device\n\n' +
-    '<span class="ok">●</span> <span class="hl">ZenGuard (MSP)</span> — IT Support T2 <span class="sub">· 2023–2024</span>\n' +
-    '  · 350+ users across multiple clients · macOS/Windows/Linux\n' +
+    '  · TokenBroker cache forensics for HTTP 400 msrdc auth failures\n' +
+    '  · Weekly IT onboarding sessions (5–15 new hires): SSPR, VPN, MFA\n' +
+    '  · PAM credential retrieval → users back online within 15 min\n\n' +
+    '<span class="ok">●</span> <span class="hl">ZenGuard (MSP)</span> — IT Support T2 <span class="sub">· 2024–2025</span>\n' +
+    '  · 350+ users across multiple clients · 99% SLA · macOS/Windows\n' +
+    '  · Apple SME: fixed broken ABM-Addigy token, restored MDM for 200+ devices\n' +
     '  · LDAP server misconfiguration → 15–20 VPN auth failures · same-day fix\n' +
-    '  · Huntress MITM mitigation · session revoked before lateral movement\n\n' +
-    '<span class="ok">●</span> <span class="hl">Barrage Systems</span> — Desktop Support <span class="sub">· 2022–2023</span>\n' +
+    '  · Hybrid Azure AD Join: restored deleted device objects, rejoined via dsregcmd\n' +
+    '  · PowerShell printer deployment script: 5min → &lt;1min per device\n' +
+    '  · Huntress alert → compromised session revoked before lateral movement\n\n' +
+    '<span class="ok">●</span> <span class="hl">Barrage Systems</span> — Desktop Support <span class="sub">· 2023–2024</span>\n' +
+    '  · Divestiture: removed RMM agents and managed software from 100+ devices\n' +
     '  · 8–12 tickets/day · 200+ user endpoint support\n' +
     '  · Pre-provisioned 10–15 devices/week · saved new hires 3–5h on day 1\n\n' +
-    '<span class="sub">▸ Stack: M365 · Entra ID · AD · Exchange Online · PowerShell · Intune · Jamf\n' +
-    '         Okta · Authentik · Proxmox · Prometheus · Grafana · Loki · CyberArk</span>\n\n' +
+    '<span class="sub">▸ Stack: Okta · Google Workspace · Jira/Confluence · M365 · Entra ID · AD · Intune\n' +
+    '         PowerShell · CyberArk · Proxmox · Authentik · Prometheus · Grafana · Loki</span>\n\n' +
     '<span class="sub">▸ Full page: <a href="/resume">seggsy.co/resume</a></span>' +
     '</div>', true); },
 
@@ -1288,50 +1296,50 @@ var COMMANDS = {
 
   'cat authentik-sso': function() { printOutput(catProject(
     'authentik-sso', 'Enterprise SSO Implementation',
-    'Forward authentication at the reverse proxy. Active Directory backed,\n8 services protected, ~5 min to add a new app. Same architecture\nas Cloudflare Access — auth enforced at the network edge before\nrequests reach the app.',
+    'Forward authentication at the reverse proxy. Active Directory backed;\nBookstack and code-server behind one login, ~5 min to add a new app. Same architecture\nas Cloudflare Access — auth enforced at the network edge before\nrequests reach the app.',
     ['authentik', 'active directory', 'nginx-proxy-manager', 'docker', 'ldap', 'oidc'],
     '15h · feb 2026', 'active (running)')); },
 
   'cat monitoring-stack': function() { printOutput(catProject(
     'monitoring-stack', 'Observability Stack',
-    'Prometheus + Grafana + Loki across a 3-node Proxmox cluster. OS metrics\nvia node_exporter, per-VM metrics via parametric scraping against the\nProxmox REST API. 4 live-tested alert rules routing to Discord.',
+    'Prometheus + Grafana + Loki across the 4-node Proxmox cluster. OS metrics\nvia node_exporter, per-VM metrics via parametric scraping against the\nProxmox REST API. 14 alert rules routing to Discord.',
     ['prometheus', 'grafana', 'loki', 'promql', 'node_exporter', 'pve-exporter'],
     '6h · mar 2026', 'active (running)')); },
 
   'cat pbs-storage': function() { printOutput(catProject(
     'pbs-storage', 'Backup Infrastructure Migration',
-    'USB to internal SATA migration. Chunk-level deduplication via PBS.\n40% nightly failure rate (USB power management) → 0%.\n85% storage reduction vs traditional full backups.',
+    'USB to internal SATA migration. Chunk-level deduplication via PBS.\n40% nightly failure rate (USB power management) → 0%.\n98% storage reduction (measured: 6.2 TiB of backups in 126 GiB on disk).',
     ['proxmox', 'pbs', 'ext4', 'rsync', 'acme', 'cloudflare dns'],
     '8h · feb 2026', 'active (running)')); },
 
   'cat ssh-hardening': function() { printOutput(catProject(
     'ssh-hardening', 'SSH Hardening',
-    'Ed25519 + fail2ban across 6 systems (3 Proxmox hypervisors, 3 Linux VMs).\nZero lockouts during rollout — tested key auth in a new session before\nclosing the existing one.',
+    'Ed25519 + fail2ban across 7 systems (4 Proxmox nodes, 3 Linux VMs).\nZero lockouts during rollout — tested key auth in a new session before\nclosing the existing one.',
     ['openssh', 'fail2ban', 'ed25519', 'systemd', 'tailscale'],
     '2h · feb 2026', 'active (running)')); },
 
   'cat ci-cd-pipeline': function() { printOutput(catProject(
     'ci-cd-pipeline', 'CI/CD Pipeline for Docker Apps',
-    'Self-hosted GitHub Actions runner on the Docker host auto-deploys Dockerized\nservices on every push to main. checkout → docker compose pull → up -d.\nOne reusable deploy.yml template across the whole lab.',
+    'Self-hosted GitHub Actions runner on the Docker host auto-deploys Dockerized\nservices on every push to main. checkout → docker compose pull → up -d.\nRuns code-server today; the hello-web demo was retired Oct 2026.',
     ['github actions', 'self-hosted runner', 'docker compose', 'systemd', 'nginx-proxy-manager'],
     '3h · feb 2026', 'active (running)')); },
 
   'cat homelab-highlights': function() { printOutput(catProject(
     'homelab-highlights', 'Homelab Highlights',
-    'Incident logs from the lab — real troubleshooting when these projects\nbreak. e1000e NIC hang, LDAP bind-dn misconfig, and more.',
+    'Incident logs from the lab — real troubleshooting when these projects\nbreak. First entry: an e1000e NIC hang that dropped a cluster node.',
     ['proxmox', 'linux', 'debugging', 'documentation'],
     'ongoing', 'active (logging)')); },
 
   'cat work-highlights': function() { printOutput(catProject(
     'work-highlights', 'Work Examples',
     'Examples of work from enterprise environments — PAM, IAM, MDM,\ncloud, automation, and network security scenarios.',
-    ['okta', 'entra id', 'jamf', 'intune', 'powershell'],
+    ['entra id', 'intune', 'addigy', 'powershell', 'jira automation'],
     'ongoing', 'active')); },
 
   'cat k3s-cluster': function() { printOutput(catProject(
     'k3s-cluster', 'k3s Cluster',
-    'Lightweight Kubernetes across the 3-node Proxmox cluster.\nPersistent storage via Longhorn, load balancing via MetalLB.',
-    ['k3s', 'longhorn', 'metallb', 'helm', 'flux'],
+    '3-node HA K3s with embedded etcd, one VM per Proxmox host.\nKube-VIP floating API address; Longhorn storage is next.',
+    ['k3s', 'embedded etcd', 'kube-vip', 'cloud-init', 'kubectl'],
     'wip', 'activating (in progress)')); },
 
   'cat rhcsa-prep': function() { printOutput(catProject(
@@ -1388,10 +1396,10 @@ var COMMANDS = {
   'tree': function() { printOutput('<div class="output tree">' +
     '<span class="dir">~/</span>\n' +
     '<span class="branch">├──</span> <span class="dir">projects/</span>\n' +
-    '<span class="branch">│   ├──</span> <a href="/authentik-sso">authentik-sso</a>       <span class="sub">— enterprise SSO across 8 services</span>\n' +
+    '<span class="branch">│   ├──</span> <a href="/authentik-sso">authentik-sso</a>       <span class="sub">— forward-auth SSO, AD backed</span>\n' +
     '<span class="branch">│   ├──</span> <a href="/pbs-storage">pbs-storage</a>         <span class="sub">— USB → SATA migration, 0% failure</span>\n' +
     '<span class="branch">│   ├──</span> <a href="/monitoring-stack">monitoring-stack</a>    <span class="sub">— prometheus + grafana + loki</span>\n' +
-    '<span class="branch">│   ├──</span> <a href="/ssh-hardening">ssh-hardening</a>       <span class="sub">— ed25519 + fail2ban, 6 hosts</span>\n' +
+    '<span class="branch">│   ├──</span> <a href="/ssh-hardening">ssh-hardening</a>       <span class="sub">— ed25519 + fail2ban, 7 hosts</span>\n' +
     '<span class="branch">│   ├──</span> <a href="/ci-cd-pipeline">ci-cd-pipeline</a>      <span class="sub">— github actions auto-deploy</span>\n' +
     '<span class="branch">│   ├──</span> <span class="file">k3s-cluster</span>         <span class="sub">— wip · lightweight k8s</span>\n' +
     '<span class="branch">│   └──</span> <span class="file">rhcsa-prep</span>          <span class="sub">— wip · red hat cert</span>\n' +
@@ -1427,20 +1435,20 @@ var COMMANDS = {
   'gui': function() { printOutput('<div class="output">' +
     '<span class="warn">↳</span>  Expanding all sections into readable view...\n\n' +
     '<div class="gui-section"><h2>about</h2>' +
-    '<p>IT Support Engineer II at <strong style="color:var(--cyan)">The Zebra</strong> in Austin, TX. 3.4 years across MSP and enterprise environments. Mac fleet management with Jamf, Okta administration, Google Workspace, and escalated tickets.</p>' +
-    "<p>The homelab is a 3-node Proxmox cluster where I learn what I know about platform engineering — by breaking things on purpose and writing down what happened.</p></div>" +
+    '<p>IT Support Engineer II at <strong style="color:var(--cyan)">The Zebra</strong> in Austin, TX. 3.4 years across MSP and enterprise environments. Identity and access work: Okta, Google Workspace, Jira and Confluence admin, and escalated tickets.</p>' +
+    "<p>The homelab is a 4-node Proxmox cluster where I learn what I know about platform engineering — by breaking things on purpose and writing down what happened.</p></div>" +
     '<div class="gui-section"><h2>projects</h2>' +
-    '<h3><a href="/authentik-sso">authentik-sso</a> · live</h3><p>Forward authentication at the reverse proxy. AD backed, 8 services protected.</p>' +
-    '<h3><a href="/pbs-storage">pbs-storage</a> · live</h3><p>USB → SATA. Chunk-level dedup. 40% nightly failure → 0%.</p>' +
-    '<h3><a href="/monitoring-stack">monitoring-stack</a> · live</h3><p>Prometheus + Grafana + Loki across the cluster. 4 alert rules → Discord.</p>' +
-    '<h3><a href="/ssh-hardening">ssh-hardening</a> · live</h3><p>Ed25519 + fail2ban across 6 systems. Zero lockouts during rollout.</p>' +
-    '<h3><a href="/ci-cd-pipeline">ci-cd-pipeline</a> · live</h3><p>GitHub Actions + self-hosted runner. Every push to main auto-deploys.</p>' +
-    '<h3>k3s-cluster · wip</h3><p>Lightweight Kubernetes. Longhorn + MetalLB.</p></div>' +
+    '<h3><a href="/authentik-sso">authentik-sso</a> · live</h3><p>Forward authentication at the reverse proxy. AD backed. Bookstack and code-server behind one login.</p>' +
+    '<h3><a href="/pbs-storage">pbs-storage</a> · live</h3><p>USB → SATA. Chunk-level dedup. 40% nightly failure → 0%. 98% storage reduction.</p>' +
+    '<h3><a href="/monitoring-stack">monitoring-stack</a> · live</h3><p>Prometheus + Grafana + Loki across the cluster. 14 alert rules → Discord.</p>' +
+    '<h3><a href="/ssh-hardening">ssh-hardening</a> · live</h3><p>Ed25519 + fail2ban across 7 systems. Zero lockouts during rollout.</p>' +
+    '<h3><a href="/ci-cd-pipeline">ci-cd-pipeline</a> · live</h3><p>GitHub Actions + self-hosted runner. Every push to main auto-deploys (code-server).</p>' +
+    '<h3>k3s-cluster · wip</h3><p>3-node HA K3s with embedded etcd and a Kube-VIP API address.</p></div>' +
     '<div class="gui-section"><h2>experience</h2><ul>' +
     '<li><strong>The Zebra</strong> — IT Support Engineer II · 2026–present</li>' +
-    '<li><strong>Pretium Enterprise Services</strong> — Tech Delivery T2 · 2024–2026</li>' +
-    '<li><strong>ZenGuard (MSP)</strong> — IT Support T2 · 2023–2024</li>' +
-    '<li><strong>Barrage Systems</strong> — Desktop Support · 2022–2023</li>' +
+    '<li><strong>Pretium Enterprise Services</strong> — Technology Delivery T2 · 2025–2026</li>' +
+    '<li><strong>ZenGuard (MSP)</strong> — IT Support T2 · 2024–2025</li>' +
+    '<li><strong>Barrage Systems</strong> — Desktop Support · 2023–2024</li>' +
     '</ul></div>' +
     '<div class="gui-section"><h2>contact</h2><ul>' +
     '<li>Calendar: <a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener">calendly.com/nnwaeze</a></li>' +

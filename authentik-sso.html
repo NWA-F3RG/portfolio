@@ -25,7 +25,7 @@
 
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="Enterprise SSO Implementation - Nate's Portfolio">
-    <meta property="og:description" content="Forward authentication deployment using Authentik + Active Directory. Protecting 8+ applications with centralized identity management and zero per-app credentials.">
+    <meta property="og:description" content="Forward authentication deployment using Authentik + Active Directory. Self-hosted apps behind one login with centralized identity management and zero per-app credentials.">
     <meta property="og:image" content="https://seggsy.co/og-image.png">
     <meta property="og:url" content="https://seggsy.co/authentik-sso">
     <meta property="og:type" content="article">
@@ -33,7 +33,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Enterprise SSO Implementation - Nate's Portfolio">
-    <meta name="twitter:description" content="Forward authentication deployment using Authentik + Active Directory. Protecting 8+ applications with centralized identity management.">
+    <meta name="twitter:description" content="Forward authentication deployment using Authentik + Active Directory. Self-hosted apps behind one login with centralized identity management.">
     <meta name="twitter:image" content="https://seggsy.co/og-image.png">
 
     <!-- Fonts: IBM Plex Mono -->
@@ -72,7 +72,7 @@
                 <p>Set up single sign-on across my homelab — one login for everything from the documentation wiki to the code editor. Authentik validates credentials against Active Directory, then issues a session cookie the reverse proxy checks on every request. Log in once; everything just works after that.</p>
 
                 <div class="key-achievement">
-                    <strong>Key Achievement:</strong> 8+ applications behind one login. Adding a new app takes about 5 minutes — a proxy provider, an application entry, and a few nginx lines.
+                    <strong>Key Achievement:</strong> Self-hosted apps behind one login. Adding a new app takes about 5 minutes — a proxy provider, an application entry, and a few nginx lines.
                 </div>
             </div>
         </div>
@@ -83,7 +83,7 @@
 
             <h3>What I Started With</h3>
             <ul>
-                <li>8+ applications running in my homelab (documentation wiki, dashboard, code editor, etc.)</li>
+                <li>A growing set of self-hosted apps in my homelab (documentation wiki, dashboard, code editor, etc.)</li>
                 <li>Each app had its own login page and password</li>
                 <li>I was either reusing passwords (bad security) or forgetting which password went with which app</li>
                 <li>No way to see who accessed what, or block access globally if needed</li>
@@ -92,9 +92,9 @@
             <h3>Why This Sucks</h3>
             <ul>
                 <li><strong>Security risk:</strong> Weak passwords get reused, or you write them down</li>
-                <li><strong>Time waste:</strong> Managing users in 8 different places</li>
+                <li><strong>Time waste:</strong> Managing users separately in every app</li>
                 <li><strong>No control:</strong> Can't revoke someone's access to everything at once</li>
-                <li><strong>Annoying:</strong> Logging in 8 times to check 8 things</li>
+                <li><strong>Annoying:</strong> Logging in again for every app I checked</li>
             </ul>
 
         </section>
@@ -297,7 +297,7 @@
 
             <div class="success-box">
                 <ul style="margin-bottom: 0;">
-                    <li><strong>8+ applications</strong> behind one login</li>
+                    <li><strong>Every protected app</strong> behind one login</li>
                     <li>One set of AD credentials for everything — no per-app passwords</li>
                     <li><strong>~5 minutes</strong> to add a new application to SSO</li>
                     <li>No authentication failures since going live</li>
@@ -316,13 +316,11 @@
             </ol>
 
             <div class="success-box">
-                <p>This pattern has been applied to:</p>
+                <p>Currently protected by this pattern:</p>
                 <ul style="margin-bottom: 0;">
                     <li>Documentation platform (Bookstack)</li>
-                    <li>Dashboard (Glance)</li>
                     <li>Web IDE (code-server)</li>
-                    <li>Monitoring (Uptime Kuma)</li>
-                    <li>Backup tool (Duplicati)</li>
+                    <li>Earlier: a dashboard (Glance) and a backup tool (Duplicati), both retired in October 2026</li>
                 </ul>
                 <p style="margin-top: var(--space-sm); margin-bottom: 0;"><strong>And works for any future HTTP(S) application without touching the app itself.</strong></p>
             </div>
@@ -333,7 +331,7 @@
             <h2>The Short Version</h2>
 
             <div class="story-section">
-                <p>I was running 8 self-hosted applications with independent user management — password fatigue, reused credentials, no centralized audit trail. The goal was to implement SSO that would work across everything, including apps without native SSO support. I deployed Authentik as the identity provider backed by a 2-DC Active Directory environment, then placed authentication at the reverse proxy layer so every HTTP request gets validated before it reaches the application. That's the same architecture Cloudflare Access uses — auth enforced at the edge, apps never see credentials directly.</p>
+                <p>I was running a set of self-hosted applications with independent user management — password fatigue, reused credentials, no centralized audit trail. The goal was to implement SSO that would work across everything, including apps without native SSO support. I deployed Authentik as the identity provider backed by a 2-DC Active Directory environment, then placed authentication at the reverse proxy layer so every HTTP request gets validated before it reaches the application. That's the same architecture Cloudflare Access uses — auth enforced at the edge, apps never see credentials directly.</p>
                 <p>The hard parts were protocol-level: LDAP bind operations require Distinguished Name format (<code>CN=Admin,OU=Users,DC=domain,DC=local</code>), not the UPN email format I first tried. nginx's <code>auth_request</code> only treats 2xx responses as "allow," which required correctly wiring the <code>error_page 401 = @authentik</code> redirect flow. And session cookies set on <code>auth.domain.local</code> don't propagate to <code>app.domain.local</code> without explicitly scoping them to the parent domain. Once those three pieces clicked, the rest was just configuration — and the pattern now takes about 5 minutes to apply to any new application.</p>
             </div>
         </section>

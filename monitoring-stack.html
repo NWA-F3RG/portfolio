@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Full-stack observability across a 3-node Proxmox cluster using Prometheus, Grafana, and Loki. OS metrics, per-VM breakdowns via REST API, and 4 live-tested alert rules routing to Discord.">
+    <meta name="description" content="Full-stack observability across a Proxmox cluster using Prometheus, Grafana, and Loki. OS metrics, per-VM breakdowns via REST API, and 14 alert rules routing to Discord.">
 
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
@@ -25,7 +25,7 @@
 
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="Monitoring &amp; Observability Stack - Nate's Portfolio">
-    <meta property="og:description" content="Full-stack observability across a 3-node Proxmox cluster using Prometheus, Grafana, and Loki. OS metrics, per-VM breakdowns via REST API, and 4 live-tested alert rules routing to Discord.">
+    <meta property="og:description" content="Full-stack observability across a Proxmox cluster using Prometheus, Grafana, and Loki. OS metrics, per-VM breakdowns via REST API, and 14 alert rules routing to Discord.">
     <meta property="og:image" content="https://seggsy.co/og-image.png">
     <meta property="og:url" content="https://seggsy.co/monitoring-stack">
     <meta property="og:type" content="article">
@@ -33,7 +33,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Monitoring &amp; Observability Stack - Nate's Portfolio">
-    <meta name="twitter:description" content="Full-stack observability across a 3-node Proxmox cluster using Prometheus, Grafana, and Loki. OS metrics, per-VM breakdowns via REST API, and 4 live-tested alert rules routing to Discord.">
+    <meta name="twitter:description" content="Full-stack observability across a Proxmox cluster using Prometheus, Grafana, and Loki. OS metrics, per-VM breakdowns via REST API, and 14 alert rules routing to Discord.">
     <meta name="twitter:image" content="https://seggsy.co/og-image.png">
 
     <!-- Fonts: IBM Plex Mono -->
@@ -154,7 +154,7 @@
                     <ul>
                         <li>OS metrics from all 3 Proxmox nodes</li>
                         <li>Per-VM CPU, memory, and status via API</li>
-                        <li>4 alert rules routing to Discord</li>
+                        <li>14 alert rules routing to Discord (4 at launch)</li>
                         <li>Loki stack deployed for log aggregation</li>
                         <li>Grafana protected behind HTTPS via NPM</li>
                     </ul>
@@ -277,7 +277,7 @@ monitoring-vm (pve03)
             </ul>
 
             <h3>Alerting (Grafana → Discord)</h3>
-            <p>Four alert rules are configured in Grafana and route to a dedicated Discord channel via webhook. All rules were live-tested before being marked production-ready:</p>
+            <p>Four alert rules are configured in Grafana and route to a dedicated Discord channel via webhook. All rules were live-tested before being marked production-ready. These are the four launch rules; the set has since grown to 14, adding SMART health and disk temperature, thin-pool capacity, unused Docker images, and media-stack health:</p>
 
             <table class="alert-table">
                 <thead>
@@ -419,7 +419,7 @@ rate(node_cpu_seconds_total[5m])
                         <p>Observability has three distinct data types, each answering a different question:</p>
                         <ul>
                             <li><strong>Metrics (Prometheus)</strong> — "Is something wrong?" Numeric, low volume, highly efficient to store and query. Best for detecting that a problem exists.</li>
-                            <li><strong>Logs (Loki)</strong> — "Why is it wrong?" Text events, high volume. Best for understanding the sequence of events that led to a problem. Loki is deployed but Promtail log shipping is Phase 2.</li>
+                            <li><strong>Logs (Loki)</strong> — "Why is it wrong?" Text events, high volume. Best for understanding the sequence of events that led to a problem. Loki is deployed; shipping node logs into it with Grafana Alloy is Phase 2.</li>
                             <li><strong>Traces (Jaeger/Tempo)</strong> — "Where in the request chain did it fail?" Distributed request paths across microservices. Out of scope for this deployment — relevant for application-layer observability.</li>
                         </ul>
                         <p>Most production incidents start with a metrics alert, then a log investigation. Traces become important when you're debugging distributed systems with multiple services calling each other.</p>
@@ -543,7 +543,7 @@ docker inspect grafana | grep ROOT_URL</pre>
                     <li><strong>Per-VM metrics via Proxmox REST API</strong> — breakdown by VM across the full cluster</li>
                     <li><strong>Node Exporter Full dashboard (ID 1860)</strong> — cluster-wide OS health visualization</li>
                     <li><strong>Proxmox via Prometheus dashboard (ID 10347)</strong> — per-VM resource breakdown</li>
-                    <li><strong>4 alerting rules configured and live-tested</strong> — all rules verified with real trigger conditions</li>
+                    <li><strong>4 launch alert rules configured and live-tested</strong> — all verified with real trigger conditions (14 rules today)</li>
                     <li><strong>Discord notifications working</strong> — correct grafana.seggsy.co links confirmed</li>
                     <li><strong>Grafana protected behind HTTPS</strong> — https://grafana.seggsy.co via Nginx Proxy Manager</li>
                     <li><strong>Full deployment documented</strong> in Obsidian vault</li>
@@ -570,7 +570,7 @@ docker inspect grafana | grep ROOT_URL</pre>
             </div>
 
             <div class="warning-box">
-                <strong>Phase 2 Remaining:</strong> windows_exporter on DC01 and DC02 (Windows-specific metrics, AD auth events), Promtail log shipping from Proxmox nodes into Loki, and Authentik SSO on Grafana (same forward-auth pattern as other services).
+                <strong>Phase 2 Remaining:</strong> windows_exporter on DC01 and DC02 (Windows-specific metrics, AD auth events), Proxmox node logs shipped into Loki with Grafana Alloy (Promtail, the original plan, is end-of-life), and Authentik SSO on Grafana (same forward-auth pattern as other services).
             </div>
         </section>
 

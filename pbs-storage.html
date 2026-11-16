@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Backup Infrastructure Migration - Proxmox Backup Server implementation achieving 100% backup success rate and 85% storage reduction through deduplication.">
+    <meta name="description" content="Backup Infrastructure Migration - Proxmox Backup Server implementation achieving 100% backup success rate and a measured 98% storage reduction through deduplication.">
 
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
@@ -25,7 +25,7 @@
 
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="Backup Infrastructure Migration - Nate's Portfolio">
-    <meta property="og:description" content="Proxmox Backup Server implementation achieving 100% backup success rate and 85% storage reduction through deduplication.">
+    <meta property="og:description" content="Proxmox Backup Server implementation achieving 100% backup success rate and a measured 98% storage reduction through deduplication.">
     <meta property="og:image" content="https://seggsy.co/og-image.png">
     <meta property="og:url" content="https://seggsy.co/pbs-storage">
     <meta property="og:type" content="article">
@@ -33,7 +33,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Backup Infrastructure Migration - Nate's Portfolio">
-    <meta name="twitter:description" content="Proxmox Backup Server implementation achieving 100% backup success rate and 85% storage reduction.">
+    <meta name="twitter:description" content="Proxmox Backup Server implementation achieving 100% backup success rate and a measured 98% storage reduction.">
     <meta name="twitter:image" content="https://seggsy.co/og-image.png">
 
     <!-- Fonts: IBM Plex Mono -->
@@ -119,10 +119,10 @@
 
             <div class="tldr">
                 <div class="tldr-title">TL;DR</div>
-                <p>Migrated from unreliable USB-based backups to Proxmox Backup Server with internal SATA drives. Backup jobs were failing roughly 40% of nights due to USB power management issues. Now four weeks of daily backups fit on a 1TB drive, jobs run unattended, and a secondary node syncs a full copy every night.</p>
+                <p>Migrated from unreliable USB-based backups to Proxmox Backup Server with internal SATA drives. Backup jobs were failing roughly 40% of nights due to USB power management issues. Now a week of daily backups for 13 guests takes about 126 GiB on a 1TB drive, jobs run unattended, and a secondary node syncs a full copy every night.</p>
 
                 <div class="key-achievement">
-                    <strong>Key Achievement:</strong> Jobs stopped failing. 85% storage reduction through deduplication. Secondary node keeps a full copy in case the primary drive dies.
+                    <strong>Key Achievement:</strong> Jobs stopped failing. 98% storage reduction through deduplication (measured). Secondary node keeps a full copy in case the primary drive dies.
                 </div>
             </div>
         </div>
@@ -205,7 +205,7 @@
 
             <h4>Proxmox Backup Server</h4>
             <ul>
-                <li>Chunk-level deduplication (85% storage savings)</li>
+                <li>Chunk-level deduplication (98% storage savings, measured)</li>
                 <li>Automatic verification of backup integrity</li>
                 <li>Let's Encrypt certificates via ACME for secure web UI</li>
                 <li>Native integration with Proxmox VE</li>
@@ -250,7 +250,7 @@ Savings: 65%</pre>
                     <li>420GB of live VM data</li>
                     <li>1TB backup drive capacity</li>
                     <li><strong>Before PBS:</strong> Could store 1-2 full backup rotations</li>
-                    <li><strong>After PBS:</strong> Storing 4+ weeks of daily backups with room to grow</li>
+                    <li><strong>After PBS:</strong> 7 daily backups of 13 guests use about 13% of the drive</li>
                 </ul>
             </div>
         </section>
@@ -370,12 +370,12 @@ blockdev --getalignoff /dev/sda1</code></pre>
                     <div class="stat-label">Failed Jobs Since Migration</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">85%</div>
+                    <div class="stat-value">98%</div>
                     <div class="stat-label">Storage Reduction</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">30+</div>
-                    <div class="stat-label">Days Retention</div>
+                    <div class="stat-value">50x</div>
+                    <div class="stat-label">Dedup Factor</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">2</div>
@@ -386,9 +386,9 @@ blockdev --getalignoff /dev/sda1</code></pre>
             <div class="success-box">
                 <ul style="margin-bottom: 0;">
                     <li>Backup jobs have been running clean since migration (was ~40% failure rate)</li>
-                    <li><strong>85% storage reduction</strong> through chunk-level deduplication</li>
+                    <li><strong>98% storage reduction</strong> through chunk-level deduplication (measured October 2026)</li>
                     <li>Primary syncs to secondary nightly — if the drive fails, the other node has a full copy</li>
-                    <li>30 daily + 8 weekly + 12 monthly backups, all on a 1TB drive</li>
+                    <li>7 daily backups of every guest (<code>keep-daily=7</code>), with daily garbage collection</li>
                     <li>Nothing has needed manual intervention since it went live</li>
                     <li>Following 3-2-1 principles, working toward an offsite copy</li>
                 </ul>
@@ -428,15 +428,14 @@ blockdev --getalignoff /dev/sda1</code></pre>
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
-                        <p><strong>Observation:</strong> PBS deduplication reduced storage requirements by 85%.</p>
+                        <p><strong>Observation:</strong> PBS deduplication reduced storage requirements by 98%.</p>
 
-                        <p><strong>Math:</strong></p>
+                        <p><strong>Measured (first garbage collection, October 2026):</strong></p>
                         <ul>
-                            <li>420GB live data</li>
-                            <li>30 days of retention</li>
-                            <li>Traditional: 420GB x 30 = 12.6TB needed</li>
-                            <li>PBS deduplicated: ~1.9TB actually used</li>
-                            <li>Savings: 85%</li>
+                            <li>13 guests, 7 daily backups each</li>
+                            <li>Logical backup data: 6.2 TiB</li>
+                            <li>Actually on disk: 126 GiB</li>
+                            <li>Dedup factor: 50.6x, so 98% savings</li>
                         </ul>
 
                         <p><strong>Impact:</strong> Can afford longer retention on smaller drives, improving disaster recovery capabilities.</p>
@@ -473,7 +472,7 @@ blockdev --getalignoff /dev/sda1</code></pre>
 
             <div class="story-section">
                 <p>I was running a 3-node Proxmox cluster with ~420GB of VM data backed up to a 4.5TB external USB drive shared via NFS. Backup jobs were failing roughly 40% of nights — the USB drive's power management would put it to sleep mid-backup, stale the NFS mount path, and in some cases cause VMs to shut down unexpectedly when they lost access to the mount mid-write. Single point of failure, no redundancy, and gambling every night that nothing would break. I migrated to Proxmox Backup Server with internal SATA drives: a 1TB drive on pve01 as the primary PBS instance with chunk-level deduplication, and a 1TB drive on pve02 partitioned as both a 200GB NFS share for ISOs and a 731GB PBS sync target. Primary syncs to secondary on a 2-hour offset from the backup window, giving full node-level redundancy if either drive fails.</p>
-                <p>Three things broke during the migration. The USB drive went to sleep mid-rsync during the initial data move — fixed by disabling autosuspend temporarily and using <code>rsync --partial</code> so interrupted transfers resume rather than restart. The ACME DNS-01 challenge for the PBS Let's Encrypt certificate kept failing because Cloudflare's DNS propagation takes time before Let's Encrypt can verify the TXT record — adding a delay and ensuring the API token had Zone:DNS:Edit scope fixed it. And the 1TB ext4 filesystem reported less usable space than expected because ext4 reserves 5% for root by default — about 50GB on a 1TB drive — which is designed for OS disks, not backup workloads. <code>tune2fs -m 1</code> reclaimed most of it. Since deployment: 100% backup success rate, 85% storage reduction through deduplication, and 30+ days of retention that would have required over 12TB with traditional full-backup rotation.</p>
+                <p>Three things broke during the migration. The USB drive went to sleep mid-rsync during the initial data move — fixed by disabling autosuspend temporarily and using <code>rsync --partial</code> so interrupted transfers resume rather than restart. The ACME DNS-01 challenge for the PBS Let's Encrypt certificate kept failing because Cloudflare's DNS propagation takes time before Let's Encrypt can verify the TXT record — adding a delay and ensuring the API token had Zone:DNS:Edit scope fixed it. And the 1TB ext4 filesystem reported less usable space than expected because ext4 reserves 5% for root by default — about 50GB on a 1TB drive — which is designed for OS disks, not backup workloads. <code>tune2fs -m 1</code> reclaimed most of it. Since deployment: 100% backup success rate and a measured 98% storage reduction through deduplication: 6.2 TiB of backups stored in 126 GiB on disk.</p>
             </div>
         </section>
     </main>
