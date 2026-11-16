@@ -773,7 +773,69 @@
                 </ul>
             </div>
         </article>
-        
+
+        <!-- Example 10: Jira Automation Security Alert Intake -->
+        <article class="work-example" aria-labelledby="work-10-title">
+            <div class="card-heading-row">
+                <span class="category-badge cat-automation">AUTOMATION</span>
+                <div>
+                    <h2 id="work-10-title">Security Operations: Automated Alert Intake in Jira</h2>
+                    <div class="card-env-line">Jira Automation &nbsp;·&nbsp; Google Workspace Alert Center &nbsp;·&nbsp; Gmail Routing</div>
+                </div>
+            </div>
+
+            <div class="example-section">
+                <h3>The Challenge</h3>
+                <p>
+                    The Information Security team was copying Google Workspace security alerts (phishing campaigns,
+                    spam waves) into Jira by hand, around 15 to 20 a week. Every ticket was typed by a person,
+                    so they were slow to appear and came out different each time: different priorities, missing
+                    labels, no consistent response steps.
+                </p>
+            </div>
+
+            <div class="example-section">
+                <h3>My Approach</h3>
+                <ol>
+                    <li>Set up a service-account mailbox with Gmail routing that lets through only the official alert senders and archives everything else, so stray mail never becomes a ticket</li>
+                    <li>Pointed that mailbox at a Jira mail handler so each alert becomes an issue as soon as it arrives</li>
+                    <li>Built a multi-branch Jira Automation rule that reads the subject and body with smart values and sorts each alert into phishing, spam, or general</li>
+                    <li>Had each branch set the same priority, story points, and labels, and paste the matching SOP remediation steps into the ticket</li>
+                    <li>Added a catch-all branch that flags anything unrecognised for manual triage, so no alert falls through silently</li>
+                </ol>
+            </div>
+
+            <div class="example-section">
+                <h3>Making It Safe to Run Unattended</h3>
+                <ul>
+                    <li><strong>Loop prevention:</strong> the rule doesn't fire again when it edits its own ticket</li>
+                    <li><strong>Null-safe fallbacks:</strong> a malformed alert still produces a usable ticket instead of an empty one</li>
+                    <li><strong>Reporter gating:</strong> the rule only touches tickets the mail handler created, never ones an engineer filed by hand</li>
+                    <li><strong>Error notification:</strong> if the rule fails, I hear about it, instead of finding out a week later that alerts stopped arriving</li>
+                </ul>
+            </div>
+
+            <div class="example-section">
+                <h3>Outcome</h3>
+                <p>
+                    Routine alert intake went from manual to zero-touch. 15+ alerts a week now land as complete tickets,
+                    already sorted and with response steps attached, so analysts start on the investigation instead of
+                    the paperwork. Every alert ticket carries the same fields, which keeps reporting and SLA tracking consistent.
+                </p>
+            </div>
+
+            <div class="example-section">
+                <h3>Skills Demonstrated</h3>
+                <ul class="skills-list">
+                    <li class="skill-badge">Jira Automation</li>
+                    <li class="skill-badge">Google Workspace Admin</li>
+                    <li class="skill-badge">Security Operations</li>
+                    <li class="skill-badge">Workflow Design</li>
+                    <li class="skill-badge">Process Automation</li>
+                </ul>
+            </div>
+        </article>
+
         <!-- CTA Section -->
         <section class="hero" style="margin-top: var(--space-2xl); text-align: center;">
             <p>
