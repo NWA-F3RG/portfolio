@@ -47,7 +47,8 @@
     --bg-soft:   #232325;
     --bg-elev:   #2a2a2c;
     --fg:        #e6e6dc;
-    --fg-dim:    #75715e;
+    --fg-dim:    #a39e88;   /* secondary TEXT: 5.3:1+ on every bg (WCAG AA) */
+    --fg-faint:  #75715e;   /* decoration only (rules, art, glyphs) */
     --green:     #a6e22e;
     --orange:    #fd971f;
     --cyan:      #66d9ef;
@@ -63,11 +64,12 @@
     background: var(--bg-deep);
     color: var(--fg);
     font-family: var(--font);
-    font-size: 14px;
-    line-height: 1.55;
+    font-size: 15px;
+    line-height: 1.6;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    overflow-x: clip;  /* clip, not hidden: hidden makes body a scroll box and breaks the sticky prompt */
     scroll-padding-bottom: 70px;
   }
 
@@ -131,7 +133,7 @@
     .site-header nav { flex-wrap: wrap; padding: 0 14px; }
     .nav-links { width: 100%; justify-content: space-between; overflow-x: auto; scrollbar-width: none; }
     .nav-links::-webkit-scrollbar { display: none; }
-    .nav-links a { padding: 0 5.6px; font-size: 12.8px; }
+    .nav-links a { padding: 0 5.6px; font-size: 13px; }
   }
 
   /* Secondary palette chips (novelty commands) sit after the main ones */
@@ -145,8 +147,8 @@
     background: var(--bg-deep);
     min-height: 100vh;
     min-height: 100dvh;
-    font-size: 13.5px;
-    line-height: 1.45;
+    font-size: 15px;
+    line-height: 1.5;
   }
 
   .boot-line {
@@ -156,7 +158,9 @@
   }
 
   .boot-line.empty { height: 1.45em; }
-  .boot-line.motd-body-wrap { white-space: pre-wrap; word-wrap: break-word; }
+  /* Room under the newest boot line so the fixed skip hint never covers it */
+  #boot-output { padding-bottom: 72px; }
+  .boot-line.motd-body-wrap { white-space: pre-wrap; word-wrap: break-word; max-width: 72ch; }
 
   .ts      { color: var(--fg-dim); }
   .ok      { color: var(--green); }
@@ -165,6 +169,7 @@
   .info    { color: var(--cyan); }
   .hl      { color: var(--orange); }
   .dim     { color: var(--fg-dim); }
+  .faint   { color: var(--fg-faint); }
   .bracket { color: var(--fg); }
 
   /* =================================================================
@@ -174,8 +179,8 @@
     display: flex;
     gap: 32px;
     margin: 16px 0 8px 0;
-    font-size: 13px;
-    line-height: 1.45;
+    font-size: 14px;
+    line-height: 1.5;
   }
 
   .neofetch-art {
@@ -191,7 +196,7 @@
   .neofetch-info .head { color: var(--green); margin-bottom: 2px; }
   .neofetch-info .head .at   { color: var(--fg); }
   .neofetch-info .head .host { color: var(--cyan); }
-  .neofetch-info .sep  { color: var(--fg-dim); margin-bottom: 4px; }
+  .neofetch-info .sep  { color: var(--fg-faint); margin-bottom: 4px; }
 
   .neofetch-info .row { display: flex; gap: 8px; }
   .neofetch-info .row .k { color: var(--green); min-width: 88px; }
@@ -210,10 +215,10 @@
     display: flex;
     align-items: baseline;
     gap: 0;
-    font-size: 14px;
+    font-size: 15px;
     margin: 8px 0 4px 0;
     position: sticky;
-    bottom: 52px;
+    bottom: var(--palette-h, 52px);  /* JS measures the palette */
     background: var(--bg-deep);
     z-index: 50;
     padding: 4px 0;
@@ -235,6 +240,7 @@
     font-family: inherit;
     font-size: inherit;
     flex: 1;
+    min-width: 0;   /* let the input shrink: no sideways scroll on phones */
     caret-color: transparent;
     padding: 0;
     position: relative;
@@ -259,6 +265,7 @@
   .prompt-cursor-wrap {
     position: relative;
     flex: 1;
+    min-width: 0;
     display: flex;
     align-items: baseline;
   }
@@ -313,8 +320,8 @@
   .output {
     margin: 4px 0 12px 0;
     color: var(--fg);
-    font-size: 13.5px;
-    line-height: 1.6;
+    font-size: inherit;
+    line-height: 1.65;
     white-space: pre-wrap;
   }
 
@@ -325,6 +332,11 @@
   .output .warn    { color: var(--yellow); }
   .output .fail    { color: var(--pink); }
   .output .ok      { color: var(--green); }
+
+  /* Paragraph output: wraps at ~72 characters (Baymard 50-75) instead of
+     hard-coded line breaks, so phones don't wrap every line twice */
+  .output .para { display: block; white-space: normal; max-width: 72ch; margin: 0 0 0.9em; }
+  .output .para.indent { margin-left: 4ch; }
 
   .output a {
     color: var(--cyan);
@@ -338,7 +350,7 @@
   /* systemctl-style row */
   .sc-row {
     display: grid;
-    grid-template-columns: 18px 1fr auto auto;
+    grid-template-columns: 18px 20ch 11ch minmax(0, 1fr);
     gap: 14px;
     padding: 2px 0;
     cursor: pointer;
@@ -354,14 +366,18 @@
   .sc-row .dot.d { color: var(--fg-dim); }
   .sc-row .dot.c { color: var(--cyan); }
   .sc-row .name  { color: var(--fg); }
-  .sc-row .state { font-size: 11.5px; color: var(--fg-dim); }
+  .sc-row .state { font-size: 13px; color: var(--fg-dim); }
   .sc-row .state.a { color: var(--green); }
   .sc-row .state.w { color: var(--yellow); }
-  .sc-row .when  { font-size: 11.5px; color: var(--fg-dim); }
+  .sc-row .when  { font-size: 13px; color: var(--fg-dim); }
+  .sc-row .desc  { color: var(--fg); }
+  .sc-row.sc-head { cursor: default; }
+  .sc-row.sc-head:hover { background: none; }
+  .sc-head span { color: var(--fg-dim); font-size: 13px; letter-spacing: 0.05em; }
 
   /* tree */
-  .tree { font-size: 13px; line-height: 1.65; }
-  .tree .branch { color: var(--fg-dim); }
+  .tree { font-size: inherit; line-height: 1.65; }
+  .tree .branch { color: var(--fg-faint); }
   .tree .dir    { color: var(--cyan); font-weight: 500; }
   .tree .file   { color: var(--fg); }
 
@@ -391,7 +407,7 @@
   }
 
   .palette-label {
-    font-size: 10px;
+    font-size: 13px;
     color: var(--fg-dim);
     letter-spacing: 0.1em;
     margin-right: 8px;
@@ -402,9 +418,10 @@
     background: transparent;
     border: 1px solid var(--border);
     color: var(--fg);
-    padding: 5px 11px;
+    padding: 0 12px;
+    min-height: 44px;
     font-family: var(--font);
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
     border-radius: 3px;
     transition: all 0.12s;
@@ -417,7 +434,7 @@
   .chip:active { transform: scale(0.97); }
   .chip .key  { color: var(--orange); font-weight: 600; }
   .chip.icon  { margin-left: auto; }
-  .chip-desc  { color: var(--fg-dim); font-size: 11px; }
+  .chip-desc  { color: var(--fg-dim); font-size: 13px; }
 
   /* =================================================================
      GUI SECTIONS
@@ -429,72 +446,42 @@
     background: var(--bg-soft);
   }
   .gui-section h2 { color: var(--green); font-size: 18px; font-weight: 600; margin-bottom: 12px; }
-  .gui-section h3 { color: var(--cyan); font-size: 14px; font-weight: 600; margin: 16px 0 6px; }
+  .gui-section h3 { color: var(--cyan); font-size: 16px; font-weight: 600; margin: 16px 0 6px; }
   .gui-section p  { color: var(--fg); line-height: 1.7; margin-bottom: 10px; }
   .gui-section ul { list-style: none; }
   .gui-section li { color: var(--fg); padding: 4px 0; line-height: 1.6; }
   .gui-section li::before { content: '▸ '; color: var(--green); }
 
   /* =================================================================
-     BOOT CHOOSER
+     WHOAMI CARD: first thing on the landing screen (10-second test)
      ================================================================= */
-  .boot-chooser {
-    padding: 8px 0;
-    line-height: 1.7;
+  .whoami {
+    margin: 4px 0 20px;
+    padding: 16px 20px;
+    background: var(--bg-soft);
+    border-left: 2px solid var(--green);
+    white-space: normal;
+    max-width: 80ch;
   }
-  .boot-chooser .chooser-head {
-    color: var(--green);
-    margin-bottom: 12px;
+  .whoami .name { color: var(--fg); font-size: 1.6em; font-weight: 600; line-height: 1.2; }
+  .whoami .role { color: var(--cyan); margin: 6px 0 12px; }
+  .whoami p     { max-width: 68ch; line-height: 1.65; margin-bottom: 14px; }
+  .whoami .links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .whoami .links a {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px;
+    border: 1px solid var(--border-active); border-radius: 3px;
+    color: var(--green); text-decoration: none;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   }
-  .boot-chooser .chooser-opt {
-    color: var(--fg);
-    margin-left: 2ch;
-    padding: 4px 6px 4px 0;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: color 0.1s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .boot-chooser .chooser-opt:active {
-    color: var(--green);
-  }
-  .boot-chooser .chooser-opt:active .chooser-key {
-    border-color: var(--green);
-    color: var(--green);
-  }
-  @media (hover: hover) {
-    .boot-chooser .chooser-opt:hover {
-      color: var(--green);
-    }
-    .boot-chooser .chooser-opt:hover .chooser-key {
-      border-color: var(--green);
-      color: var(--green);
-    }
-  }
-  .boot-chooser .chooser-key {
-    color: var(--orange);
-    border: 1px solid var(--border-active);
-    padding: 1px 6px;
-    border-radius: 2px;
-    margin-right: 10px;
-    font-size: 0.9em;
-    display: inline-block;
-    min-width: 5ch;
-    text-align: center;
-    transition: border-color 0.1s ease, color 0.1s ease;
-  }
-  .boot-chooser .chooser-prompt {
-    margin-top: 8px;
-    color: var(--fg);
-  }
-  .boot-chooser .prompt-hint {
-    color: var(--fg-dim);
-    font-style: italic;
-    margin-right: 4px;
-    margin-left: 6px;
-  }
-  .boot-chooser .chooser-prompt .cursor {
-    margin-left: 4px;
+  .whoami .links a:hover { border-color: var(--green); background: rgba(166,226,46,0.06); }
+
+  /* Shown while the boot plays: any key or tap skips it */
+  .boot-skip-hint {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    padding: 18px 16px calc(14px + env(safe-area-inset-bottom));
+    text-align: center; color: var(--fg-dim); font-size: 13px;
+    background: linear-gradient(transparent, var(--bg-deep) 45%);
+    pointer-events: none;
   }
 
   /* =================================================================
@@ -504,8 +491,9 @@
     background: transparent;
     border: 1px solid var(--border);
     color: var(--fg-dim);
-    width: 28px;
-    height: 28px;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
     border-radius: 3px;
     cursor: pointer;
     font-size: 13px;
@@ -521,7 +509,7 @@
      ================================================================= */
   .app {
     display: none;
-    padding: 20px 32px 100px 32px;
+    padding: 20px 32px calc(var(--palette-h, 52px) + 64px) 32px;
     min-height: 100vh;
   }
   .boot.fading { opacity: 0; transition: opacity 1.2s ease-out; }
@@ -530,36 +518,39 @@
 
   /* Mobile — 700px */
   @media (max-width: 700px) {
-    html, body { overflow-x: hidden; }
-    .boot { padding: 16px 14px 16px 14px; font-size: 12px; }
-    .app  { padding: 16px 14px 150px 14px; font-size: 12px; }
+    html, body { overflow-x: hidden; overflow-x: clip; }
+    .boot { padding: 16px 14px; font-size: 14px; }
+    .app  { padding: 16px 14px calc(var(--palette-h, 60px) + 72px) 14px; font-size: 14px; }
     /* Boot lines and output: pre-wrap so long lines wrap instead of overflow */
     .boot-line { white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; }
     .output { overflow-wrap: break-word; word-break: break-word; }
     .neofetch { flex-direction: column; gap: 10px; }
     .neofetch-art { font-size: 9px; line-height: 1.15; }
-    .neofetch-info { font-size: 12px; }
+    .neofetch-info { font-size: 14px; }
     .neofetch-info .row .k { min-width: 64px; }
     .neofetch-info .row .v { word-break: break-word; }
-    .sc-row { grid-template-columns: 16px 1fr; gap: 8px; }
-    .sc-row .state, .sc-row .when { display: none; }
-    .palette { padding: 8px 10px; gap: 4px; }
+    /* Phones: description drops under the unit name */
+    .sc-row { grid-template-columns: 16px minmax(0, 1fr); gap: 0 8px; padding-top: 4px; padding-bottom: 4px; }
+    .sc-row .state, .sc-row .when, .sc-row.sc-head { display: none; }
+    .sc-row .desc { grid-column: 2; color: var(--fg-dim); }
+    /* One row of full-size chips that scrolls sideways, instead of 3-4 wrapped rows */
+    .palette { padding: 8px 10px; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .palette::-webkit-scrollbar { display: none; }
     .palette-label { display: none; }
-    .chip { padding: 4px 9px; font-size: 11px; }
+    .chip { padding: 0 10px; flex-shrink: 0; }
     .chip.icon { margin-left: 0; }
-    .prompt-line { font-size: 13px; bottom: 40px; }
-    .output { font-size: 12px; }
+    .prompt-line { font-size: 14px; }
     /* Prevent iOS Safari auto-zoom (triggers on any input < 16px) */
     .prompt-input, .ssh-field { font-size: 16px; }
   }
 
   /* Very small screens — 420px */
   @media (max-width: 420px) {
-    .boot { padding: 12px 12px 12px 12px; font-size: 11px; }
-    .app  { padding: 12px 12px 160px 12px; font-size: 11px; }
-    .ts { display: none; }        /* hide [timestamp] prefixes — too wide */
+    .boot { padding: 12px; }
+    .app  { padding: 12px 12px calc(var(--palette-h, 60px) + 72px) 12px; }
+    .ts { display: none; }
+    .p-branch { display: none; }  /* room for the input at 14px */        /* hide [timestamp] prefixes — too wide */
     .neofetch-art { display: none; } /* ASCII art not readable at this size */
-    .chip { padding: 3px 7px; font-size: 10.5px; }
     .chip-desc { display: none; }
   }
 
@@ -590,31 +581,30 @@
 
   /* Large desktop — bump font size for 27"+ monitors */
   @media (min-width: 1440px) {
-    html, body { font-size: 15px; }
-    .boot { font-size: 14.5px; }
-    .app  { font-size: 15px; }
+    html, body { font-size: 16px; }
+    .boot { font-size: 16px; }
+    .app  { font-size: 16px; }
   }
 
   /* Landscape mobile — rotated phones (~360-430px tall) */
   @media (orientation: landscape) and (max-height: 500px) {
-    .boot  { padding: 10px 16px; font-size: 11px; }
-    .app   { padding: 10px 16px 110px 16px; font-size: 11px; }
-    .palette { padding: 4px 10px; gap: 3px; }
+    .boot  { padding: 10px 16px; font-size: 13.5px; }
+    .app   { padding: 10px 16px calc(var(--palette-h, 52px) + 40px) 16px; font-size: 13.5px; }
+    .palette { padding: 4px 10px; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
     .palette-label { display: none; }
-    .chip  { padding: 3px 8px; font-size: 10px; }
+    .chip  { padding: 0 8px; font-size: 13.5px; flex-shrink: 0; }
     .chip-desc { display: none; }
     .chip.icon { margin-left: 0; }
-    .prompt-line { bottom: 36px; font-size: 12px; }
+    .prompt-line { font-size: 13.5px; }
     .neofetch { flex-direction: row; gap: 12px; }
     .neofetch-art { display: none; }
   }
 
   /* Very small phones — iPhone SE (375px), Galaxy A01 (360px) */
   @media (max-width: 380px) {
-    .boot { padding: 10px 10px; font-size: 10.5px; }
-    .app  { padding: 10px 10px 160px 10px; font-size: 10.5px; }
-    .chip { padding: 2px 6px; font-size: 10px; }
-    .neofetch-info { font-size: 11px; }
+    .boot { padding: 10px; font-size: 13.5px; }
+    .app  { padding: 10px 10px calc(var(--palette-h, 60px) + 72px) 10px; font-size: 13.5px; }
+    .neofetch-info { font-size: 13.5px; }
   }
 </style>
 </head>
@@ -639,6 +629,7 @@
 <!-- Boot screen -->
 <div class="boot" id="boot">
   <div id="boot-output"></div>
+  <div class="boot-skip-hint" aria-hidden="true">[ press any key or tap to skip ]</div>
 </div>
 
 <!-- App shell -->
@@ -652,7 +643,7 @@
         type="text"
         class="prompt-input"
         id="prompt-input"
-        placeholder="type ? for a list of commands, or click one below ↓"
+        placeholder="try neofetch, tree, cat pbs-storage · Tab completes · ? for help"
         autocomplete="off"
         spellcheck="false"
       />
@@ -774,22 +765,22 @@ const SYSADMIN_ART = `    ╔═════════════════
     ═══╧╧╧═══╧╧╧═══╧╧╧═`;
 
 const SYSADMIN_ART_HTML =
-`<span style="color:var(--fg-dim)">    ╔══════════════════╗</span>
-<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--green)">▓▓▓</span> <span style="color:var(--cyan)">seggsy</span> <span style="color:var(--green)">▓▓▓</span>   <span style="color:var(--fg-dim)">║</span>
-<span style="color:var(--fg-dim)">    ╟──────────────────╢</span>
-<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--yellow)">●</span>  <span style="color:var(--orange)">▓▓▓▓▓▓▓</span> <span style="color:var(--fg-dim)">║</span>
-<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span>  <span style="color:var(--orange)">▓▓▓▓▓▓▓</span> <span style="color:var(--fg-dim)">║</span>
-<span style="color:var(--fg-dim)">    ╟──────────────────╢</span>
-<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--fg-dim)">░░░░░░  [  /  ]  ║</span>
-<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--cyan)">▓▓▓▓▓▓</span>  <span style="color:var(--fg-dim)">[</span><span style="color:var(--green)">══════</span><span style="color:var(--fg-dim)">] ║</span>
-<span style="color:var(--fg-dim)">    ║</span> <span style="color:var(--cyan)">▓▓▓▓▓▓</span>  <span style="color:var(--fg-dim)">[</span><span style="color:var(--green)">══════</span><span style="color:var(--fg-dim)">] ║</span>
-<span style="color:var(--fg-dim)">    ╟──────────────────╢</span>
-<span style="color:var(--fg-dim)">    ║  ┌──┐  ┌──┐ ┌──┐ ║</span>
-<span style="color:var(--fg-dim)">    ║  │</span><span style="color:var(--fg-dim)">░░</span><span style="color:var(--fg-dim)">│  │</span><span style="color:var(--orange)">▓▓</span><span style="color:var(--fg-dim)">│ │░░│ ║</span>
-<span style="color:var(--fg-dim)">    ║  └──┘  └──┘ └──┘ ║</span>
-<span style="color:var(--fg-dim)">    ╚══════════════════╝</span>
-<span style="color:var(--fg-dim)">       │││   │││   │││</span>
-<span style="color:var(--fg-dim)">    ═══╧╧╧═══╧╧╧═══╧╧╧═</span>`;
+`<span style="color:var(--fg-faint)">    ╔══════════════════╗</span>
+<span style="color:var(--fg-faint)">    ║</span> <span style="color:var(--green)">▓▓▓</span> <span style="color:var(--cyan)">seggsy</span> <span style="color:var(--green)">▓▓▓</span>   <span style="color:var(--fg-faint)">║</span>
+<span style="color:var(--fg-faint)">    ╟──────────────────╢</span>
+<span style="color:var(--fg-faint)">    ║</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--yellow)">●</span>  <span style="color:var(--orange)">▓▓▓▓▓▓▓</span> <span style="color:var(--fg-faint)">║</span>
+<span style="color:var(--fg-faint)">    ║</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span> <span style="color:var(--green)">●</span>  <span style="color:var(--orange)">▓▓▓▓▓▓▓</span> <span style="color:var(--fg-faint)">║</span>
+<span style="color:var(--fg-faint)">    ╟──────────────────╢</span>
+<span style="color:var(--fg-faint)">    ║</span> <span style="color:var(--fg-faint)">░░░░░░  [  /  ]  ║</span>
+<span style="color:var(--fg-faint)">    ║</span> <span style="color:var(--cyan)">▓▓▓▓▓▓</span>  <span style="color:var(--fg-faint)">[</span><span style="color:var(--green)">══════</span><span style="color:var(--fg-faint)">] ║</span>
+<span style="color:var(--fg-faint)">    ║</span> <span style="color:var(--cyan)">▓▓▓▓▓▓</span>  <span style="color:var(--fg-faint)">[</span><span style="color:var(--green)">══════</span><span style="color:var(--fg-faint)">] ║</span>
+<span style="color:var(--fg-faint)">    ╟──────────────────╢</span>
+<span style="color:var(--fg-faint)">    ║  ┌──┐  ┌──┐ ┌──┐ ║</span>
+<span style="color:var(--fg-faint)">    ║  │</span><span style="color:var(--fg-faint)">░░</span><span style="color:var(--fg-faint)">│  │</span><span style="color:var(--orange)">▓▓</span><span style="color:var(--fg-faint)">│ │░░│ ║</span>
+<span style="color:var(--fg-faint)">    ║  └──┘  └──┘ └──┘ ║</span>
+<span style="color:var(--fg-faint)">    ╚══════════════════╝</span>
+<span style="color:var(--fg-faint)">       │││   │││   │││</span>
+<span style="color:var(--fg-faint)">    ═══╧╧╧═══╧╧╧═══╧╧╧═</span>`;
 
 // =================================================================
 // BOOT SEQUENCE
@@ -835,11 +826,11 @@ const BOOT_LINES = [
   { d: 5350, prompt: true, cmd: 'cat /etc/motd' },
   // — MOTD theatrical reveal —
   { d: 5500, motdRule: true },
-  { d: 5900, motdBody: true, charInterval: 49, periodPause: 1500, text: "I'm obsessed with understanding how things actually work. My homelab isn't just a collection of services \u2014 it's where I break things, fix them, and document every step so I can do it better next time. I build SSO auth, automated backups, and clustering because it's the best way I've found to actually understand infrastructure." },
-  { d: 28500, motdTagline: true, hl: 'Building',    rest: ' infrastructure.', typeDur: 1200, dotPause: 0, dotCount: 0, dotInterval: 0 },
-  { d: 31200, motdTagline: true, hl: 'Documenting', rest: ' everything.',     typeDur: 1300, dotPause: 0, dotCount: 0, dotInterval: 0 },
-  { d: 34000, motdTagline: true, hl: 'Learning',    rest: ' constantly.',     typeDur: 1200, dotPause: 0, dotCount: 0, dotInterval: 0, keepCursor: true },
-  { d: 37000, dropToShell: true }
+  { d: 5700, motdBody: true, charInterval: 11, periodPause: 250, text: "I'm obsessed with understanding how things actually work. My homelab isn't just a collection of services \u2014 it's where I break things, fix them, and document every step so I can do it better next time. I build SSO auth, automated backups, and clustering because it's the best way I've found to actually understand infrastructure." },
+  { d: 10400, motdTagline: true, hl: 'Building',    rest: ' infrastructure.', typeDur: 450, dotPause: 0, dotCount: 0, dotInterval: 0 },
+  { d: 10950, motdTagline: true, hl: 'Documenting', rest: ' everything.',     typeDur: 450, dotPause: 0, dotCount: 0, dotInterval: 0 },
+  { d: 11500, motdTagline: true, hl: 'Learning',    rest: ' constantly.',     typeDur: 450, dotPause: 0, dotCount: 0, dotInterval: 0, keepCursor: true },
+  { d: 12100, dropToShell: true }
 ];
 
 // =================================================================
@@ -859,16 +850,19 @@ function emitBootLine(html) {
   window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
 }
 
+var cwd = '~';
+function escHtml(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
 function renderPromptLine(cmd) {
-  return '<span class="p-user">nate</span><span class="p-at">@</span><span class="p-host">seggsy</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-branch">(main)</span><span class="p-sigil">$</span> ' + cmd;
+  return '<span class="p-user">nate</span><span class="p-at">@</span><span class="p-host">seggsy</span><span class="p-colon">:</span><span class="p-path">' + cwd + '</span><span class="p-branch">(main)</span><span class="p-sigil">$</span> ' + cmd;
 }
 
 function renderMotd() {
   return '<div class="boot-line" style="margin:4px 0;">' +
-    '<span class="dim">─────────────────────────────────────────────────────────────────────────</span>' +
+    '<span class="faint">─────────────────────────────────────────────────────────────────────────</span>' +
     '</div>' +
     '<div class="boot-line motd-body-wrap" style="margin-bottom:6px;">' +
-    '  <span class="dim">I\'m obsessed with understanding how things actually work. My homelab isn\'t just a collection of services — it\'s where I break things, fix them, and document every step so I can do it better next time. I build SSO auth, automated backups, and clustering because it\'s the best way I\'ve found to actually understand infrastructure.</span>' +
+    '  <span>I\'m obsessed with understanding how things actually work. My homelab isn\'t just a collection of services — it\'s where I break things, fix them, and document every step so I can do it better next time. I build SSO auth, automated backups, and clustering because it\'s the best way I\'ve found to actually understand infrastructure.</span>' +
     '</div>' +
     '<div class="boot-line">' +
     '  <span class="hl">Building</span> infrastructure.\n' +
@@ -877,19 +871,60 @@ function renderMotd() {
     '</div>';
 }
 
+// Landing order: who + how to reach me first, projects next, personality after.
+function renderWhoami() {
+  return '<div class="output"><div class="whoami">' +
+    '<div class="name">nate nwaeze</div>' +
+    '<div class="role">IT Support Engineer II at The Zebra · Austin, TX</div>' +
+    '<p>Identity and access work: Okta, Jamf, Google Workspace, Jira and Confluence admin. ' +
+    'At home, a 4-node Proxmox cluster where I break things on purpose and write down what happened. ' +
+    'Open to the right role in Austin, ideally moving toward platform or systems work.</p>' +
+    '<div class="links">' +
+      '<a href="/resume">resume →</a>' +
+      '<a href="/#projects" data-cmd="ls">projects</a>' +
+      '<a href="/#contact" data-cmd="dig">contact</a>' +
+    '</div>' +
+  '</div></div>';
+}
+
+// Ends right above the live prompt, so the blinking cursor is on the first
+// screen: it reads as a shell, not a page. MOTD plays in the boot and lives
+// on as `motd`; neofetch is a command.
+function renderLanding() {
+  return '<div class="boot-line">' + renderPromptLine('whoami') + '</div>' +
+    renderWhoami() +
+    '<div class="boot-line">' + renderPromptLine('systemctl list-units --type=project') + '</div>' +
+    renderProjectList();
+}
+
+// [cmd, dot class, glyph, unit, ACTIVE, DESCRIPTION]. Descriptions restate
+// facts already on the project pages (vault is the source of truth).
+var PROJECT_UNITS = [
+  ['cat authentik-sso',      'g', '●', 'authentik-sso',      'active',     'single sign-on for homelab apps, AD backed'],
+  ['cat pbs-storage',        'g', '●', 'pbs-storage',        'active',     'nightly backup failures 40% → 0%'],
+  ['cat monitoring-stack',   'g', '●', 'monitoring-stack',   'active',     '14 alert rules → Discord across 4 nodes'],
+  ['cat ssh-hardening',      'g', '●', 'ssh-hardening',      'active',     'Ed25519 + fail2ban on 7 systems, zero lockouts'],
+  ['cat ci-cd-pipeline',     'g', '●', 'ci-cd-pipeline',     'active',     'push to main → auto-deploy (GitHub Actions)'],
+  ['cat k3s-cluster',        'y', '◐', 'k3s-cluster',        'activating', '3-node HA Kubernetes, in progress'],
+  ['cat rhcsa-prep',         'y', '◐', 'rhcsa-prep',         'activating', 'Red Hat EX200 prep, studying'],
+  ['cat homelab-highlights', 'c', '◈', 'homelab-highlights', 'active',     'incident logs from real lab breakage'],
+  ['cat work-highlights',    'c', '◈', 'work-highlights',    'active',     '10 sanitized examples from work']
+];
+
+function unitRow(u) {
+  return '<div class="sc-row" data-cmd="' + u[0] + '"><span class="dot ' + u[1] + '">' + u[2] + '</span>' +
+    '<span class="name">' + u[3] + '</span>' +
+    '<span class="state ' + (u[4] === 'active' ? 'a' : 'w') + '">' + u[4] + '</span>' +
+    '<span class="desc">' + u[5] + '</span></div>';
+}
+
 function renderProjectList() {
   return '<div class="output">' +
-    '<div class="sc-row" data-cmd="cat authentik-sso"><span class="dot g">●</span><span class="name">authentik-sso.service</span><span class="state a">active (running)</span><span class="when">2mo ago</span></div>' +
-    '<div class="sc-row" data-cmd="cat pbs-storage"><span class="dot g">●</span><span class="name">pbs-storage.service</span><span class="state a">active (running)</span><span class="when">3mo ago</span></div>' +
-    '<div class="sc-row" data-cmd="cat monitoring-stack"><span class="dot g">●</span><span class="name">monitoring-stack.service</span><span class="state a">active (running)</span><span class="when">2mo ago</span></div>' +
-    '<div class="sc-row" data-cmd="cat ssh-hardening"><span class="dot g">●</span><span class="name">ssh-hardening.service</span><span class="state a">active (running)</span><span class="when">3mo ago</span></div>' +
-    '<div class="sc-row" data-cmd="cat ci-cd-pipeline"><span class="dot g">●</span><span class="name">ci-cd-pipeline.service</span><span class="state a">active (running)</span><span class="when">4mo ago</span></div>' +
-    '<div class="sc-row" data-cmd="cat k3s-cluster"><span class="dot y">◐</span><span class="name">k3s-cluster.service</span><span class="state w">activating (in progress)</span><span class="when">—</span></div>' +
-    '<div class="sc-row" data-cmd="cat rhcsa-prep"><span class="dot y">◐</span><span class="name">rhcsa-prep.service</span><span class="state w">activating (studying)</span><span class="when">—</span></div>' +
-    '<div class="dim" style="font-size:11px;padding:5px 4px 3px;">──── notes &amp; examples ────</div>' +
-    '<div class="sc-row" data-cmd="cat homelab-highlights"><span class="dot c">◈</span><span class="name">homelab-highlights.log</span><span class="state a">active (logging)</span><span class="when">ongoing</span></div>' +
-    '<div class="sc-row" data-cmd="cat work-highlights"><span class="dot c">◈</span><span class="name">work-highlights.log</span><span class="state a">active</span><span class="when">ongoing</span></div>' +
-    '<div style="margin-top:8px;font-size:11.5px;" class="dim">9 loaded units. Click a row or type <span class="hl">cat &lt;name&gt;</span> for details.</div>' +
+    '<div class="sc-row sc-head" aria-hidden="true"><span></span><span>UNIT</span><span>ACTIVE</span><span>DESCRIPTION</span></div>' +
+    PROJECT_UNITS.slice(0, 7).map(unitRow).join('') +
+    '<div class="dim" style="font-size:13px;padding:6px 4px 3px;">──── notes &amp; examples ────</div>' +
+    PROJECT_UNITS.slice(7).map(unitRow).join('') +
+    '<div style="margin-top:8px;font-size:13px;" class="dim">9 loaded units. Click a row, or type <span class="hl">cat &lt;name&gt;</span> (Tab completes).</div>' +
     '</div>';
 }
 
@@ -918,7 +953,9 @@ function neofetchHtml() {
     '</div>';
 }
 
+var bootStartedAt = 0;
 function startBoot() {
+  bootStartedAt = Date.now();
   document.getElementById('boot').style.display = 'block';
   document.getElementById('app').classList.remove('visible');
   document.getElementById('boot-output').innerHTML = '';
@@ -958,7 +995,7 @@ function startBoot() {
         if (!document.getElementById('boot-motd-anchor')) {
           rDiv.id = 'boot-motd-anchor';
         }
-        rDiv.innerHTML = '<span class="dim">─────────────────────────────────────────────────────────────────────────</span>';
+        rDiv.innerHTML = '<span class="faint">─────────────────────────────────────────────────────────────────────────</span>';
         document.getElementById('boot-output').appendChild(rDiv);
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
         return;
@@ -968,7 +1005,7 @@ function startBoot() {
         var pauseMs = line.periodPause;
         var bDiv = document.createElement('div');
         bDiv.className = 'boot-line motd-body-wrap';
-        bDiv.innerHTML = '  <span class="dim" id="motd-body-text"></span><span class="type-cursor" id="motd-body-cursor"></span>';
+        bDiv.innerHTML = '  <span id="motd-body-text"></span><span class="type-cursor" id="motd-body-cursor"></span>';
         document.getElementById('boot-output').appendChild(bDiv);
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
         var chars = line.text.split('');
@@ -976,7 +1013,7 @@ function startBoot() {
         var lastIdx = chars.length - 1;
         chars.forEach(function(ch, ci) {
           elapsed += typeJitter(charMs, charMs * 0.4);
-          if (ch === ',') elapsed += 140;
+          if (ch === ',') elapsed += 60;
           (function(t, c, isLast) {
             bootTimeouts.push(setTimeout(function() {
               var el = document.getElementById('motd-body-text');
@@ -1098,9 +1135,7 @@ function startBoot() {
 function completeBoot() {
   try { localStorage.setItem(BOOT_KEY, '1'); } catch(e) {}
 
-  document.getElementById('app-output').innerHTML =
-    '<div class="boot-line">' + renderPromptLine('cat /etc/motd') + '</div>' +
-    renderMotd();
+  document.getElementById('app-output').innerHTML = renderLanding();
 
   var boot    = document.getElementById('boot');
   var bootOut = document.getElementById('boot-output');
@@ -1110,7 +1145,7 @@ function completeBoot() {
     document.getElementById('palette').style.display = 'flex';
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
-        document.getElementById('prompt-input').focus();
+        document.getElementById('prompt-input').focus({ preventScroll: true });
       });
     });
   }
@@ -1196,90 +1231,41 @@ function completeBoot() {
         }, 460));
 
       }, PAM_LINES.length * 110 + 220)); // last PAM line + brief pause
-    }, 850)); // cursor sits for ~850ms — deliberate, weighted
-  }, 400)); // silence after boot ends
+    }, 450)); // cursor sits briefly: the shell claiming the TTY
+  }, 200)); // short silence after boot ends
 }
 
 function skipBoot() {
   bootTimeouts.forEach(function(t) { clearTimeout(t); });
   bootTimeouts = [];
   var appOut = document.getElementById('app-output');
-  appOut.innerHTML =
-    '<div class="boot-line">' + renderPromptLine('cat /etc/motd') + '</div>' +
-    renderMotd() +
-    '<div class="boot-line">' + renderPromptLine('neofetch') + '</div>' +
-    neofetchHtml() +
-    '<div class="boot-line">' + renderPromptLine('ls projects/') + '</div>' +
-    renderProjectList();
+  appOut.innerHTML = renderLanding();
   document.getElementById('boot').style.display = 'none';
   window.scrollTo(0, 0);
   document.getElementById('app').classList.add('visible');
   document.getElementById('palette').style.display = 'flex';
   try { localStorage.setItem(BOOT_KEY, '1'); } catch(e) {}
-  document.getElementById('prompt-input').focus();
-}
-
-function showBootChooser() {
-  document.getElementById('boot').style.display = 'block';
-  document.getElementById('app').classList.remove('visible');
-  document.getElementById('palette').style.display = 'none';
-  var out = document.getElementById('boot-output');
-  out.innerHTML =
-    '<div class="boot-line boot-chooser" id="boot-chooser">' +
-      '<div class="chooser-head">[ <span class="hl">INCOMING</span> ] you\'ve caught a system mid-boot.</div>' +
-      '<div class="chooser-opt" data-action="skip"><span class="chooser-key">esc</span>skip to the site</div>' +
-      '<div class="chooser-opt" data-action="play"><span class="chooser-key">enter</span>let the boot sequence play (~40s)</div>' +
-      '<div class="chooser-prompt">&gt;<span class="prompt-hint">tap or press</span><span class="cursor"></span></div>' +
-    '</div>';
-  window.scrollTo(0, 0);
-
-  function dispatch(action) {
-    document.removeEventListener('keydown', onKey);
-    if (action === 'play') {
-      out.innerHTML = '';
-      startBoot();
-    } else {
-      skipBoot();
-    }
-  }
-
-  function onKey(e) {
-    // Boot already skipped another way (nav link, deep link): retire this listener
-    if (document.getElementById('boot').style.display === 'none') {
-      document.removeEventListener('keydown', onKey);
-      return;
-    }
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      dispatch('play');
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      dispatch('skip');
-    }
-  }
-
-  out.querySelectorAll('.chooser-opt').forEach(function(el) {
-    el.addEventListener('click', function() {
-      dispatch(el.dataset.action);
-    });
-  });
-  document.addEventListener('keydown', onKey);
+  document.getElementById('prompt-input').focus({ preventScroll: true });
 }
 
 // =================================================================
 // COMMANDS
 // =================================================================
-function printOutput(html, topAlign) {
+// One scroll rule for every command, like a real terminal: output that fits
+// sits just above the prompt (scrolled to the end); output taller than the
+// screen is shown from its first line so nobody starts reading mid-way.
+// (The prompt is sticky, so "scroll the prompt into view" no longer moves
+// the page; that's why this measures the output itself.)
+function printOutput(html) {
   var div = document.createElement('div');
   div.innerHTML = html;
   document.getElementById('app-output').appendChild(div);
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
-      if (topAlign) {
-        div.scrollIntoView({ behavior: 'instant', block: 'start' });
-      } else {
-        document.getElementById('active-prompt').scrollIntoView({ behavior: 'instant', block: 'nearest' });
-      }
+      // Scroll to the end, then back up if the "$ command" line went off the top
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' });
+      var first = (div.previousElementSibling || div).getBoundingClientRect().top;
+      if (first < 0) window.scrollTo({ top: Math.max(0, window.scrollY + first - 8), behavior: 'instant' });
     });
   });
 }
@@ -1290,7 +1276,7 @@ function catProject(slug, title, desc, stack, time, state) {
     '    Loaded: loaded (<span class="sub">~/projects/' + slug + '/</span>; enabled)\n' +
     '    Active: <span class="ok">' + state + '</span>  since <span class="hl">' + time + '</span>\n' +
     '      Docs: <a href="/' + slug + '">https://seggsy.co/' + slug + '</a>\n\n' +
-    '    <span class="sub">' + desc.replace(/\n/g, '\n    ') + '</span>\n\n' +
+    '<span class="para indent">' + desc.replace(/\n/g, ' ') + '</span>' +
     '    Stack: ' + stack.map(function(s) { return '<span class="hl">' + s + '</span>'; }).join(' · ') +
     '</div>';
 }
@@ -1299,21 +1285,21 @@ var COMMANDS = {
   'me': function() { printOutput('<div class="output">' +
     '<span class="heading">▸ nate nwaeze</span>\n' +
     '<span class="sub">IT Support Engineer II · Austin, TX</span>\n\n' +
-    'I do identity and access work at <span class="hl">The Zebra</span> in Austin. Mostly Okta,\n' +
-    'Mac fleet management with Jamf, Google Workspace, Jira and Confluence admin,\n' +
-    'and the kind of escalated tickets that turn out to be three problems\n' +
-    'wearing a trenchcoat.\n\n' +
-    'Before this: <span class="hl">Pretium Enterprise Services</span> (T2 Technology Delivery) and\n' +
-    '<span class="hl">ZenGuard MSP</span> (T2, Apple SME for 200+ devices). Before IT I managed\n' +
-    'restaurants. A networking tech ran cable through my dining room one afternoon\n' +
-    "and I haven't stopped asking questions since.\n\n" +
-    "The homelab is a 4-node Proxmox cluster — where I learn most of what I know\n" +
-    "about platform engineering by breaking things on purpose and writing down what\n" +
-    "happened. I'm open to the right role in Austin, ideally moving toward platform\n" +
-    "or systems work. Type <span class=\"accent\">'dig'</span> to reach me." +
+    '<span class="para">I do identity and access work at <span class="hl">The Zebra</span> in Austin. Mostly Okta, ' +
+    'Mac fleet management with Jamf, Google Workspace, Jira and Confluence admin, ' +
+    'and the kind of escalated tickets that turn out to be three problems ' +
+    'wearing a trenchcoat.</span>' +
+    '<span class="para">Before this: <span class="hl">Pretium Enterprise Services</span> (T2 Technology Delivery) and ' +
+    '<span class="hl">ZenGuard MSP</span> (T2, Apple SME for 200+ devices). Before IT I managed ' +
+    'restaurants. A networking tech ran cable through my dining room one afternoon ' +
+    "and I haven't stopped asking questions since.</span>" +
+    "<span class=\"para\">The homelab is a 4-node Proxmox cluster — where I learn most of what I know " +
+    "about platform engineering by breaking things on purpose and writing down what " +
+    "happened. I'm open to the right role in Austin, ideally moving toward platform " +
+    "or systems work. Type <span class=\"accent\">'dig'</span> to reach me.</span>" +
     '</div>', true); },
 
-  'whoami': function() { COMMANDS['me'](); },
+  'whoami': function() { printOutput(renderWhoami()); },
   'about':  function() { COMMANDS['me'](); },
 
   'cat /etc/motd': function() { printOutput(renderMotd()); },
@@ -1324,15 +1310,15 @@ var COMMANDS = {
 
   'cat resume': function() { printOutput('<div class="output">' +
     '<span class="heading">▸ From <span class="hl">restaurants</span> to <span class="hl">infrastructure</span></span>\n\n' +
-    'Picture a restaurant. A networking tech is running cable while someone\n' +
-    'watches every move, asking what each port does and why the switch matters.\n' +
-    'Not another engineer — the general manager. That was me three years ago,\n' +
-    'and that moment rewired my career. I started building home labs after my\n' +
-    'shifts, teaching myself the systems I\'d spent years walking past. When a\n' +
-    'former colleague saw my name on a help desk application, he vouched for me\n' +
-    'without hesitation, zero IT experience and all. Four companies, 350+\n' +
-    'users, and countless solved tickets later, I\'m ready to move from fixing\n' +
-    'what\'s broken to building infrastructure that doesn\'t break.\n\n' +
+    '<span class="para">Picture a restaurant. A networking tech is running cable while someone ' +
+    'watches every move, asking what each port does and why the switch matters. ' +
+    'Not another engineer — the general manager. That was me three years ago, ' +
+    'and that moment rewired my career. I started building home labs after my ' +
+    'shifts, teaching myself the systems I\'d spent years walking past. When a ' +
+    'former colleague saw my name on a help desk application, he vouched for me ' +
+    'without hesitation, zero IT experience and all. Four companies, 350+ ' +
+    'users, and countless solved tickets later, I\'m ready to move from fixing ' +
+    'what\'s broken to building infrastructure that doesn\'t break.</span>' +
     '<span class="dim">────────────────────────────────────────────────────────────</span>\n\n' +
     '<span class="heading">▸ resume — nate nwaeze</span>\n\n' +
     '<span class="ok">●</span> <span class="hl">The Zebra</span> — IT Support Engineer II <span class="sub">· 2026–present</span>\n' +
@@ -1503,7 +1489,7 @@ var COMMANDS = {
     '<div style="margin-top:12px;padding:12px;border:1px solid var(--border);background:var(--bg-soft);">' +
     '<div style="margin-bottom:8px;"><span class="sub">From:</span> <input type="text" class="ssh-field" placeholder="your.email@company.com" style="padding:4px 8px;width:260px;" /></div>' +
     '<textarea class="ssh-field" placeholder="hey nate — " style="padding:8px;width:100%;min-height:70px;resize:vertical;"></textarea>' +
-    '<div style="margin-top:8px;"><a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener" style="display:inline-block;background:var(--green);color:var(--bg-deep);padding:5px 14px;font-family:var(--font);font-size:12px;font-weight:600;text-decoration:none;border-radius:3px;">schedule a call →</a></div>' +
+    '<div style="margin-top:8px;"><a href="https://calendly.com/nnwaeze/let-s-connect" target="_blank" rel="noopener" style="display:inline-block;background:var(--green);color:var(--bg-deep);padding:12px 16px;font-family:var(--font);font-size:14px;font-weight:600;text-decoration:none;border-radius:3px;">schedule a call →</a></div>' +
     '</div>' +
     '</div>'); },
 
@@ -1558,6 +1544,10 @@ var COMMANDS = {
     '<span class="accent">cat &lt;project&gt;</span><span class="sub">read a project — authentik-sso, monitoring-stack, pbs-storage, ssh-hardening, ci-cd-pipeline</span>' +
     '<span class="accent">cat resume</span><span class="sub">career history</span>' +
     '<span class="accent">tree</span><span class="sub">site map</span>' +
+    '<span class="accent">neofetch</span><span class="sub">system info, the fun way</span>' +
+    '<span class="accent">systemctl status &lt;project&gt;</span><span class="sub">same as cat, for the purists</span>' +
+    '<span class="accent">history</span><span class="sub">what you have run so far</span>' +
+    '<span class="accent">man &lt;cmd&gt;</span><span class="sub">manual page for a command</span>' +
     '<span class="accent">dig</span><span class="sub">contact info</span>' +
     '<span class="accent">ssh</span><span class="sub">send a message</span>' +
     '<span class="accent">gui</span><span class="sub">expand everything into a readable view</span>' +
@@ -1565,10 +1555,73 @@ var COMMANDS = {
     '<span class="accent">clear</span><span class="sub">clear the screen</span>' +
     '<span class="accent">?</span><span class="sub">this help</span>' +
     '</div>' +
-    '<span class="sub" style="margin-top:12px;display:block;">↑/↓ arrow keys cycle command history</span>' +
+    '<span class="sub" style="margin-top:12px;display:block;">Tab completes · ↑/↓ history · Ctrl+L clears · Ctrl+C cancels · some commands are not listed</span>' +
     '</div>'); },
 
   'help':  function() { COMMANDS['?'](); },
+
+  // ---- things people who live in a shell try first ----
+  'neofetch':  function() { printOutput(neofetchHtml()); },
+  'fastfetch': function() { COMMANDS['neofetch'](); },
+  'uname':     function() { printOutput('<div class="output">Linux</div>'); },
+  'uname -a':  function() { printOutput('<div class="output">Linux seggsy 6.6.0-seggsy #1 SMP PREEMPT_DYNAMIC x86_64 GNU/Linux</div>'); },
+  'pwd':       function() { printOutput('<div class="output">/home/nate' + cwd.slice(1) + '</div>'); },
+  'history':   function() {
+    var h = history.slice().reverse();
+    printOutput('<div class="output">' + h.map(function(c, i) {
+      return '<span class="sub">' + ('    ' + (i + 1)).slice(-5) + '</span>  ' + escHtml(c);
+    }).join('\n') + '</div>');
+  },
+  'date':      function() { printOutput('<div class="output">' + unixDate() + '</div>'); },
+  'uptime':    function() {
+    var t = new Date().toTimeString().slice(0, 8);
+    printOutput('<div class="output"> ' + t + ' up <span class="hl">3.4 years</span> in IT,  1 user,  load average: 0.42, 0.37, 0.31</div>');
+  },
+  'exit':      function() { printOutput('<div class="output">logout\n<span class="sub">Connection to seggsy closed.</span>\n\n' +
+    'Just kidding, the session stays open. Rather read a normal page? Type <span class="accent">gui</span> or open <a href="/resume">the résumé</a>.</div>'); },
+  'logout':    function() { COMMANDS['exit'](); },
+  'systemctl':                           function() { COMMANDS['ls'](); },
+  'systemctl list-units':                function() { COMMANDS['ls'](); },
+  'systemctl list-units --type=project': function() { COMMANDS['ls'](); },
+  'man':       function() { printOutput('<div class="output">What manual page do you want?\nFor example, try <span class="accent">man man</span>.</div>'); },
+  'ping':      function() { printOutput('<div class="output"><span class="fail">ping: usage error: Destination address required</span></div>'); },
+
+  // ---- easter eggs (not listed in help) ----
+  'git log':   function() { printOutput('<div class="output">' +
+    '<span class="warn">ca5f2a2</span> <span class="hl">(HEAD -&gt; main)</span> Unify site navigation and link project pages\n' +
+    '<span class="warn">d6f3cf0</span> Fix three stale facts caught by the new drift check\n' +
+    '<span class="warn">24f63c6</span> Restore Jamf in home-page bio, gui view, and stack line\n' +
+    '<span class="warn">5ebd54f</span> Sync whole site with the vault (source of truth)\n' +
+    '<span class="warn">9eb9938</span> Resume page intro: four companies\n' +
+    '<span class="sub">(yes, the site is in git. github: type dig)</span></div>'); },
+  'git log --oneline': function() { COMMANDS['git log'](); },
+  'vim':  function() { printOutput('<div class="output"><span class="hl">~</span>\n<span class="hl">~</span>\n<span class="hl">~</span>\n' +
+    '<span class="sub">"[No Name]" 0L, 0B</span>\n\nYou are in vim now. Type <span class="accent">:q!</span> to escape.</div>'); },
+  'vi':   function() { COMMANDS['vim'](); },
+  'nvim': function() { COMMANDS['vim'](); },
+  ':q':   function() { printOutput('<div class="output"><span class="ok">You escaped vim.</span> Most people never do. Put that on your résumé.</div>'); },
+  ':q!':  function() { COMMANDS[':q'](); },
+  ':wq':  function() { COMMANDS[':q'](); },
+  ':x':   function() { COMMANDS[':q'](); },
+  'nano': function() { printOutput('<div class="output">nano: a sensible choice. Nothing to edit here, though. Try <span class="accent">cat resume</span>.</div>'); },
+  'emacs': function() { printOutput('<div class="output">emacs: a great operating system, lacking only a decent editor.</div>'); },
+  'rm -rf /':      function() { printOutput('<div class="output"><span class="fail">rm: it is dangerous to operate recursively on \'/\'</span>\n' +
+    '<span class="fail">rm: use --no-preserve-root to override this failsafe</span>\n\n' +
+    '<span class="sub">(Relax. Proxmox Backup Server backs this box up every night.)</span></div>'); },
+  'rm -rf /*':     function() { COMMANDS['rm -rf /'](); },
+  'rm -rf ~':      function() { COMMANDS['rm -rf /'](); },
+  'sudo rm -rf /': function() { COMMANDS['rm -rf /'](); },
+  'rm -rf / --no-preserve-root': function() {
+    printOutput('<div class="output">removed \'/home/nate/coffee\'\nremoved \'/etc/motd\'\nremoved \'/usr/bin/curiosity\'\n' +
+      '<span class="fail">Kernel panic - not syncing: Attempted to kill init!</span>\n<span class="sub">restoring from last night\'s backup...</span></div>');
+    setTimeout(function() { COMMANDS['reboot'](); }, 1800);
+  },
+  'sudo rm -rf / --no-preserve-root': function() { COMMANDS['rm -rf / --no-preserve-root'](); },
+  'cat /etc/passwd': function() { printOutput('<div class="output">' +
+    'root:x:0:0:root:/root:/bin/bash\n' +
+    'nate:x:1000:1000:nate nwaeze,,,:/home/nate:/usr/bin/zsh\n' +
+    'recruiter:x:1001:1001:welcome,,,:/home/recruiter:/usr/bin/dig</div>'); },
+  'cat /etc/shadow': function() { printOutput('<div class="output"><span class="fail">cat: /etc/shadow: Permission denied</span></div>'); },
 
   'sudo':  function() { printOutput('<div class="output">' +
     'nate is not in the sudoers file. This incident will be reported.' +
@@ -1584,6 +1637,106 @@ var COMMANDS = {
 // =================================================================
 // DISPATCH
 // =================================================================
+// Commands that take an argument
+function prefixCommand(key, raw) {
+  var m;
+  if (key === 'echo' || key.indexOf('echo ') === 0) {
+    printOutput('<div class="output">' + escHtml(raw.slice(5)) + '</div>'); return true;
+  }
+  if (key === 'cd' || key.indexOf('cd ') === 0) { changeDir(key.slice(3).trim()); return true; }
+  if ((m = key.match(/^man\s+(\S+)$/))) { manPage(m[1]); return true; }
+  if ((m = key.match(/^ping\s+(\S+)$/))) { pingHost(m[1]); return true; }
+  if ((m = key.match(/^systemctl\s+status\s+(\S+)$/))) {
+    var c = 'cat ' + m[1].replace(/\.service$/, '');
+    if (COMMANDS[c]) COMMANDS[c]();
+    else printOutput('<div class="output"><span class="fail">Unit ' + escHtml(m[1]) + '.service could not be found.</span></div>');
+    return true;
+  }
+  return false;
+}
+
+var DIRS = { '': '~', '~': '~', '/home/nate': '~', '..': '~', 'projects': '~/projects', '~/projects': '~/projects',
+             'incidents': '~/incidents', '~/incidents': '~/incidents' };
+function changeDir(arg) {
+  if (arg !== '/') arg = arg.replace(/\/$/, '');
+  if (arg === '/' || arg === '/root') {
+    printOutput('<div class="output"><span class="fail">cd: permission denied: ' + escHtml(arg) + '</span></div>'); return;
+  }
+  var target = DIRS[arg];
+  if (!target) {
+    printOutput('<div class="output"><span class="fail">cd: no such file or directory: ' + escHtml(arg) + '</span></div>'); return;
+  }
+  cwd = target;
+  document.getElementById('cwd').textContent = cwd;
+}
+
+var MAN = {
+  me: 'about nate', whoami: 'who nate is, in one card', motd: 'message of the day', ls: 'list projects',
+  cat: 'read a project, the résumé, or a file', tree: 'site map', dig: 'contact info', ssh: 'send a message',
+  gui: 'everything in a plain readable view', reboot: 'replay the boot sequence', clear: 'clear the screen',
+  neofetch: 'system info, the fun way', history: 'commands you have run', cd: 'change directory',
+  pwd: 'print working directory', echo: 'print text', uname: 'kernel info', uptime: 'how long nate has been in IT',
+  date: 'current date and time', ping: 'check a host is up', systemctl: 'list-units, or status <project>',
+  exit: 'leave (you can try)', sudo: 'you are not in the sudoers file',
+  man: 'an interface to the system reference manuals (you are reading one)'
+};
+function manPage(cmd) {
+  var d = MAN[cmd];
+  if (!d) { printOutput('<div class="output">No manual entry for ' + escHtml(cmd) + '\n<span class="sub">Type <span class="accent">?</span> for the command list.</span></div>'); return; }
+  printOutput('<div class="output"><span class="heading">NAME</span>\n    ' + cmd + ' - ' + d +
+    '\n\n<span class="heading">SEE ALSO</span>\n    help(1), gui(1)</div>');
+}
+
+function pingHost(host) {
+  var h = escHtml(host), lines = 'PING ' + h + ' (' + (host === 'nate' ? 'austin, tx' : h) + '): 56 data bytes\n';
+  [0.42, 0.38, 0.40].forEach(function(t, i) { lines += '64 bytes from ' + h + ': icmp_seq=' + i + ' ttl=64 time=' + t + ' ms\n'; });
+  lines += '\n--- ' + h + ' ping statistics ---\n3 packets transmitted, 3 packets received, <span class="ok">0.0% packet loss</span>';
+  if (host === 'nate') lines += '\n\n<span class="sub">Low latency. Type <span class="accent">dig</span> to reach him.</span>';
+  printOutput('<div class="output">' + lines + '</div>');
+}
+
+function unixDate() {
+  var d = new Date(), tz = '';
+  try { tz = new Intl.DateTimeFormat('en-US', { timeZoneName: 'short' }).formatToParts(d)
+          .filter(function(p) { return p.type === 'timeZoneName'; })[0].value; } catch (e) {}
+  var p = d.toDateString().split(' '); // Tue Nov 17 2026
+  return p[0] + ' ' + p[1] + ' ' + p[2] + ' ' + d.toTimeString().slice(0, 8) + ' ' + tz + ' ' + p[3];
+}
+
+// Tab completion: one match completes, several complete the shared prefix,
+// a second Tab lists them (bash behaviour)
+var COMPLETIONS = ['me', 'whoami', 'motd', 'ls', 'tree', 'dig', 'ssh', 'gui', 'reboot', 'clear', 'help',
+  'neofetch', 'uname -a', 'pwd', 'cd projects', 'history', 'date', 'echo ', 'uptime', 'man ', 'exit', 'ping nate',
+  'git log', 'vim', 'cat resume', 'sudo hire nate'];
+PROJECT_UNITS.forEach(function(u) { COMPLETIONS.push(u[0], 'systemctl status ' + u[3]); });
+
+var lastTabValue = null;
+function tabComplete(inp) {
+  var v = inp.value.replace(/^\s+/, ''), lv = v.toLowerCase();
+  var matches = COMPLETIONS.filter(function(c) { return c.indexOf(lv) === 0; });
+  if (!matches.length) { lastTabValue = null; return; }
+  if (matches.length === 1) {
+    inp.value = matches[0] + (/\s$/.test(matches[0]) ? '' : ' ');
+    lastTabValue = null; return;
+  }
+  var lcp = matches.reduce(function(a, b) { var i = 0; while (i < a.length && a[i] === b[i]) i++; return a.slice(0, i); });
+  if (lcp.length > lv.length) { inp.value = lcp; lastTabValue = null; return; }
+  if (lastTabValue === v) {
+    echoPrompt(v);
+    printOutput('<div class="output tab-list">' + matches.map(escHtml).join('    ') + '</div>');
+    lastTabValue = null;
+  } else {
+    lastTabValue = v;
+  }
+}
+
+function echoPrompt(text) {
+  var echo = document.createElement('div');
+  echo.className = 'boot-line';
+  echo.innerHTML = renderPromptLine(escHtml(text));
+  document.getElementById('app-output').appendChild(echo);
+}
+
 function exec(rawInput) {
   var input = rawInput.trim();
   if (!input) return;
@@ -1605,6 +1758,8 @@ function exec(rawInput) {
 
   if (COMMANDS[key]) {
     COMMANDS[key]();
+  } else if (prefixCommand(key, input)) {
+    // handled
   } else if (key.startsWith('sudo ')) {
     COMMANDS['sudo']();
   } else if (key.startsWith('cat ')) {
@@ -1619,6 +1774,8 @@ function exec(rawInput) {
 // INPUT HANDLERS
 // =================================================================
 var promptInput = document.getElementById('prompt-input');
+// The full hint doesn't fit a phone-width prompt at a readable size
+if (window.matchMedia('(max-width: 420px)').matches) promptInput.placeholder = 'try neofetch, or ?';
 
 // Block cursor tracking — measures typed text width to position the cursor span
 var _cursorMeasurer = null;
@@ -1658,6 +1815,21 @@ promptInput.addEventListener('keydown', function(e) {
     if (historyIdx > 0) { historyIdx--; this.value = history[historyIdx]; }
     else { historyIdx = -1; this.value = ''; }
     requestAnimationFrame(updateInputCursor);
+  } else if (e.key === 'Tab' && !e.shiftKey && this.value.trim() !== '') {
+    // Empty prompt: Tab still moves focus (keyboard accessibility)
+    e.preventDefault();
+    tabComplete(this);
+    requestAnimationFrame(updateInputCursor);
+  } else if (e.ctrlKey && (e.key === 'l' || e.key === 'L')) {
+    e.preventDefault();
+    COMMANDS['clear']();
+  } else if (e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
+    e.preventDefault();
+    echoPrompt(this.value + '^C');
+    this.value = '';
+    historyIdx = -1;
+    requestAnimationFrame(updateInputCursor);
+    document.getElementById('active-prompt').scrollIntoView({ block: 'nearest' });
   } else {
     keyClack();
     requestAnimationFrame(updateInputCursor);
@@ -1676,10 +1848,39 @@ document.querySelectorAll('.chip[data-cmd]').forEach(function(btn) {
   });
 });
 
+// Boot is skippable at any moment: any key (except Tab/modifiers, so the
+// skip link still works) or any tap/click outside the site nav.
+function bootPlaying() {
+  var boot = document.getElementById('boot');
+  // The 300ms grace stops the Enter/click that ran `reboot` from skipping it
+  return boot.style.display !== 'none' && !boot.classList.contains('boot-exiting')
+    && Date.now() - bootStartedAt > 300;
+}
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape' && document.getElementById('boot').style.display !== 'none') {
-    skipBoot();
+  if (!bootPlaying()) return;
+  if (e.metaKey || e.ctrlKey || e.altKey || ['Tab', 'Shift', 'Control', 'Alt', 'Meta'].indexOf(e.key) !== -1) return;
+  e.preventDefault();
+  skipBoot();
+});
+document.addEventListener('pointerdown', function(e) {
+  if (bootPlaying() && !e.target.closest('.site-header, .skip-link')) skipBoot();
+});
+
+// The prompt line and page padding sit above the fixed palette, whose
+// height changes with screen width (wrapped rows vs one scrolling row).
+(function() {
+  var pal = document.getElementById('palette');
+  function setH() {
+    if (pal.offsetHeight) document.documentElement.style.setProperty('--palette-h', pal.offsetHeight + 'px');
   }
+  if (window.ResizeObserver) new ResizeObserver(setH).observe(pal);
+  window.addEventListener('resize', setH);
+})();
+
+// whoami card links run the matching command in place
+document.getElementById('app-output').addEventListener('click', function(e) {
+  var a = e.target.closest('a[data-cmd]');
+  if (a) { e.preventDefault(); exec(a.dataset.cmd); }
 });
 
 // sc-row click — run the associated cat command
@@ -1695,7 +1896,7 @@ document.getElementById('app-output').addEventListener('click', function(e) {
 document.addEventListener('click', function(e) {
   if (document.getElementById('app').classList.contains('visible')) {
     if (!e.target.closest('a, button, input, textarea')) {
-      promptInput.focus();
+      promptInput.focus({ preventScroll: true });
     }
   }
 });
@@ -1733,15 +1934,15 @@ window.addEventListener('hashchange', runHash);
 // =================================================================
 // INIT
 // =================================================================
+// First visit: the boot autoplays (~13s, skippable). Return visits and
+// reduced-motion users land straight on the site; `reboot` replays it.
 if (!runHash()) {
-  try {
-    if (localStorage.getItem(BOOT_KEY)) {
-      skipBoot();
-    } else {
-      showBootChooser();
-    }
-  } catch(e) {
-    showBootChooser();
+  var seen = false;
+  try { seen = !!localStorage.getItem(BOOT_KEY); } catch(e) {}
+  if (seen || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    skipBoot();
+  } else {
+    startBoot();
   }
 }
 </script>

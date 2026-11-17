@@ -5,7 +5,8 @@
     --bg-elev:   #2a2a2d;
     --bg-code:   #0f0f10;
     --fg:        #e6e6dc;
-    --fg-dim:    #75715e;
+    --fg-dim:    #a39e88;   /* secondary TEXT: 5.3:1+ on every bg (WCAG AA) */
+    --fg-faint:  #75715e;   /* decoration only (rules, art, glyphs), never reading text */
     --green:     #a6e22e;
     --orange:    #fd971f;
     --cyan:      #66d9ef;
@@ -35,7 +36,7 @@
     --font-sans: var(--font);
     --font-display: var(--font);
 
-    --font-size-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+    --font-size-xs:   clamp(0.8125rem, 0.75rem + 0.25vw, 0.875rem);
     --font-size-sm:   clamp(0.875rem, 0.8rem  + 0.375vw, 1rem);
     --font-size-base: clamp(1rem,     0.9rem  + 0.5vw,   1.125rem);
     --font-size-lg:   clamp(1.125rem, 1rem    + 0.625vw, 1.25rem);
@@ -83,7 +84,7 @@ body {
     background: var(--bg-code);
     color: var(--fg);
     line-height: 1.65;
-    font-size: 15px;
+    font-size: 16px;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -185,7 +186,7 @@ nav {
     nav { flex-wrap: wrap; }
     .nav-links { width: 100%; justify-content: space-between; overflow-x: auto; scrollbar-width: none; }
     .nav-links::-webkit-scrollbar { display: none; }
-    .nav-links a { padding: 0 0.35rem; font-size: 0.8rem; }
+    .nav-links a { padding: 0 0.35rem; font-size: 0.8125rem; }
 }
 
 /* ==================== Project Pager (prev / next) ==================== */
@@ -212,7 +213,7 @@ nav {
 }
 .project-pager a:hover { border-color: var(--green); }
 .project-pager .pager-next { margin-left: auto; text-align: right; }
-.project-pager .pager-label { color: var(--fg); font-size: 0.75rem; }
+.project-pager .pager-label { color: var(--fg); font-size: 0.8125rem; }
 .project-pager .pager-title { color: var(--green); font-size: 0.9rem; font-weight: 600; overflow-wrap: anywhere; }
 
 /* Résumé ↔ work-example cross-links */
@@ -220,7 +221,7 @@ nav {
 .see-how a, .backs-resume a { color: var(--green); text-underline-offset: 2px; }
 .see-how a:hover, .backs-resume a:hover { color: var(--fg); }
 .backs-resume {
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     color: var(--fg);
     margin-top: var(--space-xs);
 }
@@ -254,7 +255,7 @@ main.project-main {
 .project-tag {
     display: inline-block;
     font-family: var(--font);
-    font-size: 0.78rem;
+    font-size: 0.8125rem;
     color: var(--fg-dim);
     margin-bottom: var(--space-sm);
     letter-spacing: 0.02em;
@@ -262,7 +263,7 @@ main.project-main {
 .project-tag::before { content: '// '; color: var(--orange); }
 
 h1 {
-    font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+    font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.25rem);
     font-weight: 600;
     color: var(--fg);
     margin-bottom: var(--space-sm);
@@ -292,7 +293,7 @@ h1 {
 .tldr-title {
     font-family: var(--font);
     font-weight: 600;
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     color: var(--green);
     margin-bottom: var(--space-xs);
     text-transform: uppercase;
@@ -306,7 +307,7 @@ h1 {
     padding: var(--space-sm);
     margin-top: var(--space-xs);
     font-size: 0.9rem;
-    color: var(--fg-dim);
+    color: var(--fg);
 }
 .key-achievement strong { color: var(--green); }
 
@@ -314,16 +315,17 @@ h1 {
 .section { margin-bottom: var(--space-2xl); }
 
 h2 {
-    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+    font-size: clamp(1.2rem, 1.05rem + 0.6vw, 1.4rem);
     font-weight: 600;
+    line-height: 1.3;
     color: var(--green);
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-md);
     padding-bottom: var(--space-xs);
     border-bottom: 1px solid var(--border);
 }
 
 h3 {
-    font-size: clamp(0.9rem, 0.85rem + 0.25vw, 1.05rem);
+    font-size: clamp(1.05rem, 1rem + 0.25vw, 1.15rem);
     font-weight: 600;
     color: var(--cyan);
     margin-top: var(--space-lg);
@@ -331,17 +333,24 @@ h3 {
 }
 
 h4 {
-    font-size: clamp(0.85rem, 0.8rem + 0.2vw, 0.95rem);
+    font-size: 1rem;
     font-weight: 600;
     color: var(--orange);
     margin-top: var(--space-sm);
     margin-bottom: var(--space-xs);
 }
 
+/* Markdown-style heading marker: hierarchy by shape + size, not color alone */
+main h2::before { content: '## '; color: var(--orange); font-weight: 400; }
+
 p { margin-bottom: var(--space-sm); color: var(--fg); line-height: 1.7; }
 
+/* Measure: prose wraps at ~72 characters (Baymard 50-75, WCAG 1.4.8 max 80).
+   pre, tables and diagrams keep the full column. */
+main p, main li { max-width: 72ch; }
+
 ul, ol { margin-left: var(--space-md); margin-bottom: var(--space-sm); }
-li { margin-bottom: var(--space-xs); color: var(--fg); line-height: 1.65; }
+li { margin-bottom: var(--space-xs); color: var(--fg); line-height: 1.7; }
 
 /* ==================== Code & Terminal ==================== */
 pre {
@@ -359,7 +368,7 @@ pre {
 
 code {
     font-family: var(--font);
-    font-size: 0.875em;
+    font-size: max(0.875em, 0.8125rem);  /* never under 13px, even inside small tables */
     color: var(--cyan);
     background: var(--bg-elev);
     padding: 0.1em 0.4em;
@@ -405,7 +414,7 @@ pre code {
     background: transparent;
     border: none;
     color: var(--fg-dim);
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     margin: 0;
     padding: 0;
     border-radius: 0;
@@ -525,20 +534,20 @@ pre code {
 }
 
 .story-section p {
-    color: var(--fg-dim);
+    color: var(--fg);
     line-height: 1.75;
-    font-size: 0.95rem;
+    font-size: 1rem;
     margin-bottom: var(--space-sm);
 }
 .story-section p:last-child { margin-bottom: 0; }
 
-.job li { font-size: 0.95rem; }
+.job li { font-size: 1rem; }
 
 /* ==================== Skill Badges ==================== */
 .skill-badge {
     display: inline-block;
     font-family: var(--font);
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     padding: 0.2rem 0.6rem;
     background: var(--bg-elev);
     color: var(--fg-dim);
@@ -587,7 +596,7 @@ footer.project-footer .footer-content {
 
 .footer-copy {
     font-family: var(--font);
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     color: var(--fg-dim);
 }
 
@@ -601,15 +610,15 @@ footer.project-footer .footer-content {
 }
 
 @media (max-width: 768px) {
-    h1 { font-size: 1.5rem; }
-    h2 { font-size: 1rem; }
-    h3 { font-size: 0.95rem; }
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.2rem; }
+    h3 { font-size: 1.05rem; }
 
     main.project-main { padding: var(--space-lg) var(--space-xs); }
 
     .project-meta { flex-direction: column; gap: var(--space-xs); }
 
-    pre { font-size: 0.78rem; }
+    pre { font-size: 0.8125rem; }
 
     footer.project-footer .footer-content { flex-direction: column; text-align: center; }
     .footer-links { flex-wrap: wrap; justify-content: center; }
