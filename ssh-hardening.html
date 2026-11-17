@@ -81,6 +81,20 @@
                     <strong>Key Achievement:</strong> No system accepts password authentication. fail2ban bans IPs after 5 failures — slows attackers without risking permanent self-lockout.
                 </div>
             </div>
+
+            <div class="results">
+                <div class="results-cmd"><span class="prompt">$</span> cat results.txt</div>
+                <dl>
+                    <dt>password logins</dt>
+                    <dd><strong>disabled</strong> on every system</dd>
+                    <dt>systems</dt>
+                    <dd><strong>7</strong> (4 Proxmox nodes + 3 Linux VMs)</dd>
+                    <dt>lockouts</dt>
+                    <dd><strong>0</strong> during the rollout</dd>
+                    <dt>fail2ban</dt>
+                    <dd>ban after <strong>5 failures</strong> in a 10-minute window</dd>
+                </dl>
+            </div>
         </div>
 
         <!-- The Problem -->
@@ -344,10 +358,10 @@ apt update && apt install fail2ban -y</code></pre>
 
             <div class="success-box">
                 <ul style="margin-bottom: 0;">
-                    <li>No system accepts password authentication anymore</li>
-                    <li>Rolled out across all 6 systems without a single lockout</li>
-                    <li>fail2ban bans IPs after 5 failed attempts — 10-minute window, which slows attackers without risking permanent self-lockout</li>
-                    <li>Hypervisors and VMs use different security models for a reason (Proxmox needs root; VMs don't)</li>
+                    <li><strong>No system accepts password authentication</strong> anymore</li>
+                    <li>Rolled out across all 6 systems <strong>without a single lockout</strong></li>
+                    <li><strong>fail2ban bans IPs after 5 failed attempts</strong> — 10-minute window, which slows attackers without risking permanent self-lockout</li>
+                    <li>Hypervisors and VMs use <strong>different security models</strong> for a reason (Proxmox needs root; VMs don't)</li>
                 </ul>
             </div>
 

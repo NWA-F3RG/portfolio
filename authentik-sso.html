@@ -81,6 +81,20 @@
                     <strong>Key Achievement:</strong> Self-hosted apps behind one login. Adding a new app takes about 5 minutes — a proxy provider, an application entry, and a few nginx lines.
                 </div>
             </div>
+
+            <div class="results">
+                <div class="results-cmd"><span class="prompt">$</span> cat results.txt</div>
+                <dl>
+                    <dt>logins</dt>
+                    <dd>one AD login for every protected app</dd>
+                    <dt>new app</dt>
+                    <dd><strong>~5 minutes</strong> to put behind SSO</dd>
+                    <dt>auth failures</dt>
+                    <dd><strong>none</strong> since going live</dd>
+                    <dt>audit</dt>
+                    <dd>every login attempt logged in Authentik</dd>
+                </dl>
+            </div>
         </div>
 
         <!-- The Problem -->
@@ -89,10 +103,10 @@
 
             <h3>What I Started With</h3>
             <ul>
-                <li>A growing set of self-hosted apps in my homelab (documentation wiki, dashboard, code editor, etc.)</li>
-                <li>Each app had its own login page and password</li>
-                <li>I was either reusing passwords (bad security) or forgetting which password went with which app</li>
-                <li>No way to see who accessed what, or block access globally if needed</li>
+                <li><strong>A growing set of self-hosted apps</strong> in my homelab (documentation wiki, dashboard, code editor, etc.)</li>
+                <li>Each app had <strong>its own login page and password</strong></li>
+                <li>I was either <strong>reusing passwords</strong> (bad security) or forgetting which password went with which app</li>
+                <li><strong>No way to see who accessed what</strong>, or block access globally if needed</li>
             </ul>
 
             <h3>Why This Sucks</h3>
@@ -304,10 +318,10 @@
             <div class="success-box">
                 <ul style="margin-bottom: 0;">
                     <li><strong>Every protected app</strong> behind one login</li>
-                    <li>One set of AD credentials for everything — no per-app passwords</li>
+                    <li><strong>One set of AD credentials</strong> for everything — no per-app passwords</li>
                     <li><strong>~5 minutes</strong> to add a new application to SSO</li>
-                    <li>No authentication failures since going live</li>
-                    <li>Every login attempt logged in Authentik</li>
+                    <li><strong>No authentication failures</strong> since going live</li>
+                    <li><strong>Every login attempt logged</strong> in Authentik</li>
                 </ul>
             </div>
 

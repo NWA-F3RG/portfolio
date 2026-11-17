@@ -81,6 +81,20 @@
                     <strong>Key Achievement:</strong> Manual SSH-and-redeploy turned into <code>git push</code>. One <code>deploy.yml</code> pattern is reused across every Dockerized service in the homelab.
                 </div>
             </div>
+
+            <div class="results">
+                <div class="results-cmd"><span class="prompt">$</span> cat results.txt</div>
+                <dl>
+                    <dt>deploy</dt>
+                    <dd><code>git push</code> to <code>main</code> → container redeployed automatically</dd>
+                    <dt>manual steps</dt>
+                    <dd><strong>none</strong>: no SSH, no <code>docker compose</code> by hand</dd>
+                    <dt>deploy log</dt>
+                    <dd>git history: what changed, when, which commit</dd>
+                    <dt>reuse</dt>
+                    <dd>one <code>deploy.yml</code> template for any Dockerized service</dd>
+                </dl>
+            </div>
         </div>
 
         <!-- The Problem -->
@@ -314,10 +328,10 @@ networks:
 
             <div class="success-box">
                 <ul style="margin-bottom: 0;">
-                    <li>Every push to <code>main</code> redeploys the service automatically — no manual SSH, no manual compose</li>
-                    <li>The runner runs as a systemd service, so deploys keep working after reboots with nobody logged in</li>
-                    <li>Git history doubles as the deploy log — what changed, when, and by which commit</li>
-                    <li>One reusable <code>deploy.yml</code> pattern works across every Dockerized service in the homelab</li>
+                    <li><strong>Every push to <code>main</code> redeploys the service</strong> automatically — no manual SSH, no manual compose</li>
+                    <li>The runner runs as a <strong>systemd service</strong>, so deploys keep working after reboots with nobody logged in</li>
+                    <li><strong>Git history doubles as the deploy log</strong> — what changed, when, and by which commit</li>
+                    <li><strong>One reusable <code>deploy.yml</code> pattern</strong> works across every Dockerized service in the homelab</li>
                 </ul>
             </div>
 

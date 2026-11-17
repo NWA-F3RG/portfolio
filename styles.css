@@ -311,6 +311,36 @@ h1 {
 }
 .key-achievement strong { color: var(--green); }
 
+/* Results strip: "$ cat results.txt" right under the TL;DR, headline numbers only.
+   Every number must already appear further down the same page. */
+.results {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--cyan);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm) var(--space-md);
+    margin: calc(-1 * var(--space-md)) 0 var(--space-xl);   /* sit close under .tldr */
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+.results-cmd { color: var(--fg-dim); margin-bottom: var(--space-xs); }
+.results-cmd .prompt { color: var(--green); }
+.results dl {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 0.35rem var(--space-md);
+    margin: 0;
+}
+.results dt { color: var(--cyan); }
+.results dd { color: var(--fg); margin: 0; }
+.results dd strong { color: var(--green); }
+@media (max-width: 600px) {
+    .results { padding: var(--space-sm); }
+    .results dl { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .results dd { margin-bottom: var(--space-xs); }
+    .results dd:last-child { margin-bottom: 0; }
+}
+
 /* ==================== Content Sections ==================== */
 .section { margin-bottom: var(--space-2xl); }
 
@@ -328,9 +358,10 @@ h3 {
     font-size: clamp(1.05rem, 1rem + 0.25vw, 1.15rem);
     font-weight: 600;
     color: var(--cyan);
-    margin-top: var(--space-lg);
+    margin-top: 2.5rem;              /* clear break between sub-topics */
     margin-bottom: var(--space-sm);
 }
+h2 + h3 { margin-top: var(--space-md); }
 
 h4 {
     font-size: 1rem;
@@ -374,6 +405,17 @@ code {
     padding: 0.1em 0.4em;
     border-radius: var(--radius-sm);
 }
+
+/* Long inline paths/commands wrap instead of pushing the page sideways on phones */
+:not(pre) > code { overflow-wrap: anywhere; }
+
+/* Wide tables scroll inside their own box, never the page */
+.table-scroll {
+    overflow-x: auto;
+    margin-bottom: var(--space-sm);
+    -webkit-overflow-scrolling: touch;
+}
+.table-scroll > table { margin-bottom: 0; }
 
 pre code {
     color: var(--fg);
@@ -505,6 +547,8 @@ pre code {
     gap: var(--space-sm);
     margin-bottom: var(--space-sm);
 }
+
+.comparison-grid > * { min-width: 0; }   /* let 1fr columns shrink on narrow phones */
 
 .before-box, .after-box {
     padding: var(--space-sm);

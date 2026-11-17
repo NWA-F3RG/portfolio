@@ -131,6 +131,18 @@
                     <strong>Key Achievement:</strong> Jobs stopped failing. 98% storage reduction through deduplication (measured). Secondary node keeps a full copy in case the primary drive dies.
                 </div>
             </div>
+
+            <div class="results">
+                <div class="results-cmd"><span class="prompt">$</span> cat results.txt</div>
+                <dl>
+                    <dt>failed nights</dt>
+                    <dd><strong>~40% → none</strong> since the migration</dd>
+                    <dt>storage</dt>
+                    <dd><strong>6.2 TiB</strong> of backups in <strong>126 GiB</strong> (98% less)</dd>
+                    <dt>coverage</dt>
+                    <dd>13 guests × 7 daily backups, copied nightly to a second node</dd>
+                </dl>
+            </div>
         </div>
 
         <!-- The Problem -->
@@ -139,11 +151,11 @@
 
             <h3>What I Started With</h3>
             <ul>
-                <li>3-node Proxmox cluster with ~420GB of VM data</li>
-                <li>Backups stored on 4.5TB external USB drive shared via NFS</li>
-                <li>Backup jobs failing ~40% of nights due to USB disconnects</li>
-                <li>VMs would sometimes shut down unexpectedly when mount path disappeared mid-backup</li>
-                <li>No redundancy - single point of failure for all backups</li>
+                <li>3-node Proxmox cluster with <strong>~420GB of VM data</strong></li>
+                <li>Backups stored on <strong>4.5TB external USB drive</strong> shared via NFS</li>
+                <li>Backup jobs <strong>failing ~40% of nights</strong> due to USB disconnects</li>
+                <li>VMs would sometimes <strong>shut down unexpectedly</strong> when mount path disappeared mid-backup</li>
+                <li><strong>No redundancy</strong> - single point of failure for all backups</li>
             </ul>
 
             <h3>Why USB Storage Failed</h3>

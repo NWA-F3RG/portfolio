@@ -74,8 +74,8 @@
             font-weight: 600;
             padding: 0.15rem 0.5rem;
             border-radius: var(--radius-sm);
-            background: rgba(248, 113, 113, 0.2);
-            color: var(--color-accent-danger);
+            background: rgba(249, 38, 114, 0.15);
+            color: #ff6b9d;   /* lighter pink: 6.3:1 on its own tint (pink text was 3.8:1) */
             border: 1px solid var(--color-accent-danger);
         }
         .badge-warning {
@@ -85,7 +85,7 @@
             font-weight: 600;
             padding: 0.15rem 0.5rem;
             border-radius: var(--radius-sm);
-            background: rgba(251, 146, 60, 0.2);
+            background: rgba(253, 151, 31, 0.15);
             color: var(--color-accent-warning);
             border: 1px solid var(--color-accent-warning);
         }
@@ -133,6 +133,20 @@
                 <div class="key-achievement">
                     <strong>Key Achievement:</strong> Full cluster visibility — OS metrics, per-VM breakdowns, log aggregation, and live alerting — using the same open-source toolchain SRE teams run in production
                 </div>
+            </div>
+
+            <div class="results">
+                <div class="results-cmd"><span class="prompt">$</span> cat results.txt</div>
+                <dl>
+                    <dt>alert rules</dt>
+                    <dd><strong>14</strong> routing to Discord (4 live-tested at launch)</dd>
+                    <dt>metrics</dt>
+                    <dd>Proxmox host metrics every <strong>15s</strong>, plus per-VM data via the REST API</dd>
+                    <dt>critical alerts</dt>
+                    <dd>fire after <strong>2 minutes</strong>, so one missed scrape is not a page</dd>
+                    <dt>logs</dt>
+                    <dd>aggregated in Loki</dd>
+                </dl>
             </div>
         </div>
 
@@ -195,6 +209,7 @@ monitoring-vm (pve03)
 
             <h3>Infrastructure</h3>
 
+            <div class="table-scroll">
             <table class="alert-table">
                 <thead>
                     <tr>
@@ -255,6 +270,7 @@ monitoring-vm (pve03)
                     </tr>
                 </tbody>
             </table>
+            </div>
         </section>
 
         <!-- What Gets Monitored -->
@@ -285,6 +301,7 @@ monitoring-vm (pve03)
             <h3>Alerting (Grafana → Discord)</h3>
             <p>Four alert rules are configured in Grafana and route to a dedicated Discord channel via webhook. All rules were live-tested before being marked production-ready. These are the four launch rules; the set has since grown to 14, adding SMART health and disk temperature, thin-pool capacity, unused Docker images, and media-stack health:</p>
 
+            <div class="table-scroll">
             <table class="alert-table">
                 <thead>
                     <tr>
@@ -321,6 +338,7 @@ monitoring-vm (pve03)
                     </tr>
                 </tbody>
             </table>
+            </div>
         </section>
 
         <!-- Key Concepts Learned -->
