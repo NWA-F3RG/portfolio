@@ -207,7 +207,13 @@
     <header>
         <nav aria-label="Main navigation">
             <a href="/" class="logo"><span class="logo-user">nate</span><span class="logo-at">@</span><span class="logo-host">seggsy</span><span class="logo-path">:~/projects</span><span class="logo-dollar"> $</span></a>
-            <a href="/" class="back-link">back to terminal</a>
+            <ul class="nav-links">
+                <li><a href="/#projects">projects</a></li>
+                <li><a href="/homelab-highlights">homelab</a></li>
+                <li><a href="/work-highlights" aria-current="page">work</a></li>
+                <li><a href="/resume">resume</a></li>
+                <li><a href="/#contact">contact</a></li>
+            </ul>
         </nav>
     </header>
     
@@ -236,6 +242,7 @@
                 <div>
                     <h2 id="work-1-title">Privileged Access Management: CyberArk + LAPS Recovery</h2>
                     <div class="card-env-line">CyberArk PAM &nbsp;·&nbsp; LAPS &nbsp;·&nbsp; Entra ID &nbsp;·&nbsp; VPN</div>
+                    <p class="backs-resume">Résumé line: <a href="/resume#r-pam">Restored access with PAM tools &rarr;</a></p>
                 </div>
             </div>
             
@@ -289,6 +296,7 @@
                 <div>
                     <h2 id="work-2-title">Identity & Access: Active Directory Security Groups</h2>
                     <div class="card-env-line">Active Directory &nbsp;·&nbsp; ADUC &nbsp;·&nbsp; NTFS Permissions &nbsp;·&nbsp; Entra ID</div>
+                    <p class="backs-resume">Résumé line: <a href="/resume#r-ad-audit">AD permission audits &rarr;</a></p>
                 </div>
             </div>
             
@@ -342,6 +350,7 @@
                 <div>
                     <h2 id="work-3-title">Mobile Device Management: Secure Teams Access Configuration</h2>
                     <div class="card-env-line">Entra ID &nbsp;·&nbsp; Microsoft Intune &nbsp;·&nbsp; SecureW2 &nbsp;·&nbsp; MFA</div>
+                    <p class="backs-resume">Résumé line: <a href="/resume#r-intune-remote">Remote Intune enrollment &rarr;</a></p>
                 </div>
             </div>
             
@@ -397,6 +406,7 @@
                 <div>
                     <h2 id="work-4-title">Cloud Identity: Windows 365 Cloud PC Provisioning Failure</h2>
                     <div class="card-env-line">Windows 365 &nbsp;·&nbsp; Microsoft Intune &nbsp;·&nbsp; Entra ID</div>
+                    <p class="backs-resume">Résumé line: <a href="/resume#r-w365">Windows 365 failures &rarr;</a></p>
                 </div>
             </div>
             
@@ -462,6 +472,7 @@
                 <div>
                     <h2 id="work-5-title">Cloud Identity: Windows 365 Cloud PC Authentication Failure (HTTP 400 / TokenBroker Cache)</h2>
                     <div class="card-env-line">Windows 365 &nbsp;·&nbsp; Entra ID &nbsp;·&nbsp; WAM / TokenBroker</div>
+                    <p class="backs-resume">Résumé line: <a href="/resume#r-w365">Windows 365 failures &rarr;</a></p>
                 </div>
             </div>
             
@@ -533,6 +544,7 @@
                 <div>
                     <h2 id="work-6-title">Enterprise MDM: Apple Business Manager Recovery & Process Documentation</h2>
                     <div class="card-env-line">Apple Business Manager &nbsp;·&nbsp; Addigy &nbsp;·&nbsp; ADE</div>
+                    <p class="backs-resume">Résumé line: <a href="/resume#r-abm">Apple Business Manager recovery &rarr;</a></p>
                 </div>
             </div>
             
@@ -605,6 +617,7 @@
                 <div>
                     <h2 id="work-7-title">Automation: PowerShell Printer Deployment Script</h2>
                     <div class="card-env-line">PowerShell &nbsp;·&nbsp; Print Server Management</div>
+                    <p class="backs-resume">Résumé line: <a href="/resume#r-printer-script">PowerShell printer script &rarr;</a></p>
                 </div>
             </div>
             
@@ -667,6 +680,7 @@
                 <div>
                     <h2 id="work-8-title">Network Identity: VPN Authentication Failure Resolution</h2>
                     <div class="card-env-line">VPN &nbsp;·&nbsp; LDAP &nbsp;·&nbsp; Active Directory</div>
+                    <p class="backs-resume">Résumé line: <a href="/resume#r-vpn-ldap">VPN / LDAP authentication fix &rarr;</a></p>
                 </div>
             </div>
             
@@ -732,6 +746,7 @@
                 <div>
                     <h2 id="work-9-title">Security Response: Compromised Session Revoked Before Lateral Movement</h2>
                     <div class="card-env-line">Huntress &nbsp;·&nbsp; Incident Response &nbsp;·&nbsp; Threat Mitigation</div>
+                    <p class="backs-resume">Résumé line: <a href="/resume#r-huntress">Compromised session revoked &rarr;</a></p>
                 </div>
             </div>
             
@@ -781,6 +796,7 @@
                 <div>
                     <h2 id="work-10-title">Security Operations: Automated Alert Intake in Jira</h2>
                     <div class="card-env-line">Jira Automation &nbsp;·&nbsp; Google Workspace Alert Center &nbsp;·&nbsp; Gmail Routing</div>
+                    <p class="backs-resume">Résumé line: <a href="/resume#r-alert-intake">Automated security-alert intake &rarr;</a></p>
                 </div>
             </div>
 
@@ -853,8 +869,11 @@
             <div class="footer-text">&copy; 2026 Nate &mdash; Austin, TX</div>
             
             <div class="footer-links">
-                <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
-                <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
-                <a href="/homelab-highlights">Homelab Highlights</a>
+                <a href="/#projects">Projects</a>
+                <a href="/homelab-highlights">Homelab</a>
+                <a href="/work-highlights">Work</a>
+                <a href="/resume">Resume</a>
+                <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub (opens in new tab)">GitHub</a>
+                <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn (opens in new tab)">LinkedIn</a>
                 <a href="/cdn-cgi/l/email-protection#254b4b5244405f406556404242565c0b464a" aria-label="Email">Email</a>
             </div>

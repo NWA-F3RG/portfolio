@@ -64,6 +64,9 @@
 
 html { scroll-behavior: smooth; }
 
+/* Anchor targets land below the sticky header, not under it */
+[id] { scroll-margin-top: 5rem; }
+
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after {
@@ -149,26 +152,88 @@ nav {
 .logo .logo-path   { color: var(--orange); }
 .logo .logo-dollar { color: var(--pink); font-weight: 600; margin-left: 4px; }
 
-/* Back-to-terminal link */
-.back-link {
-    color: var(--fg-dim);
+/* Main nav: the same five links on every page (index.html mirrors these rules inline) */
+.nav-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+}
+.nav-links li { margin: 0; line-height: 1; }
+.nav-links a {
+    color: var(--fg);
     text-decoration: none;
     font-size: 0.85rem;
-    font-weight: 400;
-    transition: color 0.15s;
+    white-space: nowrap;
+    padding: 0 0.6rem;
     min-height: 44px;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
 }
-.back-link:hover { color: var(--fg); }
-.back-link::before {
-    content: '←';
-    color: var(--green);
-    font-size: 1rem;
-    line-height: 1;
+.nav-links a:hover { color: var(--green); }
+.nav-links a[aria-current] { color: var(--green); border-bottom-color: var(--green); }
+
+/* Phones: logo on one row, links on the next; header scrolls away to save space */
+@media (max-width: 700px) {
+    header { position: static; padding: var(--space-xs) 0; }
+    nav { flex-wrap: wrap; }
+    .nav-links { width: 100%; justify-content: space-between; overflow-x: auto; scrollbar-width: none; }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .nav-links a { padding: 0 0.35rem; font-size: 0.8rem; }
+}
+
+/* ==================== Project Pager (prev / next) ==================== */
+.project-pager {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+    padding: var(--space-md) 0 0;   /* override the header's generic nav padding */
+    border-top: 1px solid var(--border);
+}
+.project-pager a {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 44px;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    max-width: 48%;
+    transition: border-color 0.15s;
+    touch-action: manipulation;
+}
+.project-pager a:hover { border-color: var(--green); }
+.project-pager .pager-next { margin-left: auto; text-align: right; }
+.project-pager .pager-label { color: var(--fg); font-size: 0.75rem; }
+.project-pager .pager-title { color: var(--green); font-size: 0.9rem; font-weight: 600; overflow-wrap: anywhere; }
+
+/* Résumé ↔ work-example cross-links */
+.see-how { white-space: nowrap; }
+.see-how a, .backs-resume a { color: var(--green); text-underline-offset: 2px; }
+.see-how a:hover, .backs-resume a:hover { color: var(--fg); }
+.backs-resume {
+    font-size: 0.8rem;
+    color: var(--fg);
+    margin-top: var(--space-xs);
+}
+.backs-resume a { color: var(--green); }
+li:target {
+    background: rgba(166, 226, 46, 0.08);
+    outline: 1px solid var(--green);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+}
+@media print {
+    .see-how, .backs-resume, .nav-links, .project-pager { display: none !important; }
+    li:target { background: none; outline: none; }
 }
 
 /* ==================== Project Page Layout ==================== */
@@ -508,7 +573,8 @@ footer.project-footer .footer-content {
 
 .footer-links {
     display: flex;
-    gap: var(--space-lg);
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-lg);
 }
 
 .footer-links a {

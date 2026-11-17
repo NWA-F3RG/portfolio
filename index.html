@@ -89,6 +89,55 @@
   }
 
   /* =================================================================
+     SITE HEADER — the same nav as every other page (mirrors the
+     Header & Nav rules in styles.css; px because this page's root
+     font-size is 14px). Static here, not sticky: the fixed command
+     palette is this page's always-visible navigation.
+     ================================================================= */
+  .skip-link {
+    position: absolute; top: -40px; left: 0; z-index: 200;
+    background: var(--green); color: var(--bg);
+    padding: 8px; border-radius: 3px; font-weight: 600; text-decoration: none;
+  }
+  .skip-link:focus { top: 8px; left: 8px; }
+  .site-header { background: var(--bg-soft); border-bottom: 1px solid var(--border); padding: 16px 0; }
+  /* Full width, padded like .boot/.app so the logo lines up with the terminal text */
+  .site-header nav {
+    padding: 0 32px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  @media (min-width: 1400px) { .site-header nav { padding: 0 min(160px, 12vw); } }
+  .site-header .logo {
+    font-size: 14.4px; color: var(--fg-dim); text-decoration: none;
+    min-height: 44px; display: inline-flex; align-items: center;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  }
+  .logo .logo-user   { color: var(--green); font-weight: 600; }
+  .logo .logo-at     { color: var(--fg-dim); }
+  .logo .logo-host   { color: var(--cyan); font-weight: 600; }
+  .logo .logo-path   { color: var(--orange); }
+  .logo .logo-dollar { color: var(--pink); font-weight: 600; margin-left: 4px; }
+  .nav-links { list-style: none; display: flex; align-items: center; gap: 4px; }
+  .nav-links a {
+    color: var(--fg); text-decoration: none; font-size: 13.6px; white-space: nowrap;
+    padding: 0 9.6px; min-height: 44px; display: inline-flex; align-items: center;
+    border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  }
+  .nav-links a:hover { color: var(--green); }
+  .nav-links a[aria-current] { color: var(--green); border-bottom-color: var(--green); }
+  @media (max-width: 700px) {
+    .site-header { padding: 8px 0; }
+    .site-header nav { flex-wrap: wrap; padding: 0 14px; }
+    .nav-links { width: 100%; justify-content: space-between; overflow-x: auto; scrollbar-width: none; }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .nav-links a { padding: 0 5.6px; font-size: 12.8px; }
+  }
+
+  /* Secondary palette chips (novelty commands) sit after the main ones */
+  .chip.minor .key { color: var(--fg); font-weight: 400; }
+
+  /* =================================================================
      BOOT SCREEN
      ================================================================= */
   .boot {
@@ -571,13 +620,29 @@
 </head>
 <body>
 
+<a href="#app" class="skip-link">Skip to main content</a>
+
+<!-- Site header: same five links as every other page -->
+<header class="site-header">
+  <nav aria-label="Main navigation">
+    <a href="/" class="logo"><span class="logo-user">nate</span><span class="logo-at">@</span><span class="logo-host">seggsy</span><span class="logo-path">:~</span><span class="logo-dollar"> $</span></a>
+    <ul class="nav-links">
+      <li><a href="/#projects">projects</a></li>
+      <li><a href="/homelab-highlights">homelab</a></li>
+      <li><a href="/work-highlights">work</a></li>
+      <li><a href="/resume">resume</a></li>
+      <li><a href="/#contact">contact</a></li>
+    </ul>
+  </nav>
+</header>
+
 <!-- Boot screen -->
 <div class="boot" id="boot">
   <div id="boot-output"></div>
 </div>
 
 <!-- App shell -->
-<div class="app" id="app">
+<main class="app" id="app">
   <div id="app-output"></div>
 
   <div class="prompt-line" id="active-prompt">
@@ -594,23 +659,24 @@
       <span class="cursor input-cursor" id="input-cursor"></span>
     </span>
   </div>
-</div>
+</main>
 
-<!-- Command palette -->
+<!-- Command palette: plain-word labels first; each chip runs the real command -->
+
 <div class="palette" id="palette" style="display:none;">
   <span class="palette-label">// click or type</span>
-  <button class="chip" data-cmd="me"><span class="key">me</span><span class="chip-desc"> — bio</span></button>
-  <button class="chip" data-cmd="motd"><span class="key">motd</span><span class="chip-desc"> — ethos</span></button>
-  <button class="chip" data-cmd="ls"><span class="key">ls</span><span class="chip-desc"> — projects</span></button>
-  <button class="chip" data-cmd="cat resume"><span class="key">cat resume</span></button>
-  <button class="chip" data-cmd="cat homelab-highlights"><span class="key">homelab</span><span class="chip-desc"> — logs</span></button>
-  <button class="chip" data-cmd="cat work-highlights"><span class="key">work</span><span class="chip-desc"> — examples</span></button>
-  <button class="chip" data-cmd="dig"><span class="key">dig</span><span class="chip-desc"> — contact</span></button>
-  <button class="chip" data-cmd="ssh"><span class="key">ssh</span><span class="chip-desc"> — msg</span></button>
-  <button class="chip" data-cmd="gui"><span class="key">gui</span><span class="chip-desc"> — readable</span></button>
-  <button class="chip" data-cmd="reboot"><span class="key">reboot</span></button>
-  <button class="chip" data-cmd="clear"><span class="key">clr</span></button>
-  <button class="chip" data-cmd="?"><span class="key">?</span><span class="chip-desc"> — help</span></button>
+  <button class="chip" data-cmd="me"><span class="key">about</span><span class="chip-desc">$ me</span></button>
+  <button class="chip" data-cmd="ls"><span class="key">projects</span><span class="chip-desc">$ ls</span></button>
+  <button class="chip" data-cmd="cat resume"><span class="key">resume</span><span class="chip-desc">$ cat resume</span></button>
+  <button class="chip" data-cmd="cat work-highlights"><span class="key">work</span><span class="chip-desc">examples</span></button>
+  <button class="chip" data-cmd="cat homelab-highlights"><span class="key">homelab</span><span class="chip-desc">incident logs</span></button>
+  <button class="chip" data-cmd="dig"><span class="key">contact</span><span class="chip-desc">$ dig</span></button>
+  <button class="chip" data-cmd="ssh"><span class="key">message</span><span class="chip-desc">$ ssh</span></button>
+  <button class="chip" data-cmd="gui"><span class="key">readable view</span><span class="chip-desc">$ gui</span></button>
+  <button class="chip minor" data-cmd="?"><span class="key">? help</span></button>
+  <button class="chip minor" data-cmd="motd"><span class="key">motd</span></button>
+  <button class="chip minor" data-cmd="reboot"><span class="key">reboot</span></button>
+  <button class="chip minor" data-cmd="clear"><span class="key">clr</span></button>
   <button class="mute-btn icon" id="mute-btn" title="Toggle sound">🔊</button>
 </div>
 
@@ -1161,8 +1227,8 @@ function showBootChooser() {
   out.innerHTML =
     '<div class="boot-line boot-chooser" id="boot-chooser">' +
       '<div class="chooser-head">[ <span class="hl">INCOMING</span> ] you\'ve caught a system mid-boot.</div>' +
-      '<div class="chooser-opt" data-action="play"><span class="chooser-key">enter</span>let the sequence play</div>' +
-      '<div class="chooser-opt" data-action="skip"><span class="chooser-key">esc</span>cut to the terminal</div>' +
+      '<div class="chooser-opt" data-action="skip"><span class="chooser-key">esc</span>skip to the site</div>' +
+      '<div class="chooser-opt" data-action="play"><span class="chooser-key">enter</span>let the boot sequence play (~40s)</div>' +
       '<div class="chooser-prompt">&gt;<span class="prompt-hint">tap or press</span><span class="cursor"></span></div>' +
     '</div>';
   window.scrollTo(0, 0);
@@ -1178,6 +1244,11 @@ function showBootChooser() {
   }
 
   function onKey(e) {
+    // Boot already skipped another way (nav link, deep link): retire this listener
+    if (document.getElementById('boot').style.display === 'none') {
+      document.removeEventListener('keydown', onKey);
+      return;
+    }
     if (e.key === 'Enter') {
       e.preventDefault();
       dispatch('play');
@@ -1366,6 +1437,9 @@ var COMMANDS = {
   'ssh send msg': function() { COMMANDS['ssh'](); },
   'gui readable': function() { COMMANDS['gui'](); },
   '? help':       function() { COMMANDS['?'](); },
+  'message':       function() { COMMANDS['ssh'](); },
+  'readable':      function() { COMMANDS['gui'](); },
+  'readable view': function() { COMMANDS['gui'](); },
 
   // Short-name and common-variation aliases
   'cat authentik':    function() { COMMANDS['cat authentik-sso'](); },
@@ -1627,16 +1701,48 @@ document.addEventListener('click', function(e) {
 });
 
 // =================================================================
+// DEEP LINKS — /#projects, /#contact, /#about, /#gui skip the boot and
+// run that command. The site nav (on every page) links here.
+// =================================================================
+var HASH_CMDS = { '#projects': 'ls', '#contact': 'dig', '#about': 'me', '#gui': 'gui' };
+
+function runHash() {
+  var cmd = HASH_CMDS[location.hash.toLowerCase()];
+  if (!cmd) return false;
+  var skipped = false;
+  if (document.getElementById('boot').style.display !== 'none') {
+    skipBoot();            // skipBoot already ends on the project list
+    skipped = true;
+  }
+  if (!(skipped && cmd === 'ls')) exec(cmd);
+  return true;
+}
+
+// Nav clicks on this page: run the command even if the hash is unchanged
+document.querySelectorAll('.site-header a[href^="/#"]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    var hash = a.getAttribute('href').slice(1);
+    // window.history: this script's own `history` is the command-history array
+    if (location.hash !== hash) window.history.pushState(null, '', hash);
+    runHash();
+  });
+});
+window.addEventListener('hashchange', runHash);
+
+// =================================================================
 // INIT
 // =================================================================
-try {
-  if (localStorage.getItem(BOOT_KEY)) {
-    skipBoot();
-  } else {
+if (!runHash()) {
+  try {
+    if (localStorage.getItem(BOOT_KEY)) {
+      skipBoot();
+    } else {
+      showBootChooser();
+    }
+  } catch(e) {
     showBootChooser();
   }
-} catch(e) {
-  showBootChooser();
 }
 </script>
 </body>

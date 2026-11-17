@@ -101,7 +101,13 @@
             <a href="/" class="logo">
                 <span class="logo-user">nate</span><span class="logo-at">@</span><span class="logo-host">seggsy</span><span class="logo-path">:~/projects</span><span class="logo-dollar"> $</span>
             </a>
-            <a href="/" class="back-link">back to terminal</a>
+            <ul class="nav-links">
+                <li><a href="/#projects" aria-current="true">projects</a></li>
+                <li><a href="/homelab-highlights">homelab</a></li>
+                <li><a href="/work-highlights">work</a></li>
+                <li><a href="/resume">resume</a></li>
+                <li><a href="/#contact">contact</a></li>
+            </ul>
         </nav>
     </header>
 
@@ -475,15 +481,22 @@ blockdev --getalignoff /dev/sda1</code></pre>
                 <p>Three things broke during the migration. The USB drive went to sleep mid-rsync during the initial data move — fixed by disabling autosuspend temporarily and using <code>rsync --partial</code> so interrupted transfers resume rather than restart. The ACME DNS-01 challenge for the PBS Let's Encrypt certificate kept failing because Cloudflare's DNS propagation takes time before Let's Encrypt can verify the TXT record — adding a delay and ensuring the API token had Zone:DNS:Edit scope fixed it. And the 1TB ext4 filesystem reported less usable space than expected because ext4 reserves 5% for root by default — about 50GB on a 1TB drive — which is designed for OS disks, not backup workloads. <code>tune2fs -m 1</code> reclaimed most of it. Since deployment: 100% backup success rate and a measured 98% storage reduction through deduplication: 6.2 TiB of backups stored in 126 GiB on disk.</p>
             </div>
         </section>
+        <nav class="project-pager" aria-label="More projects">
+            <a href="/authentik-sso" class="pager-prev" rel="prev"><span class="pager-label">&larr; previous</span><span class="pager-title">authentik-sso</span></a>
+            <a href="/monitoring-stack" class="pager-next" rel="next"><span class="pager-label">next &rarr;</span><span class="pager-title">monitoring-stack</span></a>
+        </nav>
     </main>
 
     <footer class="project-footer" role="contentinfo">
         <div class="footer-content">
             <div class="footer-copy">&copy; 2026 Nate &mdash; Austin, TX</div>
             <nav class="footer-links" aria-label="Footer navigation">
-                <a href="/">Projects</a>
+                <a href="/#projects">Projects</a>
+                <a href="/homelab-highlights">Homelab</a>
+                <a href="/work-highlights">Work</a>
                 <a href="/resume">Resume</a>
-                <a href="/work-highlights">Work Examples</a>
+                <a href="https://github.com/NWA-F3RG" target="_blank" rel="noopener noreferrer" aria-label="GitHub (opens in new tab)">GitHub</a>
+                <a href="https://www.linkedin.com/in/nathannwaeze/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn (opens in new tab)">LinkedIn</a>
             </nav>
         </div>
     </footer>
